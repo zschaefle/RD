@@ -1,0 +1,82 @@
+.RDitem{
+	overflow:hidden;
+	border:1px solid black;
+	padding:2px;
+	clear:left;
+	float:left;
+	height:50px;
+	width:363px;
+	background-color:transparent;
+}
+.RDminion{
+	overflow:hidden;
+	border:1px solid black;
+	padding:2px;
+	clear:left;
+	float:left;
+	min-height:0px;
+	width:363px;
+}
+.RDequip{
+	overflow:hidden;
+	border:1px solid black;
+	padding:2px;
+	height:50px;
+	width:187px;
+}
+
+.RDpic {
+	margin-right:2px;
+	height:50px;
+	width:50px;
+	border:0px solid black;
+	padding:0px;
+	float:left;
+	clear:left;	
+	background-color:transparent;
+
+}
+
+.itemwords {
+	height:50px;
+	width:311px;
+	float:right;
+	clear:right;
+	border:0px solid black;
+	padding:0px;
+	font-weight:500px;
+}
+
+.name {
+	float:left;
+	clear:left;
+	width:80%;
+	height:18px;
+	border: 0px solid black;
+	padding:0px;}
+
+.quant {
+	float:right;
+	clear:right;
+	width:20%;
+	height:18px;
+	text-align:right;
+	border: 0px solid black;
+	padding:0px;
+}
+
+.desc {
+	height:32px;
+	border: 0px solid black;
+	padding:0px;
+	width:100%;
+	font-size:10px;
+}
+.hpbar{
+	height:3px;
+	border: 1px solid #999;
+	float:left;
+	clear:left;
+	overflow: hide;
+}
+

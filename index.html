@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Regenerating Dongeon v1.0</title>
+		<link rel="stylesheet" type="text/css" href="a4.css">
+		<link rel="stylesheet" type="text/css" href="rd.css">
+		<link rel="shortcut icon" href="favicon.ico" type="image/ico">
+		<script src="RD-CG.js"></script>
+	</head>
+	<body onload="RDinit()" style="background-color:#aaa;font-family: Courier New;">
+		<h2 style="min-width:969px;">Regenerating Dongeon v1.0</h2>
+		<div class="invis" style="width:995px;height:259px;border:2px solid #666;margin:auto;">
+			<!--Main-->
+			<div class="invis" style="background-image: url(img/screenmain.png);background-color:transparent;padding:10px;height:129px;font-size:15px;overflow:hidden;" id="RDmain">
+				<div class="invis" style="float:left;clear:left;height:100%;width:900px;">
+					<div class="invis" style="height:50%;width:100%;font-weight:500;font-size:9pt;" id="roomdesc"></div>
+					<div class="invis" style="height:50%;width:100%" id="maindesc"></div>
+				</div>
+
+				<div class="invis" style="float:right;clear:right;height:100%;width:75px;">
+					<button onclick="screenchange(2);RDrefresh()" style="width:75px;">Inventory</button>
+					<button onclick="RDloot()" style="width:75px;margin-top:5px;margin-bottom:5px;">Loot</button>
+					<div class="invis" style="height:75px;width:75px;border:1px solid black;border-radius:38px;overflow:hidden; background-image: url('img/url.jpg'); background-position: center;">
+						<div class="invis" style="width:25px;height:25px;margin-left:28px;margin-right:25px; background-color: transparent"><div onclick="move(1)" style = "background-color:transparent;color:#DDD;border: 0px;font-size:17px; text-shadow: 0px 0px 5px #000000; cursor: pointer;"><strong>N</strong></div></div>
+						<div class="invis" style="width:100%;height:25px;background-color: transparent; margin-bottom: 3px"><div style="float:left;clear:left;background-color:transparent;color:#DDD;border: 0px;font-size:17px; text-shadow: 0px 0px 5px #000000; cursor: pointer;" onclick="move(4)"><strong>W</strong></div><div style="float:right;clear:right;background-color:transparent;color:#DDD;border: 0px;font-size:17px; text-shadow: 0px 0px 5px #000000; cursor: pointer;" onclick="move(2)"><strong>E</strong></div></div>
+						<div class="invis" style="width:25px;height:25px;margin-left:28px;margin-right:25px;background-color: transparent"><div onclick="move(3)" style = "background-color:transparent;color:#DDD;border: 0px;font-size:17px; text-shadow: 0px 0px 5px #000000; cursor: pointer;"><strong>S</strong></div></div>
+					</div>
+				</div>
+			</div>
+			<!--Inventory-->
+			<div class="invis" style="background-image: url(img/screenmain.png);background-color:transparent;padding:10px;height:129px;font-size:15px;overflow:hidden;" id="RDinven">
+				<div class="invis" style="height:100%;width:197px;float:left;clear:left;">
+					 <div class="invis" style="width:193px;height:112px;margin:2px;">
+					 	<div class="RDequip" id="equip1" style="clear:left;float:left;" onclick="unequip(0)">
+							<div class="RDpic" id="equipA"></div>
+							<div class="itemwords" style="width:135px;">
+								<p2>name</p2>
+								<br/>DMG mod: <p2>ehh</p2>
+								<br/>DEF mod: <p2>meh</p2>
+							</div>
+						</div>
+						<div class="RDequip" id="equip2" style="clear:left;float:left;" onclick="unequip(1)">
+							<div class="RDpic" id="equipB"></div>
+							<div class="itemwords" style="width:135px;">
+								<p2>name</p2>
+								<br/>DMG mod: <p2>ehh</p2>
+								<br/>DEF mod: <p2>meh</p2>
+							</div>
+						</div>
+					 </div>
+					 <div class="invis" style="height:102px;width:195px;float:left;clear:left;">
+					 	Health: <p2 id="hp"></p2><br/>Damage: <p2 id="dmg"></p2><br/>Defence: <p2 id="dfn"></p2><br/>Score: <p2 id="score"></p2><br/>Level: <p2 id="lvl"></p2><br/>Rooms: <p2 id="turn"></p2>
+					 </div>
+					 <button onclick="screenchange(1)">Back</button><button onclick="heal(pla)">Heal</button>
+				</div>
+				<!--items-->
+				<div class="invis" style="height:235px;width:386px;float:left;border:2px solid #666;overflow-y:scroll;" id="items"></div>
+				<div class="invis" style="height:235px;width:386px;float:left;border:2px solid #666;border-left:0 solid #666;overflow-y:scroll;" id="minions"></div>
+			</div>
+			<!--Fightbattle-->
+			<div class="invis" style="background-image: url(img/screenmain.png);background-color:transparent;padding:10px;height:129px;font-size:15px;overflow:hidden;" id="RDfight">
+				<div class="invis" style="width:651px;height:239px;float:left;clear:left">
+					<div class="invis" style="height:108px;width:100%;float:left;clear:left;">
+						<div class="invis" style="height:98px;">
+							<div class="invis" style="float:left;clear:left;height:33%" id="fightdesc"></div>
+							<div class="invis" style="float:left;clear:left;height:33%" id="enmdesc"></div>
+							<div class="invis" style="float:left;clear:left;height:33%" id="pladesc"></div>
+						</div>
+						<!--Hp bars-->
+						<div class="invis hpbar" style="width:649px;"><div class="invis" style="width:100%;height:100%;background-color:#f00" id="enmhp"></div></div>
+						<div class="invis hpbar" style="width:649px;"><div class="invis" style="width:100%;height:100%;background-color:#f00" id="plahp"></div></div>
+						
+					</div>
+					<div class="invis" style="height:21px;width:100%;float:left;clear:left;">
+						<button onclick="plaFight(1)">attack</button>
+						<button onclick="plaFight(2)">heal</button>
+						<button onclick="console.log('boop')"></button>
+					</div>
+				</div>
+				<div class="invis" style="width:129px;height:129px;float:right;clear:right" id="enmPic">Insert picture of opponent here</div>
+			</div>
+			<!--Limbo-->
+			<div class="invis" style="background-color:#222;spadding:10px;height:129px;font-size:15px;overflow:hidden;" id="RDlimbo">
+				<div class="invis" id="limbotext" style="color:#fff;width:50%;height:100%;float:left;clear:left;"></div>
+				<button onclick="limbo(2)">Leap off cliff</button>
+			</div>
+			<div class="invis" style="background-color:#222;padding:10px;height:129px;font-size:15px;overflow:hidden;" id="RDmono">
+				<div class="invis" id="dodger" style="float:left;margin:5% 0 0 35%">
+					<button onclick="limbo(3)" id="dodgeButton">RUN, DUDE! RUUN!</button>
+				</div>
+			</div>
+			
+		</div>
+		
+		<div style ="margin:auto; text-align: center; margin-top: 20px;">Created by: theCoosome, EpicBlueCircles, HeadingNorth, Alpha949</div>
+		<div style ="margin:auto; text-align: center; margin-top: 200px;font-size: 14pt;">Changelog:</div>
+		<div class = "changelogtitle">
+			v1.0 patch 1
+			<p class = "changelogdesc">Added credits and changelog, as well as tutorial.</p>
+			<p class = "changelogdesc">Enjoy!</p>
+			
+		</div>
+	</body>
+</html>

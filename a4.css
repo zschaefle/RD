@@ -1,0 +1,150 @@
+body{
+	background-color:#f00;
+	margin:0;
+	
+}
+
+
+div{
+	border: 2px solid #666;
+	background-color: #aaa;
+	padding: 5px;
+	color: #001;
+}
+
+img{
+	max-width: 100%;
+	max-height: 100%;
+	padding: 0;
+	border: 0 solid black;
+}
+
+/* I use this in divs that i dont want to change any visual aspects, and is solely for sorting. */
+.invis{
+	border: 0px solid black;
+	padding: 0px;
+	background-color: inherit;
+	margin: 0;
+}
+
+ /* Here is the container, title, and the body. */
+#container{
+	background-color: #fffefe;
+	color: #001;
+	font-family: Courier New;
+	
+	margin: 0 15%;
+	border: 0;
+	width: 70%;
+	min-width: 814px;
+	height: 1000px;
+	padding: 10px;
+}
+
+.title, #body{
+	min-width: 800px;
+	padding: 5px;
+	margin: 2px 0px;
+}
+#body{
+	overflow: auto;
+	margin-top: 10px;
+	text-align: left;
+	padding: 25px 5px;
+}
+.title{
+	font-size: 20pt;
+}
+h1, h2{
+	padding: 0 15px;
+	border-top: 20px solid #999;
+	border-bottom: 20px solid #999;
+	text-align: center;
+}
+
+h1{margin: -5px; font-weight: 800; font-size: 20pt; } 
+h2{font-weight: 700; font-size: 15pt; }
+p {background-color: #bbb; padding: 10px;}
+
+
+/* This is everything that has to do with butons and links. */
+a{
+	text-decoration: none;
+	color: inherit;
+}
+.buton{
+	float: left;
+	width: 166px;
+	padding: 10px;
+	margin: 5px;
+	font-family: Courier New Bold;
+	font-size: 10pt;
+	transition: 3s linear;
+	background-color: inherit;
+	text-align: center;
+}
+
+.box{
+	float: left;
+	width:66px;
+	height:66px;
+	margin:0px;
+	transition: 3s linear;
+	background-color: inherit;
+}
+
+.buton:hover, .current, .box:hover{
+	transition: 0.2s linear;
+	background-color: orange;
+}
+
+/*File specific*/
+
+.lootpic{
+	float: left;
+	clear: left;
+	width: 18px;
+	height: 0px;
+	border: 0px solid black;
+	padding: 0;
+}
+
+.look{
+	float: left;
+	border: 0px solid black;
+	padding: 0px;
+	background-color: inherit;
+	height:18px;
+}
+
+.look::selection{
+	background-color: #d8d8d8;
+}
+
+
+
+
+::selection{
+	
+	
+	background-color: transparent;
+}
+.changelogtitle{
+	margin: auto;
+	margin-top: 10px;
+	text-decoration: bold;
+	padding: 20px;
+	font-size: 13pt;
+	
+
+}
+
+.changelogdesc{
+	margin: auto;
+	font-size: 12pt;
+	
+	
+
+}
+
+
