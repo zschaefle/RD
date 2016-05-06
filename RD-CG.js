@@ -1565,6 +1565,8 @@ function limbo(type, message){
                     monolithTime = 1500 + (sanity * 1.5);
                     if (monolithTime <= 1){monolithTime = 5}
                     monolithOrig = monolithTime;
+                    var screen = document.getElementById("RDmono");
+                    screen.style.backgroundImage = "url('img/monoAnimation/mono1.png')";
                     screenchange(5);
                 //}
                 
