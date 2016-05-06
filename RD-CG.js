@@ -7,6 +7,7 @@ ___CHANGELOG___
     +does not actually fatten you
     +added agility canceling
             newagil = [((source.agil[0]*target.agil[1])-((target.agil[0]*source.agil[1])/2)), (source.agil[1]*target.agil[1])];
+    +incrased base agil
     +added room 31
     +added 3 new items
     +added 1 minion
@@ -156,7 +157,7 @@ function player(){
     this.healval = 1;
     this.maxhp = 100;  
     this.hdev = 3;
-    this.baseagil = [5, 100];
+    this.baseagil = [18, 100];
     this.agil = [15, 100];
     this.lvl = 1;
     this.sane = 8;
@@ -1377,7 +1378,8 @@ function attack(source, target){
 }
 function Damage(source, target){
     var message;
-    var newagil = [((source.agil[0]*target.agil[1])-((target.agil[0]*source.agil[1])/2)), (source.agil[1]*target.agil[1])];
+    var newagil = [((target.agil[0]*source.agil[1])-((source.agil[0]*target.agil[1])/2)), (target.agil[1]*source.agil[1])];
+    console.log(newagil)
     if (rand(newagil[1]) <= newagil[0]){
         message = target.name + " dodged "+ source.name +"'s attack";
     } else {
