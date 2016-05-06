@@ -5,6 +5,8 @@ https://drive.google.com/open?id=1S_5sqfRwNeyYip_296_XltTGRayP3fW6amOfEyVC5hM
 ___CHANGELOG___
 --1.3-fattening update--
     +does not actually fatten you
+    +added agility canceling
+            newagil = [((source.agil[0]*target.agil[1])-((target.agil[0]*source.agil[1])/2)), (source.agil[1]*target.agil[1])];
     +added room 31
     +added 3 new items
     +added 1 minion
@@ -1375,7 +1377,8 @@ function attack(source, target){
 }
 function Damage(source, target){
     var message;
-    if (rand(target.agil[1]) <= target.agil[0]){
+    var newagil = [((source.agil[0]*target.agil[1])-((target.agil[0]*source.agil[1])/2)), (source.agil[1]*target.agil[1])];
+    if (rand(newagil[1]) <= newagil[0]){
         message = target.name + " dodged "+ source.name +"'s attack";
     } else {
         var deviation = rand(source.ddev * 2)- source.ddev;
