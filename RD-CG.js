@@ -221,7 +221,7 @@ room30 = new Room(0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, "You stand on top of a fac
 room31 = new Room(0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, -2, "You are in a large warehouse, through the grimy windows you can see it is dusk. The occasional object is stored here, but everything is covered in spiderwebs.", "You open a large door in the ", "ern wall, someone helping from the other side.", "As you move, the strands of web begin catching.");
 //room = new Room(plant, manmade, water, dark, animal, light, items, north, east, south, west, sane, message, exitA, exitB, exitFail);
 
-bossroom = new Room(0,0,0,0,0,0,0,1,1,1,1, -2, "You find yourself in a wide open room. The ceiling is high and dark. An ominous feeling of doom hangs over you.", "Exhausted, you leave through the ", " door.", "You somehow walk into a nonexistent wall.")
+bossroom = new Room(0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, -2, "You find yourself in a wide open room. The ceiling is high and dark. An ominous feeling of doom hangs over you.", "Exhausted, you leave through the ", " door.", "You somehow walk into a nonexistent wall.")
 roomBoss2 = new Room(0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 1, -2, "You are in a small stone cavern, many twisting passageways leading through a winding cave system. You feel a drop of water plop on your head.", "You climb out through a ", "ern cave.", "You climb through a tunnel, only to find yourself in a room similar to the one you came from.");
 roomBoss3 = new Room(0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 3, "You find yourself in a room, walls covered in mechanical and mystical constructs alike. Trees are visible through the sparsely placed windows.", "You find a button hidden on the ", "ern wall, pressing it against your better judgement.", "You become distracted by the intricacies of this room.");
 
@@ -252,14 +252,14 @@ function Enemy(atk, de, name, pic, maxhp, ddev, agil, sane, message, cry, lvl, r
         this.minionTree = [];
 }
 var nullenm = new Enemy(0, 0, "", "", 0, 0, [1,100], "", "", 0, ["", "", "", "", ""], [2, 3, 4], 1000);
-var creepybaldguy = new Enemy(5, 10, "Creepy Bald Guy", "creep", 15, 2, [1,100], -1, "You know you are being watched.\nAlways...\n", "you feel it staring through your eyes,\nInto your Soul.", 1, ["Even though it seems nearly dead, it continues its steady gaze deep into your eyes.", "it seems to have lost some hair in this fight. You blink, realizing it was already bald.", "it seems to be observing, only attacking to see how you react.", "it is sitting there, observing you. Waiting and observing your every move."], [2,3,4], 200)
-var terracotta = new Enemy(0, 12, "clay soldier", "terracotta", 5, 5, [1,8], 0, "Intricately carved hinges begin to move,", "Beginning its advance towards you.", 1, ["It lays on the ground, cracks running through it.", "It wobbles, an arm and a leg missing.", "There are small cracks beginning to run through its body.", "it stands there, it's carefully carved tiny eyes staring at you."],[1,2,0], 100)
-var thug = new Enemy(7, 0, "Thug", "thug", 100, 5, [1,1000], 0, "A thug approaches you on the street.\nYou prepare your fists, being much stronger than your lean appearance implies.", "'Hey, Idiot. Whose territory do you think you're Waltzing around in?'", 0, ["", "", "", "He holds his hands up in front of his face, posture like that of a fake wrestler."], [3,2,4], 300)
-var bookofdeath = new Enemy(10, 20, "Flailing Broken Binding", "bookofdeath", 3, 1, [5,100], -1, "A nearby book seems to stir..", "A book snaps into a row of paper teeth.....", 2, ["", "", "",""], [10,7,4], 75)
-var catwatcher = new Enemy(15, 5, "Watcher Catling", "catwatcher", 65, 2, [20,100], -1, "You feel as though something is watching you.....", "A small Furry leaps at you!", 3, ["","","",""], [20, 11, 20], 100)
-var axeurlegs = new Enemy(2, 10, "Axeurlegs", "axeurlegs", 10, 1, [0,1], -2, "One of the plants seems to be twitching.....", "Steel blades click into place as the plant spins into action!", 1, ["", "","", ""],[1,3,1],8)
-var anenemy = new Enemy(5, 7, "Anenemy", "anenemy", 38, 10, [10,100], 0, "A sloshing sound alerts you to anenemy in the water......", "Anenemy attacks you!", 1, ["","", "", ""], [10, 8, 8], 75)
-var lightorb = new Enemy(12, 20, "Light Orb", "lightorb", 5, 3, [4,5], 0, "A glowing orb floats gently towards you", "", 2, ["It's light is so dim, you can almost make out the creature emitting it.", "it is no longer floating quite as high as before, and it's light is fading.", "It's light is getting duller, and it sways from side to side.", "It darts around in front of you, a streak of light across your vision."], [1,2,3], 100)
+var creepybaldguy = new Enemy(5, 10, "Creepy Bald Guy", "creep", 15, 2, [1,100], -1, "You know you are being watched.\nAlways...\n", "you feel it staring through your eyes,\nInto your Soul.", 1, ["Even though it seems nearly dead, it continues its steady gaze deep into your eyes.", "it seems to have lost some hair in this fight. You blink, realizing it was already bald.", "it seems to be observing, only attacking to see how you react.", "it is sitting there, observing you. Waiting and observing your every move."], [2,3,4], 200);
+var terracotta = new Enemy(0, 12, "clay soldier", "terracotta", 5, 5, [1,8], 0, "Intricately carved hinges begin to move,", "Beginning its advance towards you.", 1, ["It lays on the ground, cracks running through it.", "It wobbles, an arm and a leg missing.", "There are small cracks beginning to run through its body.", "it stands there, it's carefully carved tiny eyes staring at you."],[1,2,0], 100);
+var thug = new Enemy(7, 0, "Thug", "thug", 100, 5, [1,1000], 0, "A thug approaches you on the street.\nYou prepare your fists, being much stronger than your lean appearance implies.", "'Hey, Idiot. Whose territory do you think you're Waltzing around in?'", 0, ["", "", "", "He holds his hands up in front of his face, posture like that of a fake wrestler."], [3,2,4], 300);
+var bookofdeath = new Enemy(10, 20, "Flailing Broken Binding", "bookofdeath", 3, 1, [5,100], -1, "A nearby book seems to stir..", "A book snaps into a row of paper teeth.....", 2, ["", "", "",""], [10,7,4], 75);
+var catwatcher = new Enemy(15, 5, "Watcher Catling", "catwatcher", 65, 2, [20,100], -1, "You feel as though something is watching you.....", "A small Furry leaps at you!", 3, ["","","",""], [20, 11, 20], 100);
+var axeurlegs = new Enemy(2, 10, "Axeurlegs", "axeurlegs", 10, 1, [0,1], -2, "One of the plants seems to be twitching.....", "Steel blades click into place as the plant spins into action!", 1, ["", "", "", "Its spinning extremely quickly, blades hacking away at your legs inch by inch."],[1,3,1],8);
+var anenemy = new Enemy(5, 7, "Anenemy", "anenemy", 38, 10, [10,100], 0, "A sloshing sound alerts you to anenemy in the water......", "Anenemy attacks you!", 1, ["","", "", ""], [10, 8, 8], 75);
+var lightorb = new Enemy(12, 20, "Light Orb", "lightorb", 5, 3, [4,5], 0, "A glowing orb floats gently towards you", "", 2, ["It's light is so dim, you can almost make out the creature emitting it.", "it is no longer floating quite as high as before, and it's light is fading.", "It's light is getting duller, and it sways from side to side.", "It darts around in front of you, a streak of light across your vision."], [1,2,3], 100);
 var mimic = new Enemy(5, 15, "Mimic", "mimic", 20, 5, [1,100], -1, "A golden chest sits with elegant details and pure beauty.", "The chest snaps open, revealing not loot, \nBut a row of Teeth!", 2, ["","", "", ""], [1,2,3], 75)
 var nerveball = new Enemy(20, 8, "the ball of nerves", "nerveball", 20, 8, [10,100], -3, "You see a swirling ball of... nerves?", "it turns towards you, screaming with silence\n \n...and electrical currents.", 3, ["", "", "", ""], [1,2,3], 50)
 var clone = new Enemy(15, 10, "Your clone", "clone", 100, 5, [1,20], -5, "You see a more menacing version of yourself in what you think is a mirror....", "", 2, ["", "", "", ""], [10, 9, 10], 75)
@@ -596,23 +596,23 @@ function genRoom() {
     healable = true;
     //console.log(ablerooms);
     //leveling up
-    if (score >= 10 && pla.lvl == 1){
+    if (score >= 20 && pla.lvl == 1){
         pla.lvl = 2;
         roommessage += "You can sence something.. Change, or Alter, in the dongeons around you..";
     }
-    if (score >= 35 && pla.lvl == 2){
+    if (score >= 55 && pla.lvl == 2){
         pla.lvl = 3;
         roommessage += "You hear the calls of things, Unknown Creatures, from close by..";
     }
-    if (score >= 80 && pla.lvl == 3){
+    if (score >= 110 && pla.lvl == 3){
         pla.lvl = 4;
         roommessage += "You can feel the Anger, the Hatred in the dongeon, Radiating from the surfaces, Aimed at you...";
     }
-    if (score >= 140 && pla.lvl == 4){
+    if (score >= 200 && pla.lvl == 4){
         pla.lvl = 5;
         roommessage += "Level up!";
     }
-    if (score >= 200 && pla.lvl == 5){
+    if (score >= 300 && pla.lvl == 5){
         pla.lvl = 6;
         roommessage += "Level up!";
     }
