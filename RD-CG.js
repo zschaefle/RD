@@ -431,9 +431,9 @@ var alpha = new Boss(350, 34, 0, "Alpha", "alpha", 500, 6, [2,3], [5,4,10], -3, 
 
 var xissor = new Boss(200, 9, 20, "Xissor", "xissor", 200, 20, [1,10], [100,99,25], -2, xissors, godrobe, -100, "Somebody smashes through the ceiling....", "She turns around quickly, then charges at you while screaming!",["","","","","",""], bossroom, 75)
 var otherXissor = new Boss(400, 25, 35, "The Other Xissor", "otherxissor", 400, 40, [1,5], [100,90,25], -10, otherxissors, godrobe, -100, "Sombody else is here.", "She turns around slowly, then quickly draws her blade on you.",["","","","","",""], bossroom, 75)
-var epicalpha = new Boss(450, 50, 10, "Alpha 949", "alpha", 450, 12, [5, 6], [10, 8, 20], -6, sivgoggles, shurikenbag, -100, "You find yourself in a familiar looking room. Looking around, you realize you have some unfinished business. You hear sudden quick footsteps from behind you.", "you turn to see a familiar figure dashing towards you, Swinging a large axe!", ["", "", "", "", "", ""],bossroom, 120);
-var epicjim = new Boss(500, 70, 55, "Jim Grind", "jimgrind", 1000, 4, [2, 88], [24, 22, 24], -4, jimarmor, hatandboots, -100, "You find yourself in a familiar looking room. Looking around, you realize you have some unfinished business. Someone is in the room with you. You turn to face him. You both know who won last time. ", "A stern look on his face; A deadly look in his eyes.", ["", "You can see small gaps in his defence now, chinks in his armor.", "His breathing is heavy, and his swings are slower, yet just as powerful.", "He stands with a confident air about him, holding his sword firmly.", "His armor is beginning to glow, even the largest chinks in his armor closing as the armor reshapes into its original form.", "He seems unaware of your blows, simply tanking all damage you may deal to him."], roomBoss3, 260);
-var epiccoo = new Boss(300, 20, 28, "coo33", "coosome", 400, 150, [19, 64], [64,64-13,20], -4, pencil, spoon, -100, "You find yourself in a familiar looking room. Looking around, you realize you have some unfinished business. You hear a familiar chilling voice behind you.", "\'Here,  Fishy..   Fishy...\'", ["It's bloodied eyes dart across you, searching for ways to finish you off quickly.", "It looks angry, but seems to have survived worse.", "It is smiling, although panting. It seems as though it's malnourishedness is taking effect.", "He seems unfazed, a low growl and a chuckle murmured from within.","It takes a deep breath, the type one might take after a good nights sleep.","It seems to be toying with you, darting through the room."],roomBoss2,62)
+var epicalpha = new Boss(450, 50, 10, "Alpha 949", "alpha", 450, 12, [5, 6], [10, 8, 20], -6, sivgoggles, shurikenbag, -100, "You find yourself in a familiar looking room. Looking around, you realize you have some unfinished business. You hear sudden quick footsteps from behind you.", "you turn to see a familiar figure dashing towards you, Swinging a large axe!", ["", "", "", "", "", ""],bossroom, 90);
+var epicjim = new Boss(320, 45, 150, "Jim Grind", "jimgrind", 360, 2, [0, 1], [8, 7, 35], -2, jimarmor, hatandboots, -100, "You find yourself in a familiar looking room. Looking around, you realize you have some unfinished business. Someone is in the room with you. You turn to face him. You both know who won last time. ", "A stern look on his face; A deadly look in his eyes.", ["", "You can see small gaps in his defence now, chinks in his armor.", "His breathing is heavy, and his swings are slower, yet just as powerful.", "He stands with a confident air about him, holding his sword firmly.", "His armor is beginning to glow, even the largest chinks in his armor closing as the armor reshapes into its original form.", "He seems unaware of your blows, simply tanking all damage you may deal to him."], roomBoss3, 190);
+var epiccoo = new Boss(300, 20, 10, "coo33", "coosome", 400, 150, [19, 64], [64,64-13,20], -4, pencil, spoon, -100, "You find yourself in a familiar looking room. Looking around, you realize you have some unfinished business. You hear a familiar chilling voice behind you.", "\'Here,  Fishy..   Fishy...\'", ["It's bloodied eyes dart across you, searching for ways to finish you off quickly.", "It looks angry, but seems to have survived worse.", "It is smiling, although panting. It seems as though it's malnourishedness is taking effect.", "He seems unfazed, a low growl and a chuckle murmured from within.","It takes a deep breath, the type one might take after a good nights sleep.","It seems to be toying with you, darting through the room."],roomBoss2,62)
 var lastsanity = new Boss(500, 18, 16, "Last Remnants of Sanity", "lastsanity", 500, 5, [2,7], [100, 95, 100], -100, trueinsanity, trueinsanity, -100, "You feel parts of your mind fighting back, with nonsense of '<i>Something is wrong</i>.'", "You realize you need to silence these nagging voices.",["<i>You are destroying yourself...</i>","<i>Do you even know the names of the people you killed?</i>","<i></i>","<i>Something is seriously wrong with you,</i>"],bossroom, 60);
 var lastinsanity = new Boss(1000, 15, 10, "Last Remnants of Insanity", "lastinsanity", 1000, 90, [1,64], [1, 2, 3], 100, truesanity, truesanity, -100, "You feel parts of your mind begin to come together.......", "You have come to a realization: the only way to obtain your goal is to wipe insanity from your mind.",["but.. What is this place?","How do you not return to what was already there?","",""],bossroom, 25);
 
@@ -461,7 +461,7 @@ function Minion(hp, maxhp, atk, ddev, de, agil, heal, sane, lvl, name, pic, mess
         this.minions = [];
         this.id = 0;
         this.minionTree = [];
-        if (agil[0]/agil[1] <= 1){this.descagil = "very"}
+        if (agil[0]/agil[1] > .7){this.descagil = "very"}
         if (agil[0]/agil[1] <= .7){this.descagil = "quite"}
         if (agil[0]/agil[1] <= .4){this.descagil = "a bit"}
         if (agil[0]/agil[1] <= .15){this.descagil = "not"}
@@ -475,6 +475,11 @@ function toMinion(minion, newname, distract){
     return new Minion(minion.hp, minion.maxhp, minion.atk, minion.ddev, minion.def, minion.agil, [minion.healchance[0], minion.healchance[1], minion.heal], minion.sane, minion.turn, newname, minion.div, minion.message, minion.cry, minion.atkIntBase, distract);
 }
 var coompanion = toMinion(coosome, "Coompanion", 100);
+var trapfall = new Minion(100, 100, 80, 10, 10, [5, 1], [1, 2, 0], -1, 7, "Ceiling trap", "trapfall", "traap heeere", "it's a tarp!", 1000, 0);
+var trapfire = new Minion(5, 5, 1, 0, 1, [5, 1], [1, 2, 0], -1, 7, "Fire Trap", "trapfire", "Fiiiirrrreeeee", "it's a tarp!", 14, 1);
+
+var shield = new Minion(400, 430, 20, 4, 4, [0, 1], [1, 2, 0], 3, 6, "Shield", "shield", "You see a shield lying next to you. You decide to pick it up and take it with you.", "A shield", 400, 80);
+var sheild = new Minion(150, 170, 10, 4, 5, [0, 1], [1, 2, 0], 3, 4, "Sheild", "sheild", "You see a sheild lying next to you. You decide to pick it up and take it with you.", "A sheild", 600, 78);
 var enteddy = new Minion(10, 12, 3, 1, 20, [1,30], [6, 5, 4], 10, 4, "Teddy Bear", "enteddy", "You find a Teddy bear lying on the ground. You decide to pick it up.", "It looks a little grimy and beat up, but you can't seem to brush it off. Must've been made that way.", 250, 1);
 var fairy = new Minion(10, 10, 1, 0, 1, [9,10], [30, 29, 1], -2, 4, "A fairy", "fairy", " You feel a presence nearby.", "When did this get here? All it seems to do is say watch out, and tell you to listen.", 170, 1);
 var nyancat = new Minion(30, 35, 7, 2, 1, [7, 8], [20, 1, 1], -15, 6, "Nyan Cat", "nyancat", "You see a.. Cat? It jumps up, flying toward you, Rainbows trailing it.", "Nyaning", 16, 45);
@@ -494,7 +499,7 @@ for (var i = 0; i < 30; i++){
     getMinion(strangecube, cube);
 }
 
-minions = [cube, coompanion, nyancat, enteddy, balorb, strikorb, tankorb, superminion, miniminion, fairy, chicken];
+minions = [coompanion, cube, shield, sheild, nyancat, balorb, strikorb, tankorb, superminion, miniminion, enteddy, fairy, chicken, trapfall, trapfire];
 
 function getMinion(source, minion){
     //if source is player, make div of minion with id=minion.div+minion.id.   new div is only hp
@@ -617,23 +622,23 @@ function genRoom() {
     healable = true;
     //console.log(ablerooms);
     //leveling up
-    if (score >= 20 && pla.lvl == 1){
+    if (score >= 30 && pla.lvl == 1){
         pla.lvl = 2;
         roommessage += "You can sence something.. Change, or Alter, in the dongeons around you..";
     }
-    if (score >= 55 && pla.lvl == 2){
+    if (score >= 75 && pla.lvl == 2){
         pla.lvl = 3;
         roommessage += "You hear the calls of things, Unknown Creatures, from close by..";
     }
-    if (score >= 110 && pla.lvl == 3){
+    if (score >= 220 && pla.lvl == 3){
         pla.lvl = 4;
         roommessage += "You feel attention has shifted to you, knowing this is not a good thing.";
     }
-    if (score >= 200 && pla.lvl == 4){
+    if (score >= 400 && pla.lvl == 4){
         pla.lvl = 5;
         roommessage += "You can feel the Anger, the Hatred in the dongeon, Radiating from the surfaces, Aimed at you...";
     }
-    if (score >= 300 && pla.lvl == 5){
+    if (score >= 800 && pla.lvl == 5){
         pla.lvl = 6;
         roommessage += "The hairs rise on the back of your neck. You have reached your top potential, but know it is only downhill from here.";
     }
