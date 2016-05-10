@@ -3,6 +3,10 @@ http://steampoweredairship.com/unexpected-error/rd/
 https://drive.google.com/open?id=1HYPd5PBuNX24mbP4z_BhIiDxqP5lRM1dOc4g5BSVc8I
 https://drive.google.com/open?id=1S_5sqfRwNeyYip_296_XltTGRayP3fW6amOfEyVC5hM
 ___CHANGELOG___
+
+---2.5- the unlockable update
+    +fixed zarol
+
 --2.4-that one confusing update where we had two different strains for a couple weeks and then decided to put them back together in a weird way--
     +combined the two versions
     +added ascention counting variable "runs"
@@ -277,7 +281,7 @@ function item(offence, defence, agility, sanity, score, name, divname, desc){
         this.div = divname;
         this.desc = desc;
         this.quant = 0;
-        this.bossitem = 0;
+        this.findable = 0;
         
 }
 //If an item has a score of over 5, it is considered a reference, and Coosome shall act swiftly to Counter-reference toward the same topic.
@@ -369,9 +373,18 @@ var truesanity = new item(15, 15, 30, 7, 5, "True Sanity", "truesanity", "You fe
 
 var bossitems = [truesanity,trueinsanity,heroshield, herosword, fishingrod, pencil, spoon, alphaxe, sivgoggles, shurikenbag, jimsword, jimarmor, inactivecube, card, device, lapis, hatandboots, godrobe, xissors, otherxissors, compxissors];
 var allitems = [lapis, trueinsanity, truesanity, inactivecube, spoon, shurikenbag, hatandboots, device, card, jimsword, jimarmor, alphaxe, sivgoggles, pencil, fishingrod, heroshield, herosword, xissors, otherxissors, compxissors, godrobe, onepin, woodstick, acorncap, boardgame, brokenglasses, bobbypin, crowbar, recording, crate, fakesword, hoodie, journal, keyboard, lamp, nerfgun, organs, reflectivevest, sharktooth, steeltoedboots, styrofoamchestplate, wandofwater, wings, circularsaw, redbook, brokenseashell, redball, rotflesh, no_thing, sissors ,bloodpill, fakebeard, planc, ashjar, lifethread, septagram, shinedisk, tornclaw, bikeweel, cookie, heavenchip, catears, antmound, err, ichor, darkcrystal, potato, otatop, squiglasses, map, buttton];
+
 var lootitems = [];
 var equippeditems = [nothing, nothing];
 var runs = 1;
+
+
+
+function Unlock(item){
+    item.findable = 0
+    roommessage += "You hear the sound of something unlocking from far away."
+}
+
 
 function Boss(hp, atk, de, name, divname, maxhp, ddev, agil, heal, sane, loot, loot2, turn, message, cry, rundown, room, interval){
     
@@ -404,7 +417,7 @@ function Boss(hp, atk, de, name, divname, maxhp, ddev, agil, heal, sane, loot, l
 }
 
 function buildZarol(){
-    var zarol = new Boss(500 + score, 25 + (pla.lvl*10), 18+(runs*5), "Zarol", "zarol", 10000 + score * 2, 90+Math.floor(pla.score/4), [1,15], [70,69,1000+score], -10, zaroltrophy, zaroltrophy, 50, "You stand in the final room, reveling in your victory.  From just over your left shoulder, you hear heavy breathing.", "Your head slowly swivels, back poker straight, to look into three wide red eyes.",["Everything you can see is unrecognizable, even the boss that has now dispersed to the point of surrounding you.","It is infuriated by your damage, darkness billowing from its wounds, disintegrating all it touches.","You seem to have gotten its attention, but it's cold glare assures you this is not a good.","It seems almost to be ignoring you, focusing solely on destruction.", "You feel an aura of confidence, coming from it as it methodically destroys all that surrounds it.", "You feel a burst of energy from it, enveloping you with searing pain."], bossroom, 150);
+    var zarol = new Boss(500 + score, 25, 18+(runs*5), "Zarol", "zarol", 10000 + score * 2, 100, [1,15], [70,69,1000+score], -10, zaroltrophy, zaroltrophy, 50, "You stand in the final room, reveling in your victory.  From just over your left shoulder, you hear heavy breathing.", "Your head slowly swivels, back poker straight, to look into three wide red eyes.",["Everything you can see is unrecognizable, even the boss that has now dispersed to the point of surrounding you.","It is infuriated by your damage, darkness billowing from its wounds, disintegrating all it touches.","You seem to have gotten its attention, but it's cold glare assures you this is not a good.","It seems almost to be ignoring you, focusing solely on destruction.", "You feel an aura of confidence, coming from it as it methodically destroys all that surrounds it.", "You feel a burst of energy from it, enveloping you with searing pain."], bossroom, 150);
     return zarol
 }
 zarol = buildZarol()
@@ -501,7 +514,7 @@ function gentables(){
     //&& item.sane >= sanity-2 && item.sane <= sanity+2 ?
     for (i in allitems){
         item = allitems[i];
-        if (item.bossitem == 0){ 
+        if (item.findable == 0){ 
             if (pla.lvl == 1 && (item.atk + item.def + (item.agil / 3) + (item.sane / 3)) <= 5) {lootitems.push(item);}
             if (pla.lvl == 2 && (item.atk + item.def + (item.agil / 2) + (item.sane / 2)) <= 10) {lootitems.push(item);}
             if (pla.lvl == 3 && (item.atk + item.def + item.agil + item.sane) <= 15) {lootitems.push(item);}
@@ -913,7 +926,7 @@ function RDinit() {
         itemdiv[1].innerHTML = "<img src='img/"+item.div+".png'>"
     }
 
-    for (i in bossitems) {bossitems[i].bossitem = 1;}
+    for (i in bossitems) {bossitems[i].findable = 1;}
     setInterval('enmFight()',10);
 }
 
@@ -1071,7 +1084,9 @@ function prints(stuff) {
 function RDloot() {
     if (lootable) {
         gentables();
-        getitem(lootitems[rand(lootitems.length)-1]);
+        var itemget = lootitems[rand(lootitems.length)-1]
+
+        getitem(itemget);
         lootable = false;
     } else {printb("there is nothing to loot here.")}
 }
