@@ -1,16 +1,10 @@
-/*
+ /*
 http://steampoweredairship.com/unexpected-error/rd/
-https://drive.google.com/open?id=1HYPd5PBuNX24mbP4z_BhIiDxqP5lRM1dOc4g5BSVc8I
-https://drive.google.com/open?id=1S_5sqfRwNeyYip_296_XltTGRayP3fW6amOfEyVC5hM
 ___CHANGELOG___
 --1.3-fattening update--
     +does not actually fatten you
-    +added agility canceling
-            newagil = [((source.agil[0]*target.agil[1])-((target.agil[0]*source.agil[1])/2)), (source.agil[1]*target.agil[1])];
-    +incrased base agil
     +added room 31
     +added 3 new items
-    +added 1 minion
     +changing sanity is more viable
         +items affect sanity each room (item.sane/5)
         +healing repairs sanity (+.2)
@@ -33,6 +27,7 @@ ___CHANGELOG___
     + added potato and otatop
     + added rooms 29 - 30
     
+
 
 
 --0.1.9+1--the Beefy update--
@@ -157,7 +152,7 @@ function player(){
     this.healval = 1;
     this.maxhp = 100;  
     this.hdev = 3;
-    this.baseagil = [18, 100];
+    this.baseagil = [5, 100];
     this.agil = [15, 100];
     this.lvl = 1;
     this.sane = 8;
@@ -193,11 +188,11 @@ room2 = new Room(1, 0, 0, 1, 1, 1, 1, rand(2)-1, 1, 2, rand(2)-1, 1, "This room 
 room3 = new Room(0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, "You\'re in a linoleum cube, bare and featureless. \n A circular opening appears behind you, and an open pit is just ahead. \n A featureless voice speaks to you through static speakers. \n You can\'t understand a single word.", "As you walk toward the ", ", the circular door smoothly opens in the wall ahead of you.", "The voice seems to be insulting you as you stumble about, slightly confused.");
 room4 = new Room(1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 3, "You find yourself in a lonely forest. \nThe snow on the ground mists in the sun, slowly turning into slush. \nYou take a moment to mourn the death of winter. Global warming man. \nThat\'s what it does.", "There's a small door in one of the trees to the ", ".\nYou pull it open and and fall through.", "");
 room5 = new Room(0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, -2, "You stand on clouds, up to your ankles in condensation. \nYou see birds flying nearby. \nYou could swear that you see a large animal lurching its way towards you on lopsided legs.", " ", " ", " ");
-room6 = new Room(0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, -1, "You are in a room, a large centrepiece of machinery whirring to life, bursts of energy coming from within. There are voices yelling urgently at you from a viewport in the wall above.", "You manage to dodge the now falling rubble and make it through the ", "ern sliding doors.", "A zap of lightning from the core of the room leaps through the viewport, and you hear a scream of pain.");
-room7 = new Room(0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 1, "The walls cave inwards, rough rock with red striped sedimentary motif. The floor is loose packed sand, soft against your feet. \nYou look ahead, where the walls become lower and the ground gets rough. \nYou\'ll need to crawl.", "You crawl to the ", " exit, scraping your elbow.", "You realize that this is not an Indiana Jones movie, and that this wall will not open with enough force.");
+room6 = new Room(0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, -1, "You are in a room, a large centerpiece of machinery whirring to life, bursts of energy coming from within. There are voices yelling urgently at you from a viewport in the wall above.", "You manage to dodge the now falling rubble and make it through the ", "ern sliding doors.", "A zap of lightning from the core of the room leaps through the viewport, and you hear a scream of pain.");
+room7 = new Room(0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 1, "The walls cave inwards, rough rock with red striped sedimentary motif. The floor is loose packed sand, soft against your feet. \nYou look ahead, where the walls become lower and the ground gets rough. \nYou\'ll need to crawl.", "You crawl to the ", " exit, scraping your elbow.", "You realize that this is not an indiana jones movie, and that this wall will not open with enough force.");
 room8 = new Room(0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 4, "You see a single shelf, packed full of books, reaching upwards like a ladder into the darkness. ", "You grip the ", "ern shelves, pulling yourself up past musty tomes.", "You become distracted by the books, taking a moment to flip through one.");
-room9 = new Room(0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, -1, "There are huge wooden beams stretching across an empty cavern. \nCoals smoulder in campfires across the expanse, lighting the room with grey dusk. \nRotting homes half-formed out of clay fill the room with a musty stench.", "You walk past small encampments and crusty artefacts to a hole in the ", "ern wall.", "You glance into one of the rooms.\nYou spot a skeleton and an old vase. No exits here.");
-room10 = new Room(0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, -1, "The sun shines in your eyes. \nYou feel water underneath you. \nShielding your eyes from the glare, you see the boat you\'re standing on, a small and splintery craft. \nThe way it bobs under your weight alarms you. \nA curl of rope under your feet obscures the bottom of the boat.", "you take hold of the paddles, paddling the boat to the ", ".", "Paddle as you may, the swirling currents quickly rush  you back into place.");
+room9 = new Room(0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, -1, "There are huge wooden beams stretching across an empty cavern. \nCoals smoulder in campfires across the expanse, lighting the room with grey dusk. \nRotting homes half-formed out of clay fill the room with a musty stench.", "You walk past small encampments and crusty artifacts to a hole in the ", "ern wall.", "You glance into one of the rooms.\nYou spot a skeleton and an old vase. No exits here.");
+room10 = new Room(0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, -1, "The sun shines in your eyes. \nYou feel water underneath you. \nShielding your eyes from the glare, you see the boat you\'re standing on, a small and splintery craft. \nThe way it bobs under your weight alarms you. \nA curl of rope under your feet obscures the bottom of the boat.", "you take hold of the paddles,\npaddling the boat to the ", ".", "Paddle as you may, the swirling currents quickly rush  you back into place.");
 room11 = new Room(0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 2, "You are on a cold, stormy beach. Litter is strewn across the sand, and a man with a prosthetic arm is purposefully cleaning it up, glancing around as if expecting someone, or some<i>thing</i>.", "As you meander your way to the ", ", the man shouts at you angrily, something about litter.", "You wade about in the ocean, unsure as to whether you are looking for something, or mourning.");
 room12 = new Room(0, 1, 0, 0, 1, 1, 1, rand(2)-1, rand(2)-1, 0, 1, rand(2), "You are in a room, full of red books with no titles, no markings at all. They fill the room, but you can hear a sort of carnal snore from somewhere in the room. You decide that would be best to keep away from whatever is producing the noise.", "You manage to sneak your way through to the ", ", cringing at the occasional shifting book.", "You wander throughout the room, surprisingly small for the quantity of books it holds.");
 room13 = new Room(rand(2)-1, rand(2)-1, rand(2)-1, rand(2)-1, rand(2)-1, rand(2)-1, rand(2)-1, 1, 1, 1, 1, -7, "You find yourself in a room filled with bright darkness. Things seem to appear and disappear as if they were both there, and not there. You feel very dull all of a sudden, as if you have realized the futility of life.", "You walk slowly to what you think is a door, tripping over invisible things along the way to the ", ".", "You feel it would be best to leave as soon as possible.");
@@ -206,7 +201,7 @@ room15 = new Room(0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, -1, "You stand before the bar
 room16 = new Room(0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, -3, "You find yourself in a room full of mirrors. Seeing yourself repeated thousands of times causes you to realize the monster you have become. How many creatures have you killed since you came here? You realize that you are a murderer.","You step into the "," mirror.","You bump into yourself.");
 room17 = new Room(1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 1, 5, "You are momentarily blinded, when the light fades you look around. You seem to be in a tranquil cavern. There is a pond in the center, where lights dance peacefully on it's surface. You sit to rest for a time.", "You get up, though you wish to stay, but a hole to the ", " beckons you. You wave goodbye to the lights, they dance a farewell.", "A cavern wall seems to be where you are thinking of going, so you stay where you are..");
 room18 = new Room(1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 3, "You find yourself standing in a river, with a waterfall nearby. You take some time to rest in the lush greenery that surrounds you. You feel at peace.","You explore the forest to the ", ".","You walk straight into the waterfall.");
-room19 = new Room(rand(2)-1, rand(2)-1, rand(2)-1, rand(2)-1, rand(2)-1, rand(2)-1, rand(2)-1, rand(2)-1, 1, rand(2)-1, rand(2)-1, -10, "you Are forced to ponDer your doings, finding that you aRe in fact <i>perfectly</i> sane. buT that is what they all say\;", "northnorthwesteastsouth", "westeastnorthsouth", "eastnorthwestsouthsoutheastsouthnorthupwest");
+room19 = new Room(rand(2)-1, rand(2)-1, rand(2)-1, rand(2)-1, rand(2)-1, rand(2)-1, rand(2)-1, rand(2)-1, 1, rand(2)-1, rand(2)-1, -10, "you Are forsed to ponDer your doings, finding that you aRe in fact <i>perfectly</i> sane. buT that is what they all say\;", "northnorthwesteastsouth", "westeastnorthsouth", "eastnorthwestsouthsoutheastsouthnorthupwest");
 room20 = new Room(0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, -2,"You find yourself in the very confined space that is the interior of an elevator. There is a corpse on the floor here, foaming at the mouth. A camera in one of the corners is watching you. A sound like fingernails on a chalkboard echoes throughout the room", "You leave through the elevator door on the ", " side.", "You bump into the wall.");
 room21 = new Room(0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, -6, "You step somewhere, you can't tell where, because there is literally nothing.", "You will yourself out, towards the... ", ", yeah, the east, that's right, you always wanted to go south.", "The nothingness seems to extend to that direction, and moving that way is fruitless.");
 room22 = new Room(0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, -5, "You step somewhere, you can't tell where, because there is literally nothing except a overwhelmingly bright light.", "You will yourself out, towards the… ", ", yeah, the west, that's right, you always wanted to go south.", "The nothingness seems to extend to that direction, and moving that way is fruitless.");
@@ -221,9 +216,8 @@ room30 = new Room(0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, "You stand on top of a fac
 room31 = new Room(0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, -2, "You are in a large warehouse, through the grimy windows you can see it is dusk. The occasional object is stored here, but everything is covered in spiderwebs.", "You open a large door in the ", "ern wall, someone helping from the other side.", "As you move, the strands of web begin catching.");
 //room = new Room(plant, manmade, water, dark, animal, light, items, north, east, south, west, sane, message, exitA, exitB, exitFail);
 
-bossroom = new Room(0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, -2, "You find yourself in a wide open room. The ceiling is high and dark. An ominous feeling of doom hangs over you.", "Exhausted, you leave through the ", " door.", "You somehow walk into a nonexistent wall.")
+bossroom = new Room(0,0,0,0,0,0,0,1,1,1,1, -2, "You find yourself in a wide open room. The ceiling is high and dark. An ominous feeling of doom hangs over you.", "Exhausted, you leave through the ", " door.", "You somehow walk into a nonexistent wall.")
 roomBoss2 = new Room(0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 1, -2, "You are in a small stone cavern, many twisting passageways leading through a winding cave system. You feel a drop of water plop on your head.", "You climb out through a ", "ern cave.", "You climb through a tunnel, only to find yourself in a room similar to the one you came from.");
-roomBoss3 = new Room(0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 3, "You find yourself in a room, walls covered in mechanical and mystical constructs alike. Trees are visible through the sparsely placed windows.", "You find a button hidden on the ", "ern wall, pressing it against your better judgement.", "You become distracted by the intricacies of this room.");
 
 var rooms = [room1, room2, room3, room4, room5, room6, room7, room8, room9, room10, room11, room12, room13, room14, room15, room16, room17, room18, room19, room20, room21, room22, room23, room24, room25, room26, room27, room28, room29, room30, room31];
 
@@ -252,16 +246,16 @@ function Enemy(atk, de, name, pic, maxhp, ddev, agil, sane, message, cry, lvl, r
         this.minionTree = [];
 }
 var nullenm = new Enemy(0, 0, "", "", 0, 0, [1,100], "", "", 0, ["", "", "", "", ""], [2, 3, 4], 1000);
-var creepybaldguy = new Enemy(5, 10, "Creepy Bald Guy", "creep", 15, 2, [1,100], -1, "You know you are being watched.\nAlways...\n", "you feel it staring through your eyes,\nInto your Soul.", 1, ["Even though it seems nearly dead, it continues its steady gaze deep into your eyes.", "it seems to have lost some hair in this fight. You blink, realizing it was already bald.", "it seems to be observing, only attacking to see how you react.", "it is sitting there, observing you. Waiting and observing your every move."], [2,3,4], 200);
-var terracotta = new Enemy(0, 12, "clay soldier", "terracotta", 5, 5, [1,8], 0, "Intricately carved hinges begin to move,", "Beginning its advance towards you.", 1, ["It lays on the ground, cracks running through it.", "It wobbles, an arm and a leg missing.", "There are small cracks beginning to run through its body.", "it stands there, it's carefully carved tiny eyes staring at you."],[1,2,0], 100);
-var thug = new Enemy(7, 0, "Thug", "thug", 100, 5, [1,1000], 0, "A thug approaches you on the street.\nYou prepare your fists, being much stronger than your lean appearance implies.", "'Hey, Idiot. Whose territory do you think you're Waltzing around in?'", 0, ["", "", "", "He holds his hands up in front of his face, posture like that of a fake wrestler."], [3,2,4], 300);
-var bookofdeath = new Enemy(10, 20, "Flailing Broken Binding", "bookofdeath", 3, 1, [5,100], -1, "A nearby book seems to stir..", "A book snaps into a row of paper teeth.....", 2, ["", "", "",""], [10,7,4], 75);
-var catwatcher = new Enemy(15, 5, "Watcher Catling", "catwatcher", 65, 2, [20,100], -1, "You feel as though something is watching you.....", "A small Furry leaps at you!", 3, ["","","",""], [20, 11, 20], 100);
-var axeurlegs = new Enemy(2, 10, "Axeurlegs", "axeurlegs", 10, 1, [0,1], -2, "One of the plants seems to be twitching.....", "Steel blades click into place as the plant spins into action!", 1, ["", "", "", "Its spinning extremely quickly, blades hacking away at your legs inch by inch."],[1,3,1],8);
-var anenemy = new Enemy(5, 7, "Anenemy", "anenemy", 38, 10, [10,100], 0, "A sloshing sound alerts you to anenemy in the water......", "Anenemy attacks you!", 1, ["","", "", ""], [10, 8, 8], 75);
-var lightorb = new Enemy(12, 20, "Light Orb", "lightorb", 5, 3, [4,5], 0, "A glowing orb floats gently towards you", "", 2, ["It's light is so dim, you can almost make out the creature emitting it.", "it is no longer floating quite as high as before, and it's light is fading.", "It's light is getting duller, and it sways from side to side.", "It darts around in front of you, a streak of light across your vision."], [1,2,3], 100);
+var creepybaldguy = new Enemy(5, 10, "Creepy Bald Guy", "creep", 15, 2, [1,100], -1, "You know you are being watched.\nAlways...\n", "you feel it staring through your eyes,\nInto your Soul.", 1, ["Even though it seems nearly dead, it continues its steady gaze deep into your eyes.", "it seems to have lost some hair in this fight. You blink, realizing it was already bald.", "it seems to be observing, only attacking to see how you react.", "it is sitting there, observing you. Waiting and observing your every move."], [2,3,4], 200)
+var terracotta = new Enemy(0, 12, "clay soldier", "terracotta", 5, 5, [1,8], 0, "Intricately carved hinges begin to move,", "Beginning its advance towards you.", 1, ["It lays on the ground, cracks running through it.", "It wobbles, an arm and a leg missing.", "There are small cracks beginning to run through its body.", "it stands there, it's carefully carved tiny eyes staring at you."],[1,2,0], 100)
+var thug = new Enemy(7, 0, "Thug", "thug", 100, 5, [1,1000], 0, "A thug approaches you on the street.\nYou prepare your fists, being much stronger than your lean appearance implies.", "'Hey, Idiot. Whose territory do you think you're Waltzing around in?'", 0, ["", "", "", "He holds his hands up in front of his face, posture like that of a fake wrestler."], [3,2,4], 300)
+var bookofdeath = new Enemy(10, 20, "Flailing Broken Binding", "bookofdeath", 3, 1, [5,100], -1, "A nearby book seems to stir..", "A book snaps into a row of paper teeth.....", 2, ["", "", "",""], [10,7,4], 75)
+var catwatcher = new Enemy(15, 5, "Watcher Catling", "catwatcher", 65, 2, [20,100], -1, "You feel as though something is watching you.....", "A small Furry leaps at you!", 3, ["","","",""], [20, 11, 20], 100)
+var axeurlegs = new Enemy(2, 10, "Axeurlegs", "axeurlegs", 10, 1, [0,1], -2, "One of the plants seems to be twitching.....", "Steel blades click into place as the plant spins into action!", 1, ["", "","", ""],[1,3,1],8)
+var anenemy = new Enemy(5, 7, "Anenemy", "anenemy", 38, 10, [10,100], 0, "A sloshing sound alerts you to anenemy in the water......", "Anenemy attacks you!", 1, ["","", "", ""], [10, 8, 8], 75)
+var lightorb = new Enemy(12, 20, "Light Orb", "lightorb", 5, 3, [4,5], 0, "A glowing orb floats gently towards you", "", 2, ["It's light is so dim, you can almost make out the creature emitting it.", "it is no longer floating quite as high as before, and it's light is fading.", "It's light is getting duller, and it sways from side to side.", "It darts around in front of you, a streak of light across your vision."], [1,2,3], 100)
 var mimic = new Enemy(5, 15, "Mimic", "mimic", 20, 5, [1,100], -1, "A golden chest sits with elegant details and pure beauty.", "The chest snaps open, revealing not loot, \nBut a row of Teeth!", 2, ["","", "", ""], [1,2,3], 75)
-var nerveball = new Enemy(20, 8, "the ball of nerves", "nerveball", 20, 8, [10,100], -3, "You see a swirling ball of... nerves?", "it turns towards you, screaming with silence\n \n...and electrical currents.", 3, ["", "", "", ""], [1,2,3], 50)
+var nerveball = new Enemy(20, 8, "the ball of nerves", "nerveball", 20, 8, [10,100], -3, "You see a swirling ball of...\nnerves?", "it turns towards you,\nscreaming with silence\n \n...and electrical currents.", 3, ["", "", "", ""], [1,2,3], 50)
 var clone = new Enemy(15, 10, "Your clone", "clone", 100, 5, [1,20], -5, "You see a more menacing version of yourself in what you think is a mirror....", "", 2, ["", "", "", ""], [10, 9, 10], 75)
 var koi = new Enemy(20, -2, "Koi", "koi", 250, 3, [1,100], 0,"There is a very strange looking fish swimming in the water....","It leaps at you, with it's blunt teeth!",3,["", "", "", ""],[10,9,50], 75)
 var slime = new Enemy(3, 15, "Slime", "slime", 150, 2, [1,100], -3, "The ceiling seems to be dripping some strange substance...","You are consumed by a large blob of jelly!",3,["", "", "", ""],[40,39,2], 26)
@@ -285,7 +279,7 @@ function item(offence, defence, agility, sanity, score, name, divname, desc){
 
 // lvl 1 items ----
 var nothing = new item(0, 0, 0, 0, 0, "", "no_thing", "");
-var acorncap = new item(0, 1, 1, 2, 9, "Acorn Cap", "acorncap", "If you were really tiny, like, smaller than a squirrel, this would be the perfect armor.\nYou place it over your heart \nYou call it a kiss");
+var acorncap = new item(0, 1, 1, 2, 3, "Acorn Cap", "acorncap", "If you were really tiny, like, smaller than a squirrel, this would be the perfect armor.\nYou place it over your heart \nYou call it a kiss");
 var boardgame = new item(0, 2, -1, 2, 2, "Board Game", "boardgame", "The cardboard is battered \nfrom years of wear, but you can see the winding \npath your piece would take if you were a winner. \n\nYou're not a winner.");
 var bobbypin = new item(1, 0, 1, 1, 1, "Bobby Pin", "bobbypin", "Ow..., it's sharp.");
 var woodstick = new item(1, 0, 1, 3, 2, "Wooden Stick", "woodstick", "It might not be the best sword, but hey, it's worth a try.");
@@ -318,10 +312,10 @@ var bikeweel = new item(2, 1, -3, 2, 3, "Bike Wheel", "bikeweel", "It's part of 
 var recording = new item(7, -2, 1, -2, 6, "Recording", "recording", "Nyan cat recording");
 var potato = new item(2, 2, 1, 8, 6, "Potato", "potato", "Quite a normal potato.");
 var otatop = new item(0, 7, -2, -2, 6, "Otatop", "otatop", "Quite a inverted potato.");
+
 var squiglasses = new item(2, 1, 2, 4, 7, "Glasses", "squiglasses", "They are non-prescription, acting more as a mask, allowing you to be someone else.");
 var buttton = new item(0, 1, -3, 3, 9, "Button", "buttton", "Even though it is just a normal button, you feel as though it marks you for a death from an unknown source.");
-var map = new item(0, 1, 3, 1, 8, "Map", "map", "A roughly drawn map, you don't recognize any of the landmarks. You deem it useless.");
-
+var map = new item(0, 1, 3, 1, 8, "Map", "map", "A roughly drawn map, you dont recognize any of the landmarks. You deem it useless.");
 //lvl 2 items ----
 var heavenchip = new item(4, 4, 4, 4, 4, "Heaven Chip", "heavenchip", "Tastes like heaven");
 var planc = new item(8, 1, 4, -8, 7, "Plan C", "planc", "It's your backup plan.");
@@ -337,10 +331,11 @@ var antmound = new item(5,3, -2, -4, 6, "Ant Mound", "antmound", "It's strangely
 var planck = new item(0, 2, 11, 2, 5, "Plan ck", "planck", "like plan c, but more, and smaller. Like 1.616199x10<sup>-35</sup> meters small.");
 //lvl 3 items ----
 var ichor = new item(7, 7, -4, -8, 5, "Ichor", "ichor", "Blood of the gods. How did you even get this?");
-var err = new item(0, 0, 0, 0, 4, "Error", "err", "It was quite unexpected.");
+var err = new item(0, 0, 0, 0, 0, "Error", "err", "It was quite unexpected.");
 var bloodpill= new item(7,5,4,-5,8,"Blood Pill","bloodpill","A small capsule that contains a small amount of blood. Using it has strange effects on the environment. Blood is everywhere.");
 var darkcrystal = new item(13, 2, -2, -13, 4, "Darkened Crystal", "darkcrystal", "Contained in a forcefield, this crystal fires lasers at anything nearby.");
 //lvl 4+ items ----
+
 
 
 
@@ -412,15 +407,15 @@ function buildZarol(){
 zarol = buildZarol()
 var adventurer = new Boss(190, 20, 0, "Adventurer", "adventurer", 190, 5, [5,100], [100,50,30], -7, herosword, heroshield, 10, "You hear the footsteps of someone else.", "It is an Adventurer, \nReadying his stance for Battle!", ["He seems oddly unaware of the massive amounts of damage you have dealt him.\nMuch like you are.", "", "", "", "He seems more confident of himself,\nmore sure of his strides.",""],bossroom,100);
 var coosome = new Boss(125, 10, 10, "coo33", "coosome", 177, 75, [19, 64], [64,64-13,10], -2, fishingrod, pencil, 15, "You hear something behind you.", "\'Here,\n Fishy..\n  Fishy...\'", ["It's bloodied eyes dart across you, searching for ways to finish you off quickly.", "It looks angry, but seems to have survived worse.", "It is smiling, although panting. It seems as though it's malnourishedness is taking effect.", "He seems unfazed,\na low growl and a chuckle murmured from within.","It takes a deep breath, the type one might take after a good nights sleep.","It seems to be toying with you, darting through the room."],roomBoss2,68);
-var jimgrind = new Boss(200, 35, 35, "Jim Grind", "jimgrind", 200, 2, [1, 44], [12, 11, 12], -2, jimsword, jimarmor, 25, "Someone is in the room with you. You turn just fast enough to see him. He knows he has been spotted.", "A stern look on his face; A deadly look in his eyes.", ["", "You can see small gaps in his defence now, chinks in his armor.", "His breathing is heavy, and his swings are slower, yet just as powerful.", "He stands with a confident air about him, holding his sword firmly.", "His armor is beginning to glow, even the largest chinks in his armor closing as the armor reshapes into its original form.", "He seems unaware of your blows, simply tanking all damage you may deal to him."], roomBoss3, 260);
-var strangecube = new Boss(250, 1, -5, "Strange Cube", "cube", 350, 2, [10,100], [100,99,75], -3, inactivecube, device, 30,"A strange cube is sitting on the ground in front or you.","Sudden arcs of electricity jump across its surface as it rises into the air.", ["Although grounded, it still musters up powerful shocks upon you.", "It appears to have physical damage, and is barely able to keep itself aloft.", "It is wavering now, seeming to have less energy within it, focusing on attacks.", "It floats evenly in front of you, electricity visibly through internal circuits.", "electricity is visible streaking across its surface, arcing to nearby surfaces.", "It's magnetic fields are powerful, you can feel them pulling on your magnetic accessories."],bossroom,75)
+var jimgrind = new Boss(200, 35, 35, "Jim Grind", "jimgrind", 200, 2, [1, 44], [12, 11, 12], -2, jimsword, jimarmor, 25, "Someone is in the room with you. You turn just fast enough to see him. He knows he has been spotted.", "A stern look on his face; A deadly look in his eyes.", ["", "You can see small gaps in his defence now, chinks in his armor.", "His breathing is heavy, and his swings are slower, yet just as powerful.", "He stands with a confident air about him, holding his sword firmly.", "His armor is beginning to glow, even the largest chinks in his armor closing as the armor reshapes into its original form.", "He seems unaware of your blows, simply tanking all damage you may deal to him."],bossroom, 260);
+var strangecube = new Boss(250, 1, -5,"Strange Cube", "", 350, 2, [10,100], [100,99,75], -3, inactivecube, device, 30,"A strange cube is sitting on the ground in front or you.","Sudden arcs of electricity jump across its surface as it rises into the air.", ["Although grounded, it still musters up powerful shocks upon you.", "It appears to have physical damage, and is barely able to keep itself aloft.", "It is wavering now, seeming to have less energy within it, focusing on attacks.", "It floats evenly in front of you, electricity visibly through internal circuits.", "electricity is visible streaking across its surface, arcing to nearby surfaces.", "It's magnetic fields are powerful, you can feel them pulling on your magnetic accessories."],bossroom,75)
 var alpha = new Boss(350, 34, 0, "Alpha", "alpha", 500, 6, [2,3], [5,4,10], -3, alphaxe, sivgoggles, 20, "You hear sudden quick footsteps from behind you.", "you turn to see someone dashing at you, Swinging a large axe!", ["", "", "", "", "", ""],bossroom, 120);
 
 var xissor = new Boss(200, 9, 20, "Xissor", "xissor", 200, 20, [1,10], [100,99,25], -2, xissors, godrobe, -100, "Somebody smashes through the ceiling....", "She turns around quickly, then charges at you while screaming!",["","","","","",""], bossroom, 75)
 var otherXissor = new Boss(400, 25, 35, "The Other Xissor", "otherxissor", 400, 40, [1,5], [100,90,25], -10, otherxissors, godrobe, -100, "Sombody else is here.", "She turns around slowly, then quickly draws her blade on you.",["","","","","",""], bossroom, 75)
-var epicalpha = new Boss(450, 50, 10, "Alpha 949", "alpha", 450, 12, [5, 6], [10, 8, 20], -6, sivgoggles, shurikenbag, -100, "You find yourself in a familiar looking room. Looking around, you realize you have some unfinished business. You hear sudden quick footsteps from behind you.", "you turn to see a familiar figure dashing towards you, Swinging a large axe!", ["", "", "", "", "", ""],bossroom, 120);
-var epicjim = new Boss(500, 70, 55, "Jim Grind", "jimgrind", 1000, 4, [2, 88], [24, 22, 24], -4, jimarmor, hatandboots, -100, "You find yourself in a familiar looking room. Looking around, you realize you have some unfinished business. Someone is in the room with you. You turn to face him. You both know who won last time. ", "A stern look on his face; A deadly look in his eyes.", ["", "You can see small gaps in his defence now, chinks in his armor.", "His breathing is heavy, and his swings are slower, yet just as powerful.", "He stands with a confident air about him, holding his sword firmly.", "His armor is beginning to glow, even the largest chinks in his armor closing as the armor reshapes into its original form.", "He seems unaware of your blows, simply tanking all damage you may deal to him."], roomBoss3, 260);
-var epiccoo = new Boss(300, 20, 28, "coo33", "coosome", 400, 150, [19, 64], [64,64-13,20], -4, pencil, spoon, -100, "You find yourself in a familiar looking room. Looking around, you realize you have some unfinished business. You hear a familiar chilling voice behind you.", "\'Here,\n Fishy..\n  Fishy...\'", ["It's bloodied eyes dart across you, searching for ways to finish you off quickly.", "It looks angry, but seems to have survived worse.", "It is smiling, although panting. It seems as though it's malnourishedness is taking effect.", "He seems unfazed,\na low growl and a chuckle murmured from within.","It takes a deep breath, the type one might take after a good nights sleep.","It seems to be toying with you, darting through the room."],roomBoss2,68)
+var epicalpha = new Boss(450, 50, 10, "Alpha 949", "epicalpha", 450, 12, [5, 6], [10, 8, 20], -6, sivgoggles, shurikenbag, -100, "You find yourself in a familiar looking room. Looking around, you realize you have some unfinished business. You hear sudden quick footsteps from behind you.", "you turn to see a familiar figure dashing towards you, Swinging a large axe!", ["", "", "", "", "", ""],bossroom, 120);
+var epicjim = new Boss(500, 70, 55, "Jim Grind", "epicjim", 1000, 4, [2, 88], [24, 22, 24], -4, jimarmor, hatandboots, -100, "You find yourself in a familiar looking room. Looking around, you realize you have some unfinished business. Someone is in the room with you. You turn to face him. You both know who won last time. ", "A stern look on his face; A deadly look in his eyes.", ["", "You can see small gaps in his defence now, chinks in his armor.", "His breathing is heavy, and his swings are slower, yet just as powerful.", "He stands with a confident air about him, holding his sword firmly.", "His armor is beginning to glow, even the largest chinks in his armor closing as the armor reshapes into its original form.", "He seems unaware of your blows, simply tanking all damage you may deal to him."],bossroom, 260);
+var epiccoo = new Boss(300, 20, 28, "coo33", "epiccoo", 400, 150, [19, 64], [64,64-13,20], -4, pencil, spoon, -100, "You find yourself in a familiar looking room. Looking around, you realize you have some unfinished business. You hear a familiar chilling voice behind you.", "\'Here,\n Fishy..\n  Fishy...\'", ["It's bloodied eyes dart across you, searching for ways to finish you off quickly.", "It looks angry, but seems to have survived worse.", "It is smiling, although panting. It seems as though it's malnourishedness is taking effect.", "He seems unfazed,\na low growl and a chuckle murmured from within.","It takes a deep breath, the type one might take after a good nights sleep.","It seems to be toying with you, darting through the room."],roomBoss2,68)
 var lastsanity = new Boss(500, 18, 16, "Last Remnants of Sanity", "lastsanity", 500, 5, [2,7], [100, 95, 100], -100, trueinsanity, trueinsanity, -100, "You feel parts of your mind fighting back, with nonsense of '<i>Something is wrong</i>.'", "You realize you need to silence these nagging voices.",["<i>You are destroying yourself...</i>","<i>Do you even know the names of the people you killed?</i>","<i></i>","<i>Something is seriously wrong with you,</i>"],bossroom, 60);
 var lastinsanity = new Boss(1000, 15, 10, "Last Remnants of Insanity", "lastinsanity", 1000, 90, [1,64], [1, 2, 3], 100, truesanity, truesanity, -100, "You feel parts of your mind begin to come together.......", "You have come to a realization: the only way to obtain your goal is to wipe insanity from your mind.",["but.. What is this place?","How do you not return to what was already there?","",""],bossroom, 25);
 
@@ -453,8 +448,8 @@ function Minion(hp, maxhp, atk, ddev, de, agil, heal, sane, lvl, name, pic, mess
 function toMinion(minion, newname, distract){
     return new Minion(minion.hp, minion.maxhp, minion.atk, minion.ddev, minion.def, minion.agil, [minion.healchance[0], minion.healchance[1], minion.heal], minion.sane, minion.turn, newname, minion.div, minion.message, minion.cry, minion.atkIntBase, distract);
 }
+
 var coompanion = toMinion(coosome, "Coompanion", 100);
-var enteddy = new Minion(10, 12, 3, 1, 20, [1,30], [6, 5, 4], 10, 4, "Teddy Bear", "enteddy", "You find a Teddy bear lying on the ground. You decide to pick it up.", "It looks a little grimy and beat up, but you can't seem to brush it off. Must've been made that way.", 250, 1);
 var fairy = new Minion(10, 10, 1, 0, 1, [9,10], [30, 29, 1], -2, 4, "A fairy", "fairy", " You feel a presence nearby.", "When did this get here? All it seems to do is say watch out, and tell you to listen.", 170, 1);
 var nyancat = new Minion(30, 35, 7, 2, 1, [7, 8], [20, 1, 1], -15, 6, "Nyan Cat", "nyancat", "You see a.. Cat? It jumps up, flying toward you, Rainbows trailing it.", "Nyaning", 16, 45);
 var strikorb = new Minion(35, 45, 17, 3, -5, [1,4], [15, 14, 7], -3, 5, "Red Orb", "strikorb", "There seems to be a floating red orb here.","It's a reddish, transparent, sphere, floating next to you. It's presence sets your blood boiling, making you ready to pounce.", 70, 8);
@@ -473,7 +468,7 @@ for (var i = 0; i < 30; i++){
     getMinion(strangecube, cube);
 }
 
-minions = [cube, coompanion, nyancat, enteddy, balorb, strikorb, tankorb, superminion, miniminion, fairy, chicken];
+minions = [cube, coompanion, nyancat, balorb, strikorb, tankorb, superminion, miniminion, fairy, chicken];
 
 function getMinion(source, minion){
     //if source is player, make div of minion with id=minion.div+minion.id.   new div is only hp
@@ -596,23 +591,23 @@ function genRoom() {
     healable = true;
     //console.log(ablerooms);
     //leveling up
-    if (score >= 20 && pla.lvl == 1){
+    if (score >= 10 && pla.lvl == 1){
         pla.lvl = 2;
         roommessage += "You can sence something.. Change, or Alter, in the dongeons around you..";
     }
-    if (score >= 55 && pla.lvl == 2){
+    if (score >= 35 && pla.lvl == 2){
         pla.lvl = 3;
         roommessage += "You hear the calls of things, Unknown Creatures, from close by..";
     }
-    if (score >= 110 && pla.lvl == 3){
+    if (score >= 80 && pla.lvl == 3){
         pla.lvl = 4;
         roommessage += "You can feel the Anger, the Hatred in the dongeon, Radiating from the surfaces, Aimed at you...";
     }
-    if (score >= 200 && pla.lvl == 4){
+    if (score >= 140 && pla.lvl == 4){
         pla.lvl = 5;
         roommessage += "Level up!";
     }
-    if (score >= 300 && pla.lvl == 5){
+    if (score >= 200 && pla.lvl == 5){
         pla.lvl = 6;
         roommessage += "Level up!";
     }
@@ -1379,9 +1374,7 @@ function attack(source, target){
 }
 function Damage(source, target){
     var message;
-    var newagil = [((target.agil[0]*source.agil[1])-((source.agil[0]*target.agil[1])/2)), (target.agil[1]*source.agil[1])];
-    console.log(newagil)
-    if (rand(newagil[1]) <= newagil[0]){
+    if (rand(target.agil[1]) <= target.agil[0]){
         message = target.name + " dodged "+ source.name +"'s attack";
     } else {
         var deviation = rand(source.ddev * 2)- source.ddev;
@@ -1467,8 +1460,11 @@ function check(entity){
                     if (equippeditems[0] == nothing){miscA = herosword} else {miscA = equippeditems[0]}
                     if (equippeditems[1] == nothing){miscB = heroshield} else {miscB = equippeditems[1]}
                     //function Boss(    hp,         atk,        de,      name,      divname,    maxhp,      ddev, atkgil, heal, sane, loot, loot2, turn, message, cry, rundown, room, interval){
-                    bosses[0] = new Boss(pla.maxhp, pla.atk, pla.def, "Yourself", "adventurer", pla.maxhp, pla.ddev, pla.agil, [plaTotal, plaTotal-plaHeal+1, 4], sanity, miscA, miscB, 10, "You hear the footsteps of someone else.", "It is an Adventurer, \nReadying his stance for Battle!", ["He seems oddly unaware of the massive ammounts of damage you have delt him.\nMuch like you were.", "", "", "", "He seems more confident of himself,\nmore sure of his strides.",""], bossroom, (Math.floor(plaTime/plaTotal)));
+
+                    bosses[0] = new Boss(pla.maxhp, pla.atk, pla.def, "Yourself", "adventurer", pla.maxhp, pla.ddev, [pla.agil,100], [plaTotal, plaTotal-plaHeal, 4], sanity, miscA, miscB, 10, "You hear the footsteps of someone else.", "It is an Adventurer, \nReadying his stance for Battle!", ["He seems oddly unaware of the massive ammounts of damage you have delt him.\nMuch like you were.", "", "", "", "He seems more confident of himself,\nmore sure of his strides.",""], bossroom, (Math.floor(plaTime/plaTotal)));
                     bosses[0].minions = pla.minions;
+                    bosses[0].atkInt = (plaTime/plaTotal)
+                    bosses[0].atkIntBase = (plaTime/plaTotal)
                 }
                 if (entity.name == "Last Remnants of Sanity") {
                     pla.trueSane = -1;
@@ -1566,8 +1562,6 @@ function limbo(type, message){
                     monolithTime = 1500 + (sanity * 1.5);
                     if (monolithTime <= 1){monolithTime = 5}
                     monolithOrig = monolithTime;
-                    var screen = document.getElementById("RDmono");
-                    screen.style.backgroundImage = "url('img/monoAnimation/mono1.png')";
                     screenchange(5);
                 //}
                 
@@ -1636,3 +1630,36 @@ function monoAnimation(percentage, frams){
         prints(screen);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

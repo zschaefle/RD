@@ -129,22 +129,15 @@ a{
 	
 	background-color: transparent;
 }
-.changelogtitle{
-	margin: auto;
-	margin-top: 10px;
-	text-decoration: bold;
-	padding: 20px;
-	font-size: 13pt;
+html{
 	
-
 }
 
-.changelogdesc{
+.changelogtitle{
 	margin: auto;
-	font-size: 12pt;
+	margin-top: 20px;
+	text-align: center;
 	
-	
-
 }
 
 
