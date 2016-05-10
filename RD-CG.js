@@ -1001,12 +1001,12 @@ function RDrefresh() {
     screen.innerHTML = pla.atk;
     screen = document.getElementById("dfn");
     screen.innerHTML = pla.def;
-    //screen = document.getElementById("agl");
-    //screen.innerHTML = pla.agil[0];
+    screen = document.getElementById("agl");
+    screen.innerHTML = pla.agil[0];
     screen = document.getElementById("score");
     screen.innerHTML = score;
-    screen = document.getElementById("lvl");
-    screen.innerHTML = pla.lvl;
+    //screen = document.getElementById("lvl");
+    //screen.innerHTML = pla.lvl;
     screen = document.getElementById("turn");
     screen.innerHTML = turn;
 
