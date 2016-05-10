@@ -13,6 +13,8 @@ ___CHANGELOG___
     +added levelup descriptions
     +"balanced" zarol
     +buffed the coosome
+    +added minion descriptions
+    *fixed cube thing
 
 --2.3-fattening update--
     +does not actually fatten you
@@ -459,6 +461,14 @@ function Minion(hp, maxhp, atk, ddev, de, agil, heal, sane, lvl, name, pic, mess
         this.minions = [];
         this.id = 0;
         this.minionTree = [];
+        if (agil[0]/agil[1] <= 1){this.descagil = "very"}
+        if (agil[0]/agil[1] <= .7){this.descagil = "quite"}
+        if (agil[0]/agil[1] <= .4){this.descagil = "a bit"}
+        if (agil[0]/agil[1] <= .15){this.descagil = "not"}
+        if (distract <= 100){this.descdist = "very"}
+        if (distract <= 70){this.descdist = "quite"}
+        if (distract <= 40){this.descdist = "a bit"}
+        if (distract <= 15){this.descdist = "not"}
 }
 //takes enemy or boss, new name and divname, and distract chance, returns minion
 function toMinion(minion, newname, distract){
@@ -943,7 +953,7 @@ function testu(){
     localrand = "";
     for (i in minions){
         var item = minions[i];
-        var item = "<div class=\"RDminion\" onclick=\"prints(\'boop\')\" id=\""+item.div+"\"><div class=\"RDpic\"><img src='img/"+item.div+".png'></div><div class=\"itemwords\"><div class=\"name\" style=\"width:100%\">"+item.name+"</div><div class=\"desc\">"+item.desc+"</div></div><div class=\"invis\" style=\"float:left;clear:left;width:50%;height:34px\">Damage: "+item.atk+"<br/>Defence: "+item.def+"</div><div class=\"invis\" style=\"float:left;width:50%;height:34px\">dist agil</div><div class=\"invis\" style=\"float:left;clear:left;width:100%;min-height:0\" id=\""+item.div+"hp\"></div></div>";
+        var item = "<div class=\"RDminion\" onclick=\"prints(\'boop\')\" id=\""+item.div+"\"><div class=\"RDpic\"><img src='img/"+item.div+".png'></div><div class=\"itemwords\"><div class=\"name\" style=\"width:100%\">"+item.name+"</div><div class=\"desc\">"+item.desc+"</div></div><div class=\"invis\" style=\"float:left;clear:left;width:50%;height:34px\">Damage: "+item.atk+"<br/>Defence: "+item.def+"</div><div class=\"invis\" style=\"float:left;width:50%;height:34px\">"+item.descdist+" distracting<br/>"+item.descagil+" agile</div><div class=\"invis\" style=\"float:left;clear:left;width:100%;min-height:0\" id=\""+item.div+"hp\"></div></div>";
         localrand += item;
     }
     var screen = document.getElementById("minions");
@@ -1606,7 +1616,9 @@ function limbo(type, message){
             }
             for (i in bosses) {bosses[i].hp = bosses[i].rehp}
             //for (i in pla.minions){killMinion(pla, pla.minions[0])}
-            
+            for (var i = 0; i < 28+(runs*2); i++){
+                getMinion(strangecube, cube);
+            }
             localrand = pla.minions.length;
             for (var i = 0; i < localrand; i ++){
                 killMinion(pla, pla.minions[0])
