@@ -5,6 +5,7 @@ https://drive.google.com/open?id=1S_5sqfRwNeyYip_296_XltTGRayP3fW6amOfEyVC5hM
 ___CHANGELOG___
 
 ---2.5- the expansive update
+	+enemies can now spawn with traps
     +added unlocks capability
     +added creepyer bald guys
     +added some semicolons
@@ -369,7 +370,7 @@ var err = new item(0, 0, 0, 0, 4, "Error", "err", "It was quite unexpected.");
 var bloodpill= new item(7,5,4,-5,8,"Blood Pill","bloodpill","A small capsule that contains a small amount of blood. Using it has strange effects on the environment. Blood is everywhere.");
 var darkcrystal = new item(13, 2, -2, -13, 4, "Darkened Crystal", "darkcrystal", "Contained in a forcefield, this crystal fires lasers at anything nearby.");
 //lvl 4+ items ----
-
+var cresentstone = new item(6, 4, 3, 5, 3, "Cressent Stone", "cresentstone", "A small stone. It seems to carry some hidden power.")
 
 
 var lapis = new item(1000, 1000, 1000, 0, 1000, "coo33's Lapis", "lapis", "The Jem of the Gods.  Or at least the god of 7.");
@@ -389,15 +390,19 @@ var jimarmor = new item(0, 35, -20, 0, 10, "Enchanted Armor", "jimarmor", "Glimm
 var inactivecube = new item(25, 7, 20, 0, 10, "Inactive Cube", "inactivecube", "");
 var card = new item(2, 25, 25, 0, 20, "00000111", "card", "");
 var device = new item(40, 0, 6, 0, 20, "Electrical device", "device", "You have no idea how it works, but it looks far beyond any tech you have seen.");
+
 var godrobe = new item(5,15, 5,-1,10,"God Robe","godrobe","It's name means god robe.   Fitting, you think.");
 var xissors = new item(22, 4, 15, -1, 10, "Xissors", "xissors", "It's actually only half of a scissor.   Good for cutting clothing");
 var otherxissors = new item(22, 4, 15, -1, 10, "Other Xissors", "otherxissors", "It's actually only half of a scissor.   Good for cutting clothing");
 var compxissors = new item(45, 10, 24, -6, 20, "Complete Xissors", "compxissors", "It's finaly complete.");
+
+var cressence = new item(25, 30, 20, 10, 5, "Cressence", "cressence","It's brimming with power. You have the cressence.")
+
 var trueinsanity = new item(35, -3, -10, -3, 5, "True Insanity", "trueinsanity", "You feel at peace. You have achived true insanity.");
 var truesanity = new item(15, 15, 30, 7, 5, "True Sanity", "truesanity", "You feel at peace. You have achieved true sanity.");
 
-var bossitems = [truesanity,trueinsanity,heroshield, herosword, fishingrod, pencil, spoon, alphaxe, sivgoggles, shurikenbag, jimsword, jimarmor, inactivecube, card, device, lapis, hatandboots, godrobe, xissors, otherxissors, compxissors];
-var allitems = [lapis, trueinsanity, truesanity, inactivecube, spoon, shurikenbag, hatandboots, device, card, jimsword, jimarmor, alphaxe, sivgoggles, pencil, fishingrod, heroshield, herosword, xissors, otherxissors, compxissors, godrobe, circularsaw, rotflesh, no_thing, sissors ,bloodpill, onepin, woodstick, acorncap, boardgame, brokenglasses, bobbypin, crowbar, recording, crate, fakesword, hoodie, journal, keyboard, lamp, nerfgun, organs, reflectivevest, sharktooth, steeltoedboots, styrofoamchestplate, wandofwater, wings, redbook, brokenseashell, redball, fakebeard, planc, ashjar, lifethread, septagram, shinedisk, tornclaw, bikeweel, cookie, heavenchip, catears, antmound, err, ichor, darkcrystal, potato, otatop, squiglasses, map, buttton, cable];
+var bossitems = [truesanity,trueinsanity,heroshield, herosword, fishingrod, pencil, spoon, alphaxe, sivgoggles, shurikenbag, jimsword, jimarmor, inactivecube, card, device, lapis, hatandboots, godrobe, xissors, otherxissors, compxissors, cresentstone, cressence];
+var allitems = [lapis, trueinsanity, truesanity, inactivecube, spoon, shurikenbag, hatandboots, device, card, jimsword, jimarmor, alphaxe, sivgoggles, pencil, fishingrod, heroshield, herosword, xissors, otherxissors, compxissors, godrobe, cressence, cresentstone,  circularsaw, rotflesh, no_thing, sissors ,bloodpill, onepin, woodstick, acorncap, boardgame, brokenglasses, bobbypin, crowbar, recording, crate, fakesword, hoodie, journal, keyboard, lamp, nerfgun, organs, reflectivevest, sharktooth, steeltoedboots, styrofoamchestplate, wandofwater, wings, redbook, brokenseashell, redball, fakebeard, planc, ashjar, lifethread, septagram, shinedisk, tornclaw, bikeweel, cookie, heavenchip, catears, antmound, err, ichor, darkcrystal, potato, otatop, squiglasses, map, buttton, cable];
 
 
 function Boss(hp, atk, de, name, divname, maxhp, ddev, agil, heal, sane, loot, loot2, turn, message, cry, rundown, room, interval){
@@ -441,15 +446,19 @@ var jimgrind = new Boss(200, 35, 35, "Jim Grind", "jimgrind", 200, 2, [1, 44], [
 var strangecube = new Boss(250, 1, -5, "Strange Cube", "cube", 350, 2, [10,100], [100,99,75], -3, inactivecube, device, 30,"A strange cube is sitting on the ground in front or you.","Sudden arcs of electricity jump across its surface as it rises into the air.", ["Although grounded, it still musters up powerful shocks upon you.", "It appears to have physical damage, and is barely able to keep itself aloft.", "It is wavering now, seeming to have less energy within it, focusing on attacks.", "It floats evenly in front of you, electricity visibly through internal circuits.", "electricity is visible streaking across its surface, arcing to nearby surfaces.", "It's magnetic fields are powerful, you can feel them pulling on your magnetic accessories."],bossroom,75);
 var alpha = new Boss(350, 34, 0, "Alpha", "alpha", 500, 6, [2,3], [5,4,10], -3, alphaxe, sivgoggles, 20, "You hear sudden quick footsteps from behind you.", "you turn to see someone dashing at you, Swinging a large axe!", ["", "", "", "", "", ""], roomBoss3, 120);
 
+
 var xissor = new Boss(200, 9, 20, "Xissor", "xissor", 200, 20, [1,10], [100,99,25], -2, xissors, godrobe, -100, "Somebody smashes through the ceiling....", "She turns around quickly, then charges at you while screaming!",["","","","","",""], bossroom, 75);
 var otherXissor = new Boss(400, 25, 35, "The Other Xissor", "otherxissor", 400, 40, [1,5], [100,90,25], -10, otherxissors, godrobe, -100, "Sombody else is here.", "She turns around slowly, then quickly draws her blade on you.",["","","","","",""], bossroom, 75);
+var unacceptable = new Boss(600, 30, 10, "Cressence", "unacceptable", 1000, 10, [1, 5], [100, 40, 150], 10, cressence, cressence, -100, "The cresent stone begins to glow...", "Startled by something, you drop the stone. A swriling vortex of energy begins to appear.", ["It begins to get smaller, trying despreately to disapear back to where it came from.","The color in it is weakening, it's losing it's magnificent shape.","It seems energitic, bursting with power.","It begins to spin both counter-clockwise and clockwise at the same time.","It glowes brightly, the power of its essence stronger."], bossroom, 50);
+
 var epicalpha = new Boss(450, 50, 10, "Alpha 949", "alpha", 450, 12, [5, 6], [10, 8, 20], -6, sivgoggles, shurikenbag, -100, "You find yourself in a familiar looking room. Looking around, you realize you have some unfinished business. You hear sudden quick footsteps from behind you.", "you turn to see a familiar figure dashing towards you, Swinging a large axe!", ["", "", "", "", "", ""], roomBoss3, 90);
 var epicjim = new Boss(320, 45, 150, "Jim Grind", "jimgrind", 360, 2, [0, 1], [8, 7, 35], -2, jimarmor, hatandboots, -100, "You find yourself in a familiar looking room. Looking around, you realize you have some unfinished business. Someone is in the room with you. You turn to face him. You both know who won last time. ", "A stern look on his face; A deadly look in his eyes.", ["", "You can see small gaps in his defence now, chinks in his armor.", "His breathing is heavy, and his swings are slower, yet just as powerful.", "He stands with a confident air about him, holding his sword firmly.", "His armor is beginning to glow, even the largest chinks in his armor closing as the armor reshapes into its original form.", "He seems unaware of your blows, simply tanking all damage you may deal to him."], roomBoss4, 190);
 var epiccoo = new Boss(300, 20, 10, "coo33", "coosome", 400, 150, [19, 64], [64,64-13,20], -4, pencil, spoon, -100, "You find yourself in a familiar looking room. Looking around, you realize you have some unfinished business. You hear a familiar chilling voice behind you.", "\'Here,  Fishy..   Fishy...\'", ["It's bloodied eyes dart across you, searching for ways to finish you off quickly.", "It looks angry, but seems to have survived worse.", "It is smiling, although panting. It seems as though it's malnourishedness is taking effect.", "He seems unfazed, a low growl and a chuckle murmured from within.","It takes a deep breath, the type one might take after a good nights sleep.","It seems to be toying with you, darting through the room."],roomBoss2,62);
+
 var lastsanity = new Boss(500, 18, 16, "Last Remnants of Sanity", "lastsanity", 500, 5, [2,7], [100, 95, 100], -100, trueinsanity, trueinsanity, -100, "You feel parts of your mind fighting back, with nonsense of '<i>Something is wrong</i>.'", "You realize you need to silence these nagging voices.",["<i>You are destroying yourself...</i>","<i>Do you even know the names of the people you killed?</i>","<i></i>","<i>Something is seriously wrong with you,</i>"],bossroom, 60);
 var lastinsanity = new Boss(1000, 15, 10, "Last Remnants of Insanity", "lastinsanity", 1000, 90, [1,64], [1, 2, 3], 100, truesanity, truesanity, -100, "You feel parts of your mind begin to come together.......", "You have come to a realization: the only way to obtain your goal is to wipe insanity from your mind.",["but.. What is this place?","How do you not return to what was already there?","",""],bossroom, 25);
 
-var bosses = [adventurer, coosome, zarol, alpha, strangecube, jimgrind, xissor, otherXissor, epicalpha, epicjim, epiccoo, lastsanity, lastinsanity];
+var bosses = [adventurer, coosome, zarol, alpha, strangecube, jimgrind, xissor, otherXissor, epicalpha, epicjim, epiccoo, lastsanity, lastinsanity, unacceptable];
 
 function Minion(hp, maxhp, atk, ddev, de, agil, heal, sane, lvl, name, pic, message, desc, interval, distract){
         this.hp = hp;
@@ -490,11 +499,11 @@ var coompanion = toMinion(coosome, "Coompanion", 100);
 var trapfall = new Minion(100, 100, 80, 10, 10, [5, 1], [1, 2, 0], -1, 7, "Ceiling trap", "trapfall", "traap heeere", "it's a tarp!", 1000, 0);
 var trapfire = new Minion(5, 5, 1, 0, 1, [5, 1], [1, 2, 0], -1, 7, "Fire Trap", "trapfire", "Fiiiirrrreeeee", "it's a tarp!", 14, 1);
 
-var shield = new Minion(400, 430, 20, 4, 4, [0, 1], [1, 2, 0], 3, 6, "Shield", "shield", "You see a shield lying next to you. You decide to pick it up and take it with you.", "A shield", 400, 80);
+var shield = new Minion(400, 430, 20, 4, 4, [0, 1], [1, 2, 0], 3, 5, "Shield", "shield", "You see a shield lying next to you. You decide to pick it up and take it with you.", "A shield", 400, 80);
 var sheild = new Minion(150, 170, 10, 4, 5, [0, 1], [1, 2, 0], 3, 4, "Sheild", "sheild", "You see a sheild lying next to you. You decide to pick it up and take it with you.", "A sheild", 600, 78);
 var enteddy = new Minion(10, 12, 3, 1, 20, [1,30], [6, 5, 4], 10, 4, "Teddy Bear", "enteddy", "You find a Teddy bear lying on the ground. You decide to pick it up.", "It looks a little grimy and beat up, but you can't seem to brush it off. Must've been made that way.", 250, 1);
 var fairy = new Minion(10, 10, 1, 0, 1, [9,10], [30, 29, 1], -2, 4, "A fairy", "fairy", " You feel a presence nearby.", "When did this get here? All it seems to do is say watch out, and tell you to listen.", 170, 1);
-var nyancat = new Minion(30, 35, 7, 2, 1, [7, 8], [20, 1, 1], -15, 6, "Nyan Cat", "nyancat", "You see a.. Cat? It jumps up, flying toward you, Rainbows trailing it.", "Nyaning", 16, 45);
+var nyancat = new Minion(30, 35, 7, 2, 1, [7, 8], [20, 1, 1], -15, 5, "Nyan Cat", "nyancat", "You see a.. Cat? It jumps up, flying toward you, Rainbows trailing it.", "Nyaning", 16, 45);
 var strikorb = new Minion(35, 45, 17, 3, -5, [1,4], [15, 14, 7], -3, 5, "Red Orb", "strikorb", "There seems to be a floating red orb here.","It's a reddish, transparent, sphere, floating next to you. It's presence sets your blood boiling, making you ready to pounce.", 70, 8);
 var balorb = new Minion(50, 50, 10, 1, 10, [1,5], [4,3,6], 5, 5, "White Orb", "balorb", "There seems to be a floating white orb here.", "It's a whitish, transparent, sphere, floating next to you. It's presence cools your blood, Balancing your thoughts.", 80, 10);
 var tankorb = new Minion(75, 100, 1, 1, 25, [1,50], [2,1, 10], -3, 5, "Green Orb", "tankorb", "There seems to be a floating green orb here.", "It's a greenish, transparent, sphere, floating next to you. It's presence makes you feel as though your blood is of iron, Steeling against any attack.", 100, 25);
@@ -513,6 +522,7 @@ for (var i = 0; i < 30; i++){
 
 minions = [coompanion, cube, shield, sheild, nyancat, balorb, strikorb, tankorb, superminion, miniminion, enteddy, fairy, chicken, trapfall, trapfire];
 
+var alltraps = [trapfall, trapfire];
 function getMinion(source, minion){
     //if source is player, make div of minion with id=minion.div+minion.id.   new div is only hp
     source.minions.push(new Minion(minion.hp, minion.maxhp, minion.atk, minion.ddev, minion.def, minion.agil, [minion.healchance[0], minion.healchance[1], minion.heal], minion.sane, minion.lvl, minion.name, minion.div, minion.message, minion.desc, minion.atkIntBase, minion.dist));
@@ -1227,6 +1237,10 @@ function prepbattle(enemy){
     
     enm = enemy;
     console.log(enm.name);
+	var localrand = rand(100);
+	if (localrand == 1){
+		enm.minions.push(alltraps[rand(alltraps.length-1)]);
+	}
     if (enm.name == zarol.name || enm.name == lastinsanity.name){
         
         screen = document.getElementById("RDfight");
@@ -1259,6 +1273,10 @@ function prepbattle(enemy){
     for (i in pla.minionTree){
         pla.minionTree[i].atkInt = rand(pla.minionTree[i].atkIntBase);
     }
+	
+	
+	
+	
     return enm.message;
 }
 function enmFight(){
