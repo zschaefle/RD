@@ -360,7 +360,7 @@ var septagram = new item(10,-3,2,-10,7,"Septagram","septagram","A seven pointed 
 var sissors = new item(7, 2, 9, -9, 7,"Sissors", "sissors", "It's a pair of those kiddy scissors. At least that what you thought it was before you saw the blood.");
 var lifethread = new item(2, 7, 9, -3, 6, "Life Thread", "lifethread", "This ball of thread seems to be pulsing with blood.") ;
 var ashjar = new item(1, 10, -2, -3, 5, "Jar of Ash", "ashjar", "A small jar of ash. It smells of burnt corpses.");
-var cookie = new item(3, 1, 4, 2, 7, "Cookie", "cookie", "click        yum");
+var cookie = new item(3, 1, 4, 2, 7, "Cookie", "cookie", "It's not for equiping, it's for clicking!");
 var tornclaw = new item(8, 4, 7, -12, 5, "Torn Claw", "tornclaw", "A claw that must have been brutaly ripped off the creature while it was still alive. ");
 var antmound = new item(5,3, -2, -4, 6, "Ant Mound", "antmound", "It's strangely slush like.");
 var planck = new item(0, 2, 11, 2, 5, "Plan ck", "planck", "like plan c, but more, and smaller. Like 1.616199x10<sup>-35</sup> meters small.");
@@ -1668,7 +1668,7 @@ function limbo(type, message){
             break;
         //anything zarol
         case 1:
-            if (enm.hp =< 0){
+            if (enm.hp <= 0){
                 runs += 1;
 
 
