@@ -237,7 +237,7 @@ room32 = new Room(1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, -9, "Everything is blurry. Yo
 room33 = new Room(0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, "You feel a knotting feeling in your gut, and lose sense of location. Glancing up, you find yourself in a room with other people, you try to get their attention, but they don't look up from their computers. At a loss, you sit down at a terminal, and begin browsing for anything to help you (and some cat pictures along the way).", "As you look through the files on your screen, you see one simply titled '", ".exe', clicking it, you feel the same knot, and the scenery changes.", "You can't leave. Goddamnit Zakiah");
 room34 = new Room(0, 1, 0, 1, 1, 1, 0, 0, 1, 0, -5, "You feel the walls watching you. You look closer, seeing that these are no ordinary walls, not walls at all, but millions of creepy bald guys.", "You sprint in a ", "ernly direction, Eager to escape their watching eyes.", "You hear your blood rushing, Everything going out of focus, knowing they are all watching only making it worse.");
 room35 = new Room(1, 0, rand(2)-1, rand(2)-1, 1, 0, 1, 0, 0, 0, 1, 2, "You stumble on a root that wasn't there a second ago, and glance around. You are now in a grove of many trees. Every one of the trees is thin, tall, and either willow or cottonwood. It is rather peaceful, and you take a moment to rest your weary legs", "You trek off to the ", ", knowing that it is the right thing to do.", "Valiently, you make an effort to leave. Though after some time walking, you find yourself back in the grove.");
-room35.light = (room35.dark - 1) ** 2;
+room35.light = (room35.dark - 1) * (room35.dark - 1);
 
 //room = new Room(plant, manmade, water, dark, animal, light, items, north, east, south, west, sane, message, exitA, exitB, exitFail);
 
@@ -704,7 +704,7 @@ function genRoom() {
     roommessage += room.message;
     
     
-    localrand = rand(15);
+    localrand = rand(20);
     if (localrand == 1){roommessage += " Your feet are suddenly covered in water, with more rising from an unseen source."; room.water = 1}
     if (localrand == 2){roommessage += " Vines lazily wind their way towards you."; room.plant = 1}
     if (localrand == 3){roommessage += " You feel a gust of wind from the south."; room.south = 1}
@@ -727,6 +727,7 @@ function genRoom() {
         room.south = room.west;
         room.west = item;
     }
+    if (localrand == 16){roommessage += " You feel a sence of refreshment, of redefining who you are."; pla.sane +=3}
     pla.sane += room.sanity;
     pla.sane += (equippeditems[0].sane)/5;
     pla.sane += (equippeditems[1].sane)/5;
@@ -1528,6 +1529,7 @@ function check(entity){
         if (entity.name == enm.name && inbattle){
             inbattle = false;
             message = "You Kill the enemy.";
+            entity.minions = [];
             score += 1;
             pla.sane -= 1;
             pla.sane += entity.sane; 
