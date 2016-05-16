@@ -226,7 +226,7 @@ room21 = new Room(0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, -6, "You step somewhere, you 
 room22 = new Room(0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, -5, "You step somewhere, you can't tell where, because there is literally nothing except a overwhelmingly bright light.", "You will yourself out, towards the… ", ", yeah, the west, that's right, you always wanted to go south.", "The nothingness seems to extend to that direction, and moving that way is fruitless.");
 room23 = new Room(1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 10, "You step into a wondrous room filled with peaceful plants and animals. Waterfalls and large lush trees fill the landscape. It seems as if you have found a utopia.", "You must use all of your willpower to leave this peaceful utopia to the ","." );
 room24 = new Room(0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, -8, "As soon as you enter this room, you know you should not have. Various instruments of torture are strewn about the room. The room is filled with the wailing of the not yet dead corpses and the torture machines at work. The smell is indescribable.", "You quickly leave to the ",".", "You find yourself lost among the horrors of this room." );
-room25 = new Room(0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, -7, "It is dark. Creepily dark. You can hear a faint whispering.", "You somehow find the light in the ", ".", "The whispering is getting louder.")
+room25 = new Room(0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, -7, "It is dark. Creepily dark. You can hear a faint whispering.", "You somehow find the light in the ", ".", "The whispering is getting louder.");
 room26 = new Room(0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 5, "You are in your bedroom. It is clean and tidy in here. there is a doorway that leads to the main room.", "You walk to the ", ", out of your bedroom and into the main room.", "You decide against the act of heading that direction, maybe later.");
 room27 = new Room(0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, -2, "You are in your bedroom. It is messy and looks slightly looted. there is a doorway that leads to the main room.", "You walk to the ", ", out of your bedroom and into the main room.", "You decide against the act of heading north, maybe later.");
 room28 = new Room(1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 2, "You are in a peaceful courtyard with a bird fountain in the center, surrounded by walls and a tower made of quartz and marble.", "You walk to the ", ", through an intricately carved doorway.", "There is a wall here, you decide it would be too much trouble to climb it.");
@@ -236,6 +236,8 @@ room31 = new Room(0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, -2, "You are in a large wareh
 room32 = new Room(1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, -9, "Everything is blurry. You blink and try to focus, realizing the world around you is out of focus, not your eyes.", "You squint on your way ", ", if but only to reduce visual exposure.", "You chuckle to yourself, thinking about how this place needs glasses.");
 room33 = new Room(0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, "You feel a knotting feeling in your gut, and lose sense of location. Glancing up, you find yourself in a room with other people, you try to get their attention, but they don't look up from their computers. At a loss, you sit down at a terminal, and begin browsing for anything to help you (and some cat pictures along the way).", "As you look through the files on your screen, you see one simply titled '", ".exe', clicking it, you feel the same knot, and the scenery changes.", "You can't leave. Goddamnit Zakiah");
 room34 = new Room(0, 1, 0, 1, 1, 1, 0, 0, 1, 0, -5, "You feel the walls watching you. You look closer, seeing that these are no ordinary walls, not walls at all, but millions of creepy bald guys.", "You sprint in a ", "ernly direction, Eager to escape their watching eyes.", "You hear your blood rushing, Everything going out of focus, knowing they are all watching only making it worse.");
+room35 = new Room(1, 0, rand(2)-1, rand(2)-1, 1, 0, 1, 0, 0, 0, 1, 2, "You stumble on a root that wasn't there a second ago, and glance around. You are now in a grove of many trees. Every one of the trees is thin, tall, and either willow or cottonwood. It is rather peaceful, and you take a moment to rest your weary legs", "You trek off to the ", ", knowing that it is the right thing to do.", "Valiently, you make an effort to leave. Though after some time walking, you find yourself back in the grove.");
+room35.light = (room35.dark - 1) ** 2;
 
 //room = new Room(plant, manmade, water, dark, animal, light, items, north, east, south, west, sane, message, exitA, exitB, exitFail);
 
@@ -366,11 +368,12 @@ var antmound = new item(5,3, -2, -4, 6, "Ant Mound", "antmound", "It's strangely
 var planck = new item(0, 2, 11, 2, 5, "Plan ck", "planck", "like plan c, but more, and smaller. Like 1.616199x10<sup>-35</sup> meters small.");
 //lvl 3 items ----
 var ichor = new item(7, 7, -4, -8, 5, "Ichor", "ichor", "Blood of the gods. How did you even get this?");
+var purity = new item(4, 13, 3, 7, "Purity", "purity", "You don't know how you obtained a concept, but you feel good about it.")
 var err = new item(0, 0, 0, 0, 4, "Error", "err", "It was quite unexpected.");
 var bloodpill= new item(7,5,4,-5,8,"Blood Pill","bloodpill","A small capsule that contains a small amount of blood. Using it has strange effects on the environment. Blood is everywhere.");
 var darkcrystal = new item(13, 2, -2, -13, 4, "Darkened Crystal", "darkcrystal", "Contained in a forcefield, this crystal fires lasers at anything nearby.");
 //lvl 4+ items ----
-var cresentstone = new item(6, 4, 3, 5, 3, "Cressent Stone", "cresentstone", "A small stone. It seems to carry some hidden power.")
+var cresentstone = new item(6, 4, 3, 5, 3, "Cressent Stone", "cresentstone", "A small stone. It seems to carry some hidden power.");
 
 
 var lapis = new item(1000, 1000, 1000, 0, 1000, "coo33's Lapis", "lapis", "The Jem of the Gods.  Or at least the god of 7.");
@@ -396,13 +399,13 @@ var xissors = new item(22, 4, 15, -1, 10, "Xissors", "xissors", "It's actually o
 var otherxissors = new item(22, 4, 15, -1, 10, "Other Xissors", "otherxissors", "It's actually only half of a scissor.   Good for cutting clothing");
 var compxissors = new item(45, 10, 24, -6, 20, "Complete Xissors", "compxissors", "It's finaly complete.");
 
-var cressence = new item(25, 30, 20, 10, 5, "Cressence", "cressence","It's brimming with power. You have the cressence.")
+var cressence = new item(25, 30, 20, 10, 5, "Cressence", "cressence","It's brimming with power. You have the cressence.");
 
 var trueinsanity = new item(35, -3, -10, -3, 5, "True Insanity", "trueinsanity", "You feel at peace. You have achived true insanity.");
 var truesanity = new item(15, 15, 30, 7, 5, "True Sanity", "truesanity", "You feel at peace. You have achieved true sanity.");
 
 var bossitems = [truesanity,trueinsanity,heroshield, herosword, fishingrod, pencil, spoon, alphaxe, sivgoggles, shurikenbag, jimsword, jimarmor, inactivecube, card, device, lapis, hatandboots, godrobe, xissors, otherxissors, compxissors, cresentstone, cressence];
-var allitems = [lapis, trueinsanity, truesanity, inactivecube, spoon, shurikenbag, hatandboots, device, card, jimsword, jimarmor, alphaxe, sivgoggles, pencil, fishingrod, heroshield, herosword, xissors, otherxissors, compxissors, godrobe, cressence, cresentstone,  circularsaw, rotflesh, no_thing, sissors ,bloodpill, onepin, woodstick, acorncap, boardgame, brokenglasses, bobbypin, crowbar, recording, crate, fakesword, hoodie, journal, keyboard, lamp, nerfgun, organs, reflectivevest, sharktooth, steeltoedboots, styrofoamchestplate, wandofwater, wings, redbook, brokenseashell, redball, fakebeard, planc, ashjar, lifethread, septagram, shinedisk, tornclaw, bikeweel, cookie, heavenchip, catears, antmound, err, ichor, darkcrystal, potato, otatop, squiglasses, map, buttton, cable];
+var allitems = [lapis, trueinsanity, truesanity, inactivecube, spoon, shurikenbag, hatandboots, device, card, jimsword, jimarmor, alphaxe, sivgoggles, pencil, fishingrod, heroshield, herosword, xissors, otherxissors, compxissors, godrobe, cressence, cresentstone,  circularsaw, rotflesh, no_thing, sissors ,bloodpill, onepin, woodstick, acorncap, boardgame, brokenglasses, bobbypin, crowbar, recording, crate, fakesword, hoodie, journal, keyboard, lamp, nerfgun, organs, reflectivevest, sharktooth, steeltoedboots, styrofoamchestplate, wandofwater, wings, redbook, brokenseashell, redball, fakebeard, planc, ashjar, lifethread, septagram, shinedisk, tornclaw, bikeweel, cookie, heavenchip, catears, antmound, planck, err, ichor, darkcrystal, potato, otatop, squiglasses, map, buttton, cable];
 
 
 function Boss(hp, atk, de, name, divname, maxhp, ddev, agil, heal, sane, loot, loot2, turn, message, cry, rundown, room, interval){
@@ -439,7 +442,7 @@ function buildZarol(){
     var zarol = new Boss(500 + score, 25, 18+(runs*5), "Zarol", "zarol", 10000 + score * 2, 100, [1,15], [70,69,1000+score], -10, zaroltrophy, zaroltrophy, 50, "You stand in the final room, reveling in your victory.  From just over your left shoulder, you hear heavy breathing.", "Your head slowly swivels, back poker straight, to look into three wide red eyes.",["Everything you can see is unrecognizable, even the boss that has now dispersed to the point of surrounding you.","It is infuriated by your damage, darkness billowing from its wounds, disintegrating all it touches.","You seem to have gotten its attention, but it's cold glare assures you this is not a good.","It seems almost to be ignoring you, focusing solely on destruction.", "You feel an aura of confidence, coming from it as it methodically destroys all that surrounds it.", "You feel a burst of energy from it, enveloping you with searing pain."], bossroom, 150);
     return zarol
 }
-zarol = buildZarol()
+zarol = buildZarol();
 var adventurer = new Boss(190, 20, 0, "Adventurer", "adventurer", 190, 5, [5,100], [100,50,30], -7, herosword, heroshield, 10, "You hear the footsteps of someone else.", "It is an Adventurer, Readying his stance for Battle!", ["He seems oddly unaware of the massive amounts of damage you have dealt him. Much like you are.", "", "", "", "He seems more confident of himself, more sure of his strides.",""],bossroom,100);
 var coosome = new Boss(125, 10, 10, "coo33", "coosome", 177, 75, [19, 64], [64,64-13,10], -2, fishingrod, pencil, 15, "You hear something behind you.", "\'Here,  Fishy..   Fishy...\'", ["It's bloodied eyes dart across you, searching for ways to finish you off quickly.", "It looks angry, but seems to have survived worse.", "It is smiling, although panting. It seems as though it's malnourishedness is taking effect.", "He seems unfazed, a low growl and a chuckle murmured from within.","It takes a deep breath, the type one might take after a good nights sleep.","It seems to be toying with you, darting through the room."],roomBoss2,68);
 var jimgrind = new Boss(200, 35, 35, "Jim Grind", "jimgrind", 200, 2, [1, 44], [12, 11, 12], -2, jimsword, jimarmor, 25, "Someone is in the room with you. You turn just fast enough to see him. He knows he has been spotted.", "A stern look on his face; A deadly look in his eyes.", ["", "You can see small gaps in his defence now, chinks in his armor.", "His breathing is heavy, and his swings are slower, yet just as powerful.", "He stands with a confident air about him, holding his sword firmly.", "His armor is beginning to glow, even the largest chinks in his armor closing as the armor reshapes into its original form.", "He seems unaware of your blows, simply tanking all damage you may deal to him."], roomBoss4, 260);
@@ -567,7 +570,7 @@ function gentables(){
     }
 
     
-    //Math.floor(Math.cbrt(sanity)+-2)
+    //Math.floor(Math.cbrt(sanity)+-2);
     //
     ablerooms = [];
     for (i in rooms){
@@ -1136,7 +1139,7 @@ function printc(thing, stuff) {
     screen.innerHTML = stuff;
 }
 function prints(stuff) {
-    console.log(stuff)
+    console.log(stuff);
 }
 
 //Looting and getting items
@@ -1250,7 +1253,7 @@ function prepbattle(enemy){
     
     enm = enemy;
     console.log(enm.name);
-	var localrand = rand(20);
+	var localrand = rand(100);
 	if (localrand == 1){
 		enm.minions.push(alltraps[rand(alltraps.length-1)]);
 	}
@@ -1269,7 +1272,7 @@ function prepbattle(enemy){
     }
     
     if (enm.name == zarol.name){
-        zarol = buildZarol()
+        zarol = buildZarol();
         enm = zarol
     }
     battleprep = 500;
@@ -1327,10 +1330,10 @@ function enmFight(){
             }
             if (enm.boss){
                 if (hpratio > 100 && hpratio < 200){
-                    printc(1, enm.rundown[4])
+                    printc(1, enm.rundown[4]);
                 }
                 if (hpratio >= 200){
-                    printc(1, enm.rundown[5])
+                    printc(1, enm.rundown[5]);
                 }
             }
             var enmdo = rand(enm.healchance[0]);
@@ -1393,10 +1396,10 @@ function enmFight(){
         if (enm == unacceptable){
             localrand = rand(10);
             if (localrand == 1){
-                getMinion(enm, cresword)
+                getMinion(enm, cresword);
             }
             if (localrand == 2){
-                getMinion(enm, creshield)
+                getMinion(enm, creshield);
             }
         }
 
@@ -1404,8 +1407,8 @@ function enmFight(){
     if (dodging && monolithTime >= 0) {
         monolithTime -= 1;
         var monoPer = 100 * ((monolithOrig - monolithTime)/monolithOrig);
-        prints(monoPer)
-        monoAnimation(Math.floor(monoPer), 4)
+        prints(monoPer);
+        monoAnimation(Math.floor(monoPer), 4);
         if (monolithTime <= 0) {
             prints("Monolith touch");
             dodging = false;
@@ -1470,7 +1473,7 @@ function attack(source, target){
 function Damage(source, target){
     var message;
     var newagil = [((target.agil[0]*source.agil[1])-((source.agil[0]*target.agil[1])/2)), (target.agil[1]*source.agil[1])];
-    console.log(newagil)
+    console.log(newagil);
     if (rand(newagil[1]) <= newagil[0]){
         message = target.name + " dodged "+ source.name +"'s attack";
     } else {
@@ -1535,7 +1538,7 @@ function check(entity){
                     
                 }
                
-                if (entity.name !== "Xissor" || entity.name !== "The Other Xissor" || entity.name !== "True Insanity" || entity.name !== "True Sanity" || entity.name !== "Zarol" || entity.name !== "epicalpha" || entity.name !== "epiccoo" || entity.name !== "epicjim"){
+                if (entity.name !== "Xissor" || entity.name !== "The Other Xissor" || entity.name !== "True Insanity" || entity.name !== "True Sanity" || entity.name !== "Zarol" || entity.name !== "epicalpha" || entity.name !== "epiccoo" || entity.name !== "epicjim" || entity.name !== "unacceptable"){
                     checkpoint = entity.turn;
                 }
                     
@@ -1644,7 +1647,7 @@ function limbo(type, message){
             turn = checkpoint;
             if (turn < -2) {turn = -2}
             pla.hp = 80+rand(20);
-            var screen = document.getElementById("limbotext")
+            var screen = document.getElementById("limbotext");
             screen.innerHTML = message;
             
             if (sanity < 0){
@@ -1696,7 +1699,7 @@ function limbo(type, message){
             }
             localrand = pla.minions.length;
             for (var i = 0; i < localrand; i ++){
-                killMinion(pla, pla.minions[0])
+                killMinion(pla, pla.minions[0]);
             }
             screenchange(4);
             break;
@@ -1722,7 +1725,9 @@ function limbo(type, message){
                 currentFram = 1;
             }
             break;
-
+        default:
+            console.log("you called the limbo case wrong somehow");
+            break;
     }
 }
 
