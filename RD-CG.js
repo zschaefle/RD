@@ -449,7 +449,7 @@ var alpha = new Boss(350, 34, 0, "Alpha", "alpha", 500, 6, [2,3], [5,4,10], -3, 
 
 var xissor = new Boss(200, 9, 20, "Xissor", "xissor", 200, 20, [1,10], [100,99,25], -2, xissors, godrobe, -100, "Somebody smashes through the ceiling....", "She turns around quickly, then charges at you while screaming!",["","","","","",""], bossroom, 75);
 var otherXissor = new Boss(400, 25, 35, "The Other Xissor", "otherxissor", 400, 40, [1,5], [100,90,25], -10, otherxissors, godrobe, -100, "Sombody else is here.", "She turns around slowly, then quickly draws her blade on you.",["","","","","",""], bossroom, 75);
-var unacceptable = new Boss(600, 30, 10, "Cressence", "unacceptable", 1000, 10, [1, 5], [100, 40, 150], 10, cressence, cressence, -100, "The cresent stone begins to glow...", "Startled by something, you drop the stone. A swriling vortex of energy begins to appear.", ["It begins to get smaller, trying despreately to disapear back to where it came from.","The color in it is weakening, it's losing it's magnificent shape.","It seems energitic, bursting with power.","It begins to spin both counter-clockwise and clockwise at the same time.","It glowes brightly, the power of its essence stronger."], bossroom, 50);
+var unacceptable = new Boss(600, 10, 10, "Cressence", "unacceptable", 1000, 10, [1, 5], [100, 40, 150], 10, cressence, cressence, -100, "The cresent stone begins to glow...", "Startled by something, you drop the stone. A swriling vortex of energy begins to appear.", ["It begins to get smaller, trying despreately to disapear back to where it came from.","The color in it is weakening, it's losing it's magnificent shape.","It seems energitic, bursting with power.","It begins to spin both counter-clockwise and clockwise at the same time.","It glowes brightly, the power of its essence stronger."], bossroom, 150);
 
 var epicalpha = new Boss(450, 50, 10, "Alpha 949", "alpha", 450, 12, [5, 6], [10, 8, 20], -6, sivgoggles, shurikenbag, -100, "You find yourself in a familiar looking room. Looking around, you realize you have some unfinished business. You hear sudden quick footsteps from behind you.", "you turn to see a familiar figure dashing towards you, Swinging a large axe!", ["", "", "", "", "", ""], roomBoss3, 90);
 var epicjim = new Boss(320, 45, 150, "Jim Grind", "jimgrind", 360, 2, [0, 1], [8, 7, 35], -2, jimarmor, hatandboots, -100, "You find yourself in a familiar looking room. Looking around, you realize you have some unfinished business. Someone is in the room with you. You turn to face him. You both know who won last time. ", "A stern look on his face; A deadly look in his eyes.", ["", "You can see small gaps in his defence now, chinks in his armor.", "His breathing is heavy, and his swings are slower, yet just as powerful.", "He stands with a confident air about him, holding his sword firmly.", "His armor is beginning to glow, even the largest chinks in his armor closing as the armor reshapes into its original form.", "He seems unaware of your blows, simply tanking all damage you may deal to him."], roomBoss4, 190);
@@ -512,6 +512,13 @@ var superminion = new Minion(40, 40, 1, 1, 2, [1, 50], [50, 49, 4], -5, 5, "The 
 var cube = new Minion(1,1,1,1,20,[10,100], [10,11,0], -1, 6, "Cube", "cube", "There is a cube here. It is small.", "A small cube. It hungers for it's friends.", 100, 75);
 var chicken = new Minion(46, 46, 1, 4, 1, [1,100], [100, 99, 10], 6, 4,"Chicken","chicken","There's a chicken here.", "Loot?", 150, 25);
 
+var creshield = new Minion(100, 100, 1, 1, 20, [0,1], [100, 50, 25], 1, 7, "Cressent Shield", "creshield", "", "",100, 100);
+var cresword = new Minion(100, 100, 25, 5, 0, [0,1], [100, 50, 25], 1, 7, "Cressent Shield", "cresword", "", "",75, 50);
+
+for (var i = 0; i < 3; i++){
+    getMinion(unacceptable, creshield);
+    getMinion(unacceptable, cresword);
+}
 
 for (var i = 0; i < 30; i++){
     getMinion(superminion, miniminion);
@@ -757,6 +764,12 @@ function genRoom() {
     }
     
     if (search){
+          if (cresentstone.quant > 0 && rand(3) == 1){
+               roommessage += prepbattle(unacceptable);
+               cresentstone.quant = 0
+               search = false;
+            
+            }
         if (equippeditems[0].Name == "Sissors" && equippeditems[1].Name == "Life Thread" && noKillXissor){
                roommessage += prepbattle(xissor);
                search = false;
@@ -1237,7 +1250,7 @@ function prepbattle(enemy){
     
     enm = enemy;
     console.log(enm.name);
-	var localrand = rand(100);
+	var localrand = rand(20);
 	if (localrand == 1){
 		enm.minions.push(alltraps[rand(alltraps.length-1)]);
 	}
@@ -1375,6 +1388,16 @@ function enmFight(){
 
         if (enm.name == "Adventurer" || enm.name == "Yourself"){
             plaTime += 1;
+        }
+
+        if (enm == unacceptable){
+            localrand = rand(10);
+            if (localrand == 1){
+                getMinion(enm, cresword)
+            }
+            if (localrand == 2){
+                getMinion(enm, creshield)
+            }
         }
 
     }
@@ -1645,7 +1668,15 @@ function limbo(type, message){
             break;
         //anything zarol
         case 1:
-            runs += 1;
+            if (enm.hp =< 0){
+                runs += 1;
+
+
+                if (runs == 2){
+                    Unlock(cresentstone);
+                }
+            }
+            
             score += 10;
             turn = 0;
             checkpoint = 0
