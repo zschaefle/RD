@@ -959,6 +959,7 @@ function screenchange(number) {
     screen3 = document.getElementById("RDfight");
     screen4 = document.getElementById("RDlimbo");
     screen5 = document.getElementById("RDmono");
+    screen6 = document.getElementById("RDgrave");
     screen1.style.height = "0";
     screen1.style.padding = "0";
     screen2.style.height = "0";
@@ -969,6 +970,8 @@ function screenchange(number) {
     screen4.style.padding = "0";
     screen5.style.height = "0";
     screen5.style.padding = "0";
+    screen6.style.height = "0";
+    screen6.style.padding = "0";
     if (number === 1) {
         screen1.style.height = "239px";
         screen1.style.padding = "10px";
@@ -988,6 +991,10 @@ function screenchange(number) {
     if (number === 5) {
         screen5.style.height = "239px";
         screen5.style.padding = "10px";
+    }
+    if (number === 6) {
+        screen6.style.height = "239px";
+        screen6.style.padding = "10px";
     }
     console.log("changed to screen "+number);
 }
