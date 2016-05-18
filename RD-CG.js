@@ -756,8 +756,6 @@ function genRoom() {
         getMinion(pla, minion);
     }
 
-    var enemyspawn = rand(6); 
-    
      for (i in bosses){
         var localrand = bosses[i];
         if (localrand.turn == turn){
@@ -823,6 +821,8 @@ function genRoom() {
         }
         
         if (pla.lvl >= 3 && search){
+            var enemyspawn = rand(5); 
+
             if (enemyspawn == 4 && room.plant == 1 && room.animal == 1){
                 roommessage += prepbattle(dog);
                 search = false;
@@ -846,9 +846,8 @@ function genRoom() {
             }
         }
         if (pla.lvl >= 2 && search){
-            //--
-            
-            //--
+            var enemyspawn = rand(5); 
+    
             if (enemyspawn == 1 && room.manmade == 1 && room.water == 0){
                 roommessage += prepbattle(bookofdeath);
                 search = false;
@@ -870,6 +869,8 @@ function genRoom() {
             
         }
         if (pla.lvl >= 1 && search){
+            var enemyspawn = rand(5);
+
             if (enemyspawn == 1 && room.water == 1 && room.animal == 1){
                 roommessage += prepbattle(anenemy);
                 search = false;
@@ -878,7 +879,12 @@ function genRoom() {
                 roommessage += prepbattle(axeurlegs);
                 search = false;
             }
-            if (enemyspawn == 3){roommessage += prepbattle(creepybaldguy);}
+            if (enemyspawn == 3){
+                roommessage += prepbattle(creepybaldguy);
+            }
+            if (enemyspawn == 4){
+                roommessage += prepbattle
+            }
         }
     }
     printa(roommessage);
