@@ -819,6 +819,19 @@ function genRoom() {
                 }
             }
         }
+
+         if (pla.lvl >= 4 && search){
+            var enemyspawn = rand(5);
+
+            if (enemyspawn == 1 && room.plant == 0 && room.animal == 0){
+                roommessage += prepbattle(rockgolum);
+                search = false;
+            }
+        
+        }
+
+
+
         
         if (pla.lvl >= 3 && search){
             var enemyspawn = rand(5); 
@@ -883,7 +896,7 @@ function genRoom() {
                 roommessage += prepbattle(creepybaldguy);
             }
             if (enemyspawn == 4){
-                roommessage += prepbattle
+                roommessage += prepbattle(muffin);
             }
         }
     }
