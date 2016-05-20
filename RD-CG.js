@@ -1078,6 +1078,9 @@ function dispitem(item) {
     quantity[1].innerHTML = item.quant;
 }
 function RDrefresh() {
+	if (pla.agil[0] >= 100 && pla.agil < 1000){
+		pla.agil[0] = 99
+	}
     for (i in allitems){dispitem(allitems[i]);}
     dispminions();
     //gentables();
@@ -1141,7 +1144,7 @@ function RDrefresh() {
     misc[5].innerHTML = item.atk;
     misc[9].innerHTML = item.def;
     
-
+	
 }
 
 function printa(stuff) {
