@@ -1295,7 +1295,7 @@ function prepbattle(enemy){
 	if (localrand == 1){
 		enm.minions.push(alltraps[rand(alltraps.length-1)]);
 	}
-    if (enm.name == zarol.name || enm.name == lastinsanity.name){
+    if (enm.name == zarol.name || enm.name == lastinsanity.name || enm.name == lastsanity.name){
         
         screen = document.getElementById("RDfight");
         screen.style.backgroundImage = "url('img/screen"+enm.div+".png')";
