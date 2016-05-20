@@ -372,6 +372,7 @@ var purity = new item(4, 13, 3, 7, 5, "Purity", "purity", "You don't know how yo
 var err = new item(0, 0, 0, 0, 4, "Error", "err", "It was quite unexpected.");
 var bloodpill= new item(7,5,4,-5,8,"Blood Pill","bloodpill","A small capsule that contains a small amount of blood. Using it has strange effects on the environment. Blood is everywhere.");
 var darkcrystal = new item(13, 2, -2, -13, 4, "Darkened Crystal", "darkcrystal", "Contained in a forcefield, this crystal fires lasers at anything nearby.");
+var heatrock = new item(20, -10, 10, 2, 4, "Heat Rock", "heatrock", "A small, extremely hot rock. It burns your hand when you touch it, so you cover your hand with your sleve.")
 //lvl 4+ items ----
 var cresentstone = new item(6, 4, 3, 5, 3, "Cressent Stone", "cresentstone", "A small stone. It seems to carry some hidden power.");
 
@@ -405,7 +406,7 @@ var trueinsanity = new item(35, -3, -10, -3, 5, "True Insanity", "trueinsanity",
 var truesanity = new item(15, 15, 30, 7, 5, "True Sanity", "truesanity", "You feel at peace. You have achieved true sanity.");
 
 var bossitems = [truesanity,trueinsanity,heroshield, herosword, fishingrod, pencil, spoon, alphaxe, sivgoggles, shurikenbag, jimsword, jimarmor, inactivecube, card, device, lapis, hatandboots, godrobe, xissors, otherxissors, compxissors, cresentstone, cressence];
-var allitems = [lapis, trueinsanity, truesanity, inactivecube, spoon, shurikenbag, hatandboots, device, card, jimsword, jimarmor, alphaxe, sivgoggles, pencil, fishingrod, heroshield, herosword, xissors, otherxissors, compxissors, godrobe, cressence, cresentstone,  circularsaw, rotflesh, no_thing, sissors ,bloodpill, onepin, woodstick, acorncap, boardgame, brokenglasses, bobbypin, crowbar, recording, crate, fakesword, hoodie, journal, keyboard, lamp, nerfgun, organs, reflectivevest, sharktooth, steeltoedboots, styrofoamchestplate, wandofwater, wings, redbook, brokenseashell, redball, fakebeard, planc, ashjar, lifethread, septagram, shinedisk, tornclaw, bikeweel, cookie, heavenchip, catears, antmound, planck, err, ichor, purity, darkcrystal, potato, otatop, squiglasses, map, buttton, cable];
+var allitems = [lapis, trueinsanity, truesanity, inactivecube, spoon, shurikenbag, hatandboots, device, card, jimsword, jimarmor, alphaxe, sivgoggles, pencil, fishingrod, heroshield, herosword, xissors, otherxissors, compxissors, godrobe, cressence, cresentstone,  circularsaw, rotflesh, no_thing, sissors ,bloodpill, onepin, woodstick, acorncap, boardgame, brokenglasses, bobbypin, crowbar, recording, crate, fakesword, hoodie, journal, keyboard, lamp, nerfgun, organs, reflectivevest, sharktooth, steeltoedboots, styrofoamchestplate, wandofwater, wings, redbook, brokenseashell, redball, fakebeard, planc, ashjar, lifethread, septagram, shinedisk, tornclaw, bikeweel, cookie, heavenchip, catears, antmound, planck, err, ichor, purity, darkcrystal, heatrock, potato, otatop, squiglasses, map, buttton, cable];
 
 
 function Boss(hp, atk, de, name, divname, maxhp, ddev, agil, heal, sane, loot, loot2, turn, message, cry, rundown, room, interval){
@@ -959,6 +960,7 @@ function screenchange(number) {
     screen3 = document.getElementById("RDfight");
     screen4 = document.getElementById("RDlimbo");
     screen5 = document.getElementById("RDmono");
+    screen6 = document.getElementById("RDgrave");
     screen1.style.height = "0";
     screen1.style.padding = "0";
     screen2.style.height = "0";
@@ -969,6 +971,8 @@ function screenchange(number) {
     screen4.style.padding = "0";
     screen5.style.height = "0";
     screen5.style.padding = "0";
+    screen6.style.height = "0";
+    screen6.style.padding = "0";
     if (number === 1) {
         screen1.style.height = "239px";
         screen1.style.padding = "10px";
@@ -988,6 +992,10 @@ function screenchange(number) {
     if (number === 5) {
         screen5.style.height = "239px";
         screen5.style.padding = "10px";
+    }
+    if (number === 6) {
+        screen6.style.height = "239px";
+        screen6.style.padding = "10px";
     }
     console.log("changed to screen "+number);
 }
