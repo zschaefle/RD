@@ -352,7 +352,7 @@ var buttton = new item(0, 1, -3, 3, 9, "Button", "buttton", "Even though it is j
 var map = new item(0, 1, 3, 1, 8, "Map", "map", "A roughly drawn map, you don't recognize any of the landmarks. You deem it useless.");
 var cable = new item(2, 0, 1, 5, 3, "a Cable", "cable", "You are sure it charges something.<br/>Somewhere.");
 var croptop = new item(0, 3, 2, 2, 3, "Crop Top", "croptop", "It is woven from corn stalks. You are amazed by the makers commitment as you laugh yourself to tears.");
-
+var rock = new item(3, 2, 0, 2, 2, "Rock", "rock", "A small rock. It's tasty. Maybe a bit too much salt.")
 //lvl 2 items ----
 var heavenchip = new item(4, 4, 4, 4, 4, "Heaven Chip", "heavenchip", "Tastes like heaven");
 var planc = new item(8, 1, 4, -8, 7, "Plan C", "planc", "It's your backup plan.");
@@ -405,8 +405,8 @@ var cressence = new item(25, 30, 20, 10, 5, "Cressence", "cressence","It's brimm
 var trueinsanity = new item(35, -3, -10, -3, 5, "True Insanity", "trueinsanity", "You feel at peace. You have achived true insanity.");
 var truesanity = new item(15, 15, 30, 7, 5, "True Sanity", "truesanity", "You feel at peace. You have achieved true sanity.");
 
-var bossitems = [truesanity,trueinsanity,heroshield, herosword, fishingrod, pencil, spoon, alphaxe, sivgoggles, shurikenbag, jimsword, jimarmor, inactivecube, card, device, lapis, hatandboots, godrobe, xissors, otherxissors, compxissors, cresentstone, cressence];
-var allitems = [lapis, trueinsanity, truesanity, inactivecube, spoon, shurikenbag, hatandboots, device, card, jimsword, jimarmor, alphaxe, sivgoggles, pencil, fishingrod, heroshield, herosword, xissors, otherxissors, compxissors, godrobe, cressence, cresentstone,  circularsaw, rotflesh, no_thing, sissors ,bloodpill, onepin, woodstick, acorncap, boardgame, brokenglasses, bobbypin, crowbar, recording, crate, fakesword, hoodie, journal, keyboard, lamp, nerfgun, organs, reflectivevest, sharktooth, steeltoedboots, styrofoamchestplate, wandofwater, wings, redbook, brokenseashell, redball, fakebeard, planc, ashjar, lifethread, septagram, shinedisk, tornclaw, bikeweel, cookie, heavenchip, catears, antmound, planck, err, ichor, purity, darkcrystal, heatrock, potato, otatop, squiglasses, map, buttton, cable];
+var bossitems = [truesanity,trueinsanity,heroshield, herosword, fishingrod, pencil, spoon, alphaxe, sivgoggles, shurikenbag, jimsword, jimarmor, inactivecube, card, device, lapis, hatandboots, godrobe, xissors, otherxissors, compxissors, cresentstone, cressence, heatrock];
+var allitems = [lapis, trueinsanity, truesanity, inactivecube, spoon, shurikenbag, hatandboots, device, card, jimsword, jimarmor, alphaxe, sivgoggles, pencil, fishingrod, heroshield, herosword, xissors, otherxissors, compxissors, godrobe, cressence, cresentstone,  circularsaw, rotflesh, no_thing, sissors ,bloodpill, onepin, woodstick, acorncap, boardgame, brokenglasses, bobbypin, crowbar, recording, crate, fakesword, hoodie, journal, keyboard, lamp, nerfgun, organs, reflectivevest, sharktooth, steeltoedboots, styrofoamchestplate, wandofwater, wings, redbook, brokenseashell, redball, fakebeard, planc, ashjar, lifethread, septagram, shinedisk, tornclaw, bikeweel, cookie, heavenchip, catears, antmound, planck, err, ichor, purity, darkcrystal, heatrock, potato, otatop, squiglasses, map, buttton, cable, rock];
 
 
 function Boss(hp, atk, de, name, divname, maxhp, ddev, agil, heal, sane, loot, loot2, turn, message, cry, rundown, room, interval){
@@ -1175,7 +1175,12 @@ function RDloot() {
     if (lootable) {
         gentables();
         var itemget = lootitems[rand(lootitems.length)-1]
-
+		if (itemget == rock){
+			Unlock(heatrock)
+		}
+		
+		
+		
         getitem(itemget);
         lootable = false;
     } else {printb("there is nothing to loot here.")}
@@ -1422,7 +1427,7 @@ function enmFight(){
         }
 
         if (enm == unacceptable){
-            localrand = rand(10);
+            localrand = rand(75);
             if (localrand == 1){
                 getMinion(enm, cresword);
             }
