@@ -236,8 +236,8 @@ room31 = new Room(0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, -2, "You are in a large wareh
 room32 = new Room(1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, -9, "Everything is blurry. You blink and try to focus, realizing the world around you is out of focus, not your eyes.", "You squint on your way ", ", if but only to reduce visual exposure.", "You chuckle to yourself, thinking about how this place needs glasses.");
 room33 = new Room(0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, "You feel a knotting feeling in your gut, and lose sense of location. Glancing up, you find yourself in a room with other people, you try to get their attention, but they don't look up from their computers. At a loss, you sit down at a terminal, and begin browsing for anything to help you (and some cat pictures along the way).", "As you look through the files on your screen, you see one simply titled '", ".exe', clicking it, you feel the same knot, and the scenery changes.", "You can't leave. Goddamnit Zakiah");
 room34 = new Room(0, 1, 0, 1, 1, 1, 0, 0, 1, 0, -5, "You feel the walls watching you. You look closer, seeing that these are no ordinary walls, not walls at all, but millions of creepy bald guys.", "You sprint in a ", "ernly direction, Eager to escape their watching eyes.", "You hear your blood rushing, Everything going out of focus, knowing they are all watching only making it worse.");
-room35 = new Room(1, 0, rand(2)-1, rand(2)-1, 1, 0, 1, 0, 0, 0, 1, 2, "You stumble on a root that wasn't there a second ago, and glance around. You are now in a grove of many trees. Every one of the trees is thin, tall, and either willow or cottonwood. It is rather peaceful, and you take a moment to rest your weary legs", "You trek off to the ", ", knowing that it is the right thing to do.", "Valiently, you make an effort to leave. Though after some time walking, you find yourself back in the grove.");
-room35.light = (room35.dark - 1) * (room35.dark - 1);
+room35 = new Room(1, 0, rand(2)-1, rand(2)-1, 1, 0, 1, 0, 0, 0, 1, 2, "You stumble on a root that wasn't there a second ago, and glance around. You are now in a grove of many trees. Every one of the trees is thin, tall, and either willow or cottonwood. It is rather peaceful, and you take a moment to rest your weary legs", "You trek off to the ", ", knowing that it is the right thing to do.", "Valiently, you make an effort to leave. Though after some time walking, you find yourself back in the grove."); room35.light = (room35.dark - 1) * (room35.dark - 1);
+room36 = new Room(1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 6, "You stand on a hill, on a path surrounded by flowers of many different colors. You decide to search for a specific flower, yet not knowing what it looks like.", "Turning ", ", you know your search has come to an end as you spot a fower adorned terrace.", "You stop and smell the flowers.");
 
 //room = new Room(plant, manmade, water, dark, animal, light, items, north, east, south, west, sane, message, exitA, exitB, exitFail);
 
@@ -246,7 +246,7 @@ roomBoss2 = new Room(0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 1, -2, "You are in a small st
 roomBoss3 = new Room(1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 2, "Suddenly you are in a forest. A crossroads leading in all directions, yet you feel leaving will not be that easy. Searching for why you feel that way, you notice a few houses around you, well made, and decide to lean on one to rest for a moment. Part of it chips off. You glance around hurriedly, hoping no one saw what you did. The house probably wasn't as sturdy as you expected.", "Free to leave now, you choose to go to the ", ", hoping it will lead to better fortunes and maybe even happiness.", "You somehow can't leave even with exits everywhere. You blame Zakiah.");
 roomBoss4 = new Room(0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 3, "You find yourself in a room, walls covered in mechanical and mystical constructs alike. Trees are visible through the sparsely placed windows.", "You find a button hidden on the ", "ern wall, pressing it against your better judgement.", "You become distracted by the intricacies of this room.");
 
-var rooms = [room1, room2, room3, room4, room5, room6, room7, room8, room9, room10, room11, room12, room13, room14, room15, room16, room17, room18, room19, room20, room21, room22, room23, room24, room25, room26, room27, room28, room29, room30, room31, room32, room33, room34];
+var rooms = [room1, room2, room3, room4, room5, room6, room7, room8, room9, room10, room11, room12, room13, room14, room15, room16, room17, room18, room19, room20, room21, room22, room23, room24, room25, room26, room27, room28, room29, room30, room31, room32, room33, room34, room35, room36];
 
 //heal: [end, switch, heal] where heal is [(rand between 1 and this), (if >= this), (heal this)]
 //  so a heal of [15, 10, 10] would be a (15-10)/15 chance to heal 10hp
@@ -1286,7 +1286,6 @@ var plaHeal = 0;
 var plaTotal = 0;
 
 function prepbattle(enemy){
-    
     enm = enemy;
     console.log(enm.name);
 	var localrand = rand(100);
@@ -1325,10 +1324,6 @@ function prepbattle(enemy){
     for (i in pla.minionTree){
         pla.minionTree[i].atkInt = rand(pla.minionTree[i].atkIntBase);
     }
-	
-	
-	
-	
     return enm.message;
 }
 function enmFight(){
@@ -1457,6 +1452,12 @@ function enmFight(){
             for (i in bosses) {bosses[i].hp = bosses[i].rehp}
             genRoom();
             screenchange(1);
+        }
+    }
+    if (gravetime > 0){
+        gravetime -= 1;
+        if (gravetime == 0){
+            limbob(limbostuff[0], limbostuff[1]);
         }
     }
 }
@@ -1664,13 +1665,25 @@ function heal(entity){
     }
 }
 
-
 var dodging = false;
 var dodged = 0;
 var monolithTime = 1500;
+var gravetime = 0;
 var monolithOrig = monolithTime;
 
+var limbostuff = [0, ""];
+
 function limbo(type, message){
+    var thing = document.getElementById("grave2");
+    suffix = [["u killed by ", ". lololololol"], ["the ", " kill you."]];
+    prefix = suffix[rand(suffix.length-1)];
+    thing.innerHTML = prefix[0] + enm.name + prefix[1];
+    gravetime = 500;
+    screenchange(6);
+    limbostuff = [type, message];
+}
+
+function limbob(type, message){
     roommessage = "";
     switch (type) {
         //normal death
