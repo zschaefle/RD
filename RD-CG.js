@@ -5,12 +5,12 @@ https://drive.google.com/open?id=1HYPd5PBuNX24mbP4z_BhIiDxqP5lRM1dOc4g5BSVc8I
 https://drive.google.com/open?id=1S_5sqfRwNeyYip_296_XltTGRayP3fW6amOfEyVC5hM
 ___CHANGELOG___
 ---2.6+ -- continuous update
-	5/23 + added safety pin
-	
+    5/23 + added safety pin
+    
 
 
 ---2.5- the expansive update
-	+enemies can now spawn with traps
+    +enemies can now spawn with traps
     +added unlocks capability
     +added creepyer bald guys
     +added some semicolons
@@ -285,7 +285,7 @@ var nullenm = new Enemy(0, 0, "", "", 0, 0, [1,100], 0, "", "", 0, ["<20%", "<50
 var creepybaldguy = new Enemy(5, 10, "Creepy Bald Guy", "creep", 15, 2, [1,100], -1, "You know you are being watched. Always... ", "you feel it staring through your eyes, Into your Soul.", 1, ["Even though it seems nearly dead, it continues its steady gaze deep into your eyes.", "it seems to have lost some hair in this fight. You blink, realizing it was already bald.", "it seems to be observing, only attacking to see how you react.", "it is sitting there, staring at you. Waiting and observing your every move."], [2,3,4], 200);
 var creep2 = new Enemy(8, 12, "Creepier Bald Guy", "creep", 20, 3, [1,80], -1, "You know you are being watched. Always... ", "you feel it staring through your eyes, Into your Soul.", 3, ["Even though it seems nearly dead, it continues its steady gaze deep into your eyes.", "it seems to have lost some hair in this fight. You blink, realizing it was already bald.", "it seems to be observing, only attacking to see how you react.", "it is sitting there, staring at you. Waiting and observing your every move."], [20, 19, 8], 175);
 var creep3 = new Enemy(12, 15, "Creepier Balder Guy", "creep", 30, 4, [1,20], -2, "You know you are being watched. Always... ", "you feel it staring through your eyes, Into your Soul.", 5, ["Even though it seems nearly dead, it continues its steady gaze deep into your eyes.", "it seems to have lost some hair in this fight. You blink, realizing it was already bald.", "it seems to be observing, only attacking to see how you react.", "it is sitting there, staring at you. Waiting and observing your every move."], [11, 10, 10], 165);
-var creep3 = new Enemy(15, 20, "Creepiest Bald Guy", "creep", 45, 5, [1,20], -2, "You know you are being watched. Always... ", "you feel it staring through your eyes, Into your Soul.", 5, ["Even though it seems nearly dead, it continues its steady gaze deep into your eyes.", "it seems to have lost some hair in this fight. You blink, realizing it was already bald.", "it seems to be observing, only attacking to see how you react.", "it is sitting there, staring at you. Waiting and observing your every move."], [11, 10, 12], 125);
+var creep4 = new Enemy(15, 20, "Creepiest Bald Guy", "creep", 45, 5, [1,10], -2, "You know you are being watched. Always... ", "you feel it staring through your eyes, Into your Soul.", 5, ["Even though it seems nearly dead, it continues its steady gaze deep into your eyes.", "it seems to have lost some hair in this fight. You blink, realizing it was already bald.", "it seems to be observing, only attacking to see how you react.", "it is sitting there, staring at you. Waiting and observing your every move."], [11, 10, 12], 125);
 var terracotta = new Enemy(0, 12, "clay soldier", "terracotta", 5, 5, [1,8], 0, "Intricately carved hinges begin to move,", "Beginning its advance towards you.", 1, ["It lays on the ground, cracks running through it.", "It wobbles, an arm and a leg missing.", "There are small cracks beginning to run through its body.", "it stands there, it's carefully carved tiny eyes staring at you."],[1,2,0], 100);
 var thug = new Enemy(7, 0, "Thug", "thug", 100, 5, [1,1000], 0, "A thug approaches you on the street. You prepare your fists, being much stronger than your lean appearance implies.", "'Hey, Idiot. Whose territory do you think you're Waltzing around in?'", 0, ["", "", "", "He holds his hands up in front of his face, posture like that of a fake wrestler."], [3,2,4], 300);
 var bookofdeath = new Enemy(10, 20, "Flailing Broken Binding", "bookofdeath", 3, 1, [5,100], -1, "A nearby book seems to stir..", "A book snaps into a row of paper teeth.....", 2, ["It stops, all of its pages missing.", "It squeals, trying to flee.", "Pages are everywhere","It flaps, words flying"], [10,7,4], 75);
@@ -769,7 +769,6 @@ function genRoom() {
         var localrand = bosses[i];
         if (localrand.turn == turn){
             roommessage += prepbattle(localrand);
-            search = false;
             
         }
     }
@@ -778,30 +777,25 @@ function genRoom() {
           if (cresentstone.quant > 0 && rand(3) == 1){
                roommessage += prepbattle(unacceptable);
                cresentstone.quant = 0
-               search = false;
             
             }
         if (equippeditems[0].Name == "Sissors" && equippeditems[1].Name == "Life Thread" && noKillXissor){
                roommessage += prepbattle(xissor);
-               search = false;
                noKillXissor = false;
                turnKillXissor = turn;
             }
         if (turnKillXissor + 20 == turn && equippeditems[0].Name == "Xissors" && noKillOtherXissor){
                roommessage += prepbattle(otherXissor);
-               search = false;
                noKillOtherXissor = false;
             
         }
         if (finalsanity == 1 && turn > 20 && pla.trueSane == 0){
                roommessage += prepbattle(lastinsanity);
-               search = false;
                finalsanity = 0;
         }
         
         if (finalsanity == -1 && turn > 20 && pla.trueSane == 0){
                roommessage += prepbattle(lastsanity);
-               search = false;
                finalsanity = 0;
         }
         
@@ -809,15 +803,12 @@ function genRoom() {
             if (pla.atk >= pla.def && pla.atk >= pla.agil[0]){
                 roommessage = ""
                 roommessage += prepbattle(epicalpha);
-                search = false;
             } else if (pla.def >= pla.atk && pla.def >= pla.agil[0]){
                 roommessage = ""
                 roommessage += prepbattle(epiccoo);
-                search = false;
             } else if (pla.agil[0] >= pla.atk && pla.agil[0] >= pla.def){
                 roommessage = ""
                 roommessage += prepbattle(epicjim);
-                search = false;
             } else{
                 if (pla.sane <= 0){
                     finalsanity = -1
@@ -828,13 +819,25 @@ function genRoom() {
                 }
             }
         }
-
-         if (pla.lvl >= 4 && search){
+        
+        if (pla.lvl >= 5 && search){
+            var enemyspawn = rand(5);
+			if (enemyspawn == 3){
+				roommessage += prepbattle(creep4);
+			}
+        }
+        
+        if (pla.lvl >= 4 && search){
             var enemyspawn = rand(5);
 
             if (enemyspawn == 1 && room.plant == 0 && room.animal == 0){
                 roommessage += prepbattle(rockgolum);
-                search = false;
+            }
+            if (enemyspawn == 2 && room.water == 1){
+                roommessage += prepbattle(koi);
+            }
+            if (enemyspawn == 3){
+                roommessage += prepbattle(creep3);
             }
         
         }
@@ -847,24 +850,15 @@ function genRoom() {
 
             if (enemyspawn == 4 && room.plant == 1 && room.animal == 1){
                 roommessage += prepbattle(dog);
-                search = false;
-                
             }
             if (enemyspawn == 5){
                 roommessage += prepbattle(slime);
-                search = false;
-            }
-            if (enemyspawn == 2 && room.water == 1){
-                roommessage += prepbattle(koi);
-                search = false;
             }
             if (enemyspawn <= 2 && room.water == 0 && room.dark == 1 && room.animal == 1 && room.light == 0){
                 roommessage += prepbattle(catwatcher);
-                search = false;
             }
             if (enemyspawn == 3 && room.animal == 1 && room.light == 1){
                 roommessage += prepbattle(nerveball);
-                search = false;
             }
         }
         if (pla.lvl >= 2 && search){
@@ -872,20 +866,19 @@ function genRoom() {
     
             if (enemyspawn == 1 && room.manmade == 1 && room.water == 0){
                 roommessage += prepbattle(bookofdeath);
-                search = false;
             }
             if (enemyspawn == 2 && room.manmade == 1){
                 roommessage += prepbattle(clone);
-                search = false;
             }
             if (enemyspawn == 3 && room.light == 1){
                 roommessage += prepbattle(lightorb);
-                search = false;
             }
             if (enemyspawn == 4 && room.items == 0){
                 roommessage += prepbattle(mimic);
                 lootable = true
-                search = false;
+            }
+            if (enemyspawn == 5){
+                roommessage += prepbattle(creep2);
             }
             //----
             
@@ -895,11 +888,9 @@ function genRoom() {
 
             if (enemyspawn == 1 && room.water == 1 && room.animal == 1){
                 roommessage += prepbattle(anenemy);
-                search = false;
             }
             if (enemyspawn == 2 && room.plant == 1 && room.water == 0){
                 roommessage += prepbattle(axeurlegs);
-                search = false;
             }
             if (enemyspawn == 3){
                 roommessage += prepbattle(creepybaldguy);
@@ -1086,9 +1077,9 @@ function dispitem(item) {
     quantity[1].innerHTML = item.quant;
 }
 function RDrefresh() {
-	if (pla.agil[0] >= 100 && pla.agil < 1000){
-		pla.agil[0] = 99
-	}
+    if (pla.agil[0] >= 100 && pla.agil < 1000){
+        pla.agil[0] = 99
+    }
     for (i in allitems){dispitem(allitems[i]);}
     dispminions();
     //gentables();
@@ -1152,7 +1143,7 @@ function RDrefresh() {
     misc[5].innerHTML = item.atk;
     misc[9].innerHTML = item.def;
     
-	
+    
 }
 
 function printa(stuff) {
@@ -1186,12 +1177,12 @@ function RDloot() {
     if (lootable) {
         gentables();
         var itemget = lootitems[rand(lootitems.length)-1]
-		if (itemget == rock){
-			Unlock(heatrock)
-		}
-		
-		
-		
+        if (itemget == rock){
+            Unlock(heatrock)
+        }
+        
+        
+        
         getitem(itemget);
         lootable = false;
     } else {printb("there is nothing to loot here.")}
@@ -1294,12 +1285,13 @@ var plaHeal = 0;
 var plaTotal = 0;
 
 function prepbattle(enemy){
+    search = false
     enm = enemy;
     console.log(enm.name);
-	var localrand = rand(100);
-	if (localrand == 1){
-		enm.minions.push(alltraps[rand(alltraps.length-1)]);
-	}
+    var localrand = rand(100);
+    if (localrand == 1){
+        enm.minions.push(alltraps[rand(alltraps.length-1)]);
+    }
     if (enm.name == zarol.name || enm.name == lastinsanity.name){
         
         screen = document.getElementById("RDfight");
