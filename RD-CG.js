@@ -1,8 +1,13 @@
 /*
+HYPER VERSION
 http://steampoweredairship.com/unexpected-error/rd/
 https://drive.google.com/open?id=1HYPd5PBuNX24mbP4z_BhIiDxqP5lRM1dOc4g5BSVc8I
 https://drive.google.com/open?id=1S_5sqfRwNeyYip_296_XltTGRayP3fW6amOfEyVC5hM
 ___CHANGELOG___
+---2.6+ -- continuous update
+	5/23 + added safety pin
+	
+
 
 ---2.5- the expansive update
 	+enemies can now spawn with traps
@@ -308,7 +313,6 @@ function item(offence, defence, agility, sanity, score, name, divname, desc){
         this.desc = desc;
         this.quant = 0;
         this.findable = 0;
-        
 }
 //If an item has a score of over 5, it is considered a reference, and Coosome shall act swiftly to Counter-reference toward the same topic.
 
@@ -317,6 +321,7 @@ var nothing = new item(0, 0, 0, 0, 0, "", "no_thing", "");
 var acorncap = new item(0, 1, 1, 2, 9, "Acorn Cap", "acorncap", "If you were really tiny, like, smaller than a squirrel, this would be the perfect armor. You place it over your heart  You call it a kiss");
 var boardgame = new item(0, 2, -1, 2, 2, "Board Game", "boardgame", "The cardboard is battered  from years of wear, but you can see the winding  path your piece would take if you were a winner.   You're not a winner.");
 var bobbypin = new item(1, 0, 1, 1, 1, "Bobby Pin", "bobbypin", "Ow..., it's sharp.");
+var safetypin = new item(4, 0, 3, 1, 1, "Safety pin", "safetypin", "Not actually very safe at all.<br/>Actually quite dangerous.");
 var woodstick = new item(1, 0, 1, 3, 2, "Wooden Stick", "woodstick", "It might not be the best sword, but hey, it's worth a try.");
 var brokenglasses = new item(0, 1, 3, -1, 2, "Broken Glasses", "brokenglasses", "The few shards of perfectly clear glass in these frames could have only been made by magic.");
 var fakesword = new item(1, 1, 0, 2, 1, "Fake Sword", "fakesword", "This is actually just an inflatable party favor");
@@ -352,9 +357,9 @@ var buttton = new item(0, 1, -3, 3, 9, "Button", "buttton", "Even though it is j
 var map = new item(0, 1, 3, 1, 8, "Map", "map", "A roughly drawn map, you don't recognize any of the landmarks. You deem it useless.");
 var cable = new item(2, 0, 1, 5, 3, "a Cable", "cable", "You are sure it charges something.<br/>Somewhere.");
 var croptop = new item(0, 3, 2, 2, 3, "Crop Top", "croptop", "It is woven from corn stalks. You are amazed by the makers commitment as you laugh yourself to tears.");
-var rock = new item(3, 2, 0, 2, 2, "Rock", "rock", "A small rock. It's tasty. Maybe a bit too much salt.")
-var fourclover = new item(0, 0, 10, 15, 4, "Clover", "fourclover", "Lucky!")
-var sevenclover = new item(0, 0, 15, 20, 4, "Clover", "sevenclover", "Lucky?")
+var rock = new item(3, 2, 0, 2, 2, "Rock", "rock", "A small rock. It's tasty. Maybe a bit too much salt.");
+var fourclover = new item(0, 1, 7, 15, 4, "Clover", "fourclover", "A four leaf clover. How lucky!");
+var sevenclover = new item(0, 1, 15, 20, 4, "Clover", "sevenclover", "A seven leaf clover. Quite lucky?");
 
 //lvl 2 items ----
 var heavenchip = new item(4, 4, 4, 4, 4, "Heaven Chip", "heavenchip", "Tastes like heaven");
@@ -409,11 +414,10 @@ var trueinsanity = new item(35, -3, -10, -3, 5, "True Insanity", "trueinsanity",
 var truesanity = new item(15, 15, 30, 7, 5, "True Sanity", "truesanity", "You feel at peace. You have achieved true sanity.");
 
 var bossitems = [truesanity,trueinsanity,heroshield, herosword, fishingrod, pencil, spoon, alphaxe, sivgoggles, shurikenbag, jimsword, jimarmor, inactivecube, card, device, lapis, hatandboots, godrobe, xissors, otherxissors, compxissors, cresentstone, cressence, heatrock];
-var allitems = [lapis, trueinsanity, truesanity, inactivecube, spoon, shurikenbag, hatandboots, device, card, jimsword, jimarmor, alphaxe, sivgoggles, pencil, fishingrod, heroshield, herosword, xissors, otherxissors, compxissors, godrobe, cressence, cresentstone,  circularsaw, rotflesh, no_thing, sissors ,bloodpill, onepin, woodstick, acorncap, boardgame, brokenglasses, bobbypin, crowbar, recording, crate, fakesword, hoodie, journal, keyboard, lamp, nerfgun, organs, reflectivevest, sharktooth, steeltoedboots, styrofoamchestplate, wandofwater, wings, redbook, brokenseashell, redball, fakebeard, planc, ashjar, lifethread, septagram, shinedisk, tornclaw, bikeweel, cookie, heavenchip, catears, antmound, planck, err, ichor, purity, darkcrystal, heatrock, potato, otatop, squiglasses, map, buttton, cable, rock, fourclover, sevenclover];
+var allitems = [lapis, trueinsanity, truesanity, inactivecube, spoon, shurikenbag, hatandboots, device, card, jimsword, jimarmor, alphaxe, sivgoggles, pencil, fishingrod, heroshield, herosword, xissors, otherxissors, compxissors, godrobe, cressence, cresentstone,  circularsaw, rotflesh, no_thing, sissors ,bloodpill, onepin, woodstick, acorncap, boardgame, brokenglasses, bobbypin, crowbar, recording, crate, fakesword, hoodie, journal, keyboard, lamp, nerfgun, organs, reflectivevest, sharktooth, steeltoedboots, styrofoamchestplate, wandofwater, wings, redbook, brokenseashell, redball, fakebeard, planc, ashjar, lifethread, septagram, shinedisk, tornclaw, bikeweel, cookie, heavenchip, catears, antmound, planck, err, ichor, purity, darkcrystal, heatrock, potato, otatop, squiglasses, map, buttton, cable, rock, fourclover, sevenclover, safetypin];
 
 
 function Boss(hp, atk, de, name, divname, maxhp, ddev, agil, heal, sane, loot, loot2, turn, message, cry, rundown, room, interval){
-    
         this.hp = hp;
         this.rehp = hp;
         this.atk = parseInt(atk);
