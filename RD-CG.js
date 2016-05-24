@@ -245,6 +245,7 @@ room35 = new Room(1, 0, rand(2)-1, rand(2)-1, 1, 0, 1, 0, 0, 0, 1, 2, "You stumb
 room36 = new Room(1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 6, "You stand on a hill, on a path surrounded by flowers of many different colors. You decide to search for a specific flower, yet not knowing what it looks like.", "Turning ", ", you know your search has come to an end as you spot a fower adorned terrace.", "You stop and smell the flowers.");
 room37 = new Room(1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, -7, "yesssssssssssssss", "You exit through the ", ", stumbling over vines.", " \"I don't know...\" you mutter to yourself");
 
+specroom1 = new Room(0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, "You stand in what appears to be an arena. The ground at first appears to be sand, but upon closer inspection it turns out to be ground bones. The stands are filled with hoards to creepy bald guys, and a few cultists. You suddenly get a feeling you will not be leaving this arena alive.")
 //room = new Room(plant, manmade, water, dark, animal, light, items, north, east, south, west, sane, message, exitA, exitB, exitFail);
 
 bossroom = new Room(0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, -2, "You find yourself in a wide open room. The ceiling is high and dark. An ominous feeling of doom hangs over you.", "Exhausted, you leave through the ", " door.", "You somehow walk into a nonexistent wall.");
@@ -361,7 +362,7 @@ var croptop = new item(0, 3, 2, 2, 3, "Crop Top", "croptop", "It is woven from c
 var rock = new item(3, 2, 0, 2, 2, "Rock", "rock", "A small rock. It's tasty. Maybe a bit too much salt.");
 var fourclover = new item(0, 1, 7, 15, 4, "Clover", "fourclover", "A four leaf clover. How lucky!");
 var sevenclover = new item(0, 1, 15, 20, 4, "Clover", "sevenclover", "A seven leaf clover. Quite lucky?");
-
+var stonekey = new item(1, 1, 3, 5, 5, "Stone Key", "stonekey", "A stone key. It looks like it fits into a door somewhere.")
 //lvl 2 items ----
 var heavenchip = new item(4, 4, 4, 4, 4, "Heaven Chip", "heavenchip", "Tastes like heaven");
 var planc = new item(8, 1, 4, -8, 7, "Plan C", "planc", "It's your backup plan.");
@@ -375,6 +376,8 @@ var cookie = new item(3, 1, 4, 2, 7, "Cookie", "cookie", "It's not for equiping,
 var tornclaw = new item(8, 4, 7, -12, 5, "Torn Claw", "tornclaw", "A claw that must have been brutaly ripped off the creature while it was still alive. ");
 var antmound = new item(5,3, -2, -4, 6, "Ant Mound", "antmound", "It's strangely slush like.");
 var planck = new item(0, 2, 11, 2, 5, "Plan ck", "planck", "like plan c, but more, and smaller. Like 1.616199x10<sup>-35</sup> meters small.");
+var nail = new item(6, 0, 1, -1, 4, "Nail", "nail", "It's rusted. Or is it?");
+var chisel = new item(6, 3, 0, 3, 5, "Chisel", "chisel", "You can use it to carve a statue if you get bored.")
 //lvl 3 items ----
 var ichor = new item(7, 7, -4, -8, 5, "Ichor", "ichor", "Blood of the gods. How did you even get this?");
 var purity = new item(4, 13, 3, 7, 5, "Purity", "purity", "You don't know how you obtained a concept, but you feel good about it.")
@@ -382,6 +385,7 @@ var err = new item(0, 0, 0, 0, 4, "Error", "err", "It was quite unexpected.");
 var bloodpill= new item(7,5,4,-5,8,"Blood Pill","bloodpill","A small capsule that contains a small amount of blood. Using it has strange effects on the environment. Blood is everywhere.");
 var darkcrystal = new item(13, 2, -2, -13, 4, "Darkened Crystal", "darkcrystal", "Contained in a forcefield, this crystal fires lasers at anything nearby.");
 var heatrock = new item(20, -10, 10, 2, 4, "Heat Rock", "heatrock", "A small, extremely hot rock. It burns your hand when you touch it, so you cover your hand with your sleve.")
+var thehatchet = new item(25, 5, 5, -10, 8, "The Hatchet", "thehatchet", "It's the hatchet. It does not have any blood on it, yet.")
 //lvl 4+ items ----
 var cresentstone = new item(6, 4, 3, 5, 3, "Cressent Stone", "cresentstone", "A small stone. It seems to carry some hidden power.");
 
@@ -414,8 +418,8 @@ var cressence = new item(25, 30, 20, 10, 5, "Cressence", "cressence","It's brimm
 var trueinsanity = new item(35, -3, -10, -3, 5, "True Insanity", "trueinsanity", "You feel at peace. You have achived true insanity.");
 var truesanity = new item(15, 15, 30, 7, 5, "True Sanity", "truesanity", "You feel at peace. You have achieved true sanity.");
 
-var bossitems = [truesanity,trueinsanity,heroshield, herosword, fishingrod, pencil, spoon, alphaxe, sivgoggles, shurikenbag, jimsword, jimarmor, inactivecube, card, device, lapis, hatandboots, godrobe, xissors, otherxissors, compxissors, cresentstone, cressence, heatrock];
-var allitems = [lapis, trueinsanity, truesanity, inactivecube, spoon, shurikenbag, hatandboots, device, card, jimsword, jimarmor, alphaxe, sivgoggles, pencil, fishingrod, heroshield, herosword, xissors, otherxissors, compxissors, godrobe, cressence, cresentstone,  circularsaw, rotflesh, no_thing, sissors ,bloodpill, onepin, woodstick, acorncap, boardgame, brokenglasses, bobbypin, crowbar, recording, crate, fakesword, hoodie, journal, keyboard, lamp, nerfgun, organs, reflectivevest, sharktooth, steeltoedboots, styrofoamchestplate, wandofwater, wings, redbook, brokenseashell, redball, fakebeard, planc, ashjar, lifethread, septagram, shinedisk, tornclaw, bikeweel, cookie, heavenchip, catears, antmound, planck, err, ichor, purity, darkcrystal, heatrock, potato, otatop, squiglasses, map, buttton, cable, rock, fourclover, sevenclover, safetypin];
+var bossitems = [truesanity,trueinsanity,heroshield, herosword, fishingrod, pencil, spoon, alphaxe, sivgoggles, shurikenbag, jimsword, jimarmor, inactivecube, card, device, lapis, hatandboots, godrobe, xissors, otherxissors, compxissors, cresentstone, cressence, heatrock, thehatchet];
+var allitems = [lapis, trueinsanity, truesanity, inactivecube, spoon, shurikenbag, hatandboots, device, card, jimsword, jimarmor, alphaxe, sivgoggles, pencil, fishingrod, heroshield, herosword, xissors, otherxissors, compxissors, godrobe, cressence, cresentstone,  circularsaw, rotflesh, no_thing, sissors ,bloodpill, onepin, woodstick, acorncap, boardgame, brokenglasses, bobbypin, crowbar, recording, crate, fakesword, hoodie, journal, keyboard, lamp, nerfgun, organs, reflectivevest, sharktooth, steeltoedboots, styrofoamchestplate, wandofwater, wings, redbook, brokenseashell, redball, fakebeard, planc, ashjar, lifethread, septagram, shinedisk, tornclaw, bikeweel, cookie, heavenchip, catears, antmound, planck, err, ichor, purity, darkcrystal, heatrock, potato, otatop, squiglasses, map, buttton, cable, rock, fourclover, sevenclover, safetypin, stonekey, nail, chisel, thehatchet];
 
 
 function Boss(hp, atk, de, name, divname, maxhp, ddev, agil, heal, sane, loot, loot2, turn, message, cry, rundown, room, interval){
@@ -470,7 +474,7 @@ var epiccoo = new Boss(300, 20, 10, "coo33", "coosome", 400, 150, [19, 64], [64,
 var lastsanity = new Boss(500, 18, 16, "Last Remnants of Sanity", "lastsanity", 500, 5, [2,7], [100, 95, 100], -100, trueinsanity, trueinsanity, -100, "You feel parts of your mind fighting back, with nonsense of '<i>Something is wrong</i>.'", "You realize you need to silence these nagging voices.",["<i>You are destroying yourself...</i>","<i>Do you even know the names of the people you killed?</i>","<i></i>","<i>Something is seriously wrong with you,</i>"],bossroom, 60);
 var lastinsanity = new Boss(1000, 15, 10, "Last Remnants of Insanity", "lastinsanity", 1000, 90, [1,64], [1, 2, 3], 100, truesanity, truesanity, -100, "You feel parts of your mind begin to come together.......", "You have come to a realization: the only way to obtain your goal is to wipe insanity from your mind.",["but.. What is this place?","How do you not return to what was already there?","",""],bossroom, 25);
 
-var bosses = [adventurer, coosome, zarol, alpha, strangecube, jimgrind, xissor, otherXissor, epicalpha, epicjim, epiccoo, lastsanity, lastinsanity, unacceptable];
+var bosses = [adventurer, coosome, alpha, strangecube, jimgrind, xissor, otherXissor, epicalpha, epicjim, epiccoo, lastsanity, lastinsanity, unacceptable, zarol];
 
 function Minion(hp, maxhp, atk, ddev, de, agil, heal, sane, lvl, name, pic, message, desc, interval, distract){
         this.hp = hp;
@@ -664,6 +668,8 @@ var noKillOtherXissor = true;
 var turnKillXissor = 0;
 var noKillEpic = true;
 var roommessage = "";
+var lockedroom = false;
+var lockedroomz = false;
 function genRoom() {
     prints("Generating room.");
     RDrefresh();
@@ -705,10 +711,15 @@ function genRoom() {
             room = localrand.room
         }
     }
+ 
+
     if (search || turn == 1){
          room = ablerooms[rand(ablerooms.length)-1];
     }
-   
+    if (lockedroom){
+         room = specroom1;
+         search = false;
+    }
     
     roommessage += room.message;
     
@@ -742,6 +753,12 @@ function genRoom() {
     pla.sane += (equippeditems[1].sane)/5;
     for (i in pla.minions){
         pla.sane += (pla.minions[i].sane / 5);
+    }
+    if(localrand == 17){
+        roommessage += " the door to the north seems locked, as if you need a key.";
+        room.north = 0;
+        lockedroomz = true;
+
     }
     
     //Determining lootable
@@ -912,6 +929,12 @@ function move(direction){
         if (room.exitA == "" || room.exitA == " ") {room.exitA = "You go ";}
         if (room.exitB == "" || room.exitB == " ") {room.exitB = ".";}
         if(direction === 1){
+            if (lockedroomz == true){
+                room.north = 1;
+                lockedroom == true;
+            }
+
+
             if (room.north === 1){
                 success = true;
                 roommessage = room.exitA + "north" + room.exitB;
@@ -1559,7 +1582,7 @@ function killMinion(source, minion){
         }
     }
 }
-
+round = 0
 function check(entity){
     if (entity.hp <= 0){
         if (entity.name == enm.name && inbattle){
@@ -1620,6 +1643,14 @@ function check(entity){
             }
             screenchange(1);
             printb(message);
+            if (room == specroom1 && enm.hp <= 0){
+                round += 1
+                if (round > bosses.length-1){
+                    roomgen()
+                    round = 0
+                }
+                prepbattle(bosses[round])
+            }
         }
         if (entity.name == pla.name){
             printc(pla, "The enemy Kills you.");
