@@ -275,7 +275,7 @@ function Enemy(atk, de, name, pic, maxhp, ddev, agil, sane, message, cry, lvl, r
         this.agil = agil;
         this.message = message.toString();
         this.cry = cry.toString();
-        this.lvl = lvl;
+        this.room = lvl;
         this.heal = heal[2];
         this.rundown = rundown;
         this.healchance = [heal[0], heal[1]];
@@ -289,8 +289,8 @@ function Enemy(atk, de, name, pic, maxhp, ddev, agil, sane, message, cry, lvl, r
 var nullenm = new Enemy(0, 0, "", "", 0, 0, [1,100], 0, "", "", 0, ["<20%", "<50%", "<85%", "<=100%", "<200%", ">=200%"], [2, 3, 4], 1000);
 var creepybaldguy = new Enemy(5, 10, "Creepy Bald Guy", "creep", 15, 2, [1,100], -1, "You know you are being watched. Always... ", "you feel it staring through your eyes, Into your Soul.", 1, ["Even though it seems nearly dead, it continues its steady gaze deep into your eyes.", "it seems to have lost some hair in this fight. You blink, realizing it was already bald.", "it seems to be observing, only attacking to see how you react.", "it is sitting there, staring at you. Waiting and observing your every move."], [2,3,4], 200);
 var creep2 = new Enemy(8, 12, "Creepier Bald Guy", "creep", 20, 3, [1,80], -1, "You know you are being watched. Always... ", "you feel it staring through your eyes, Into your Soul.", 3, ["Even though it seems nearly dead, it continues its steady gaze deep into your eyes.", "it seems to have lost some hair in this fight. You blink, realizing it was already bald.", "it seems to be observing, only attacking to see how you react.", "it is sitting there, staring at you. Waiting and observing your every move."], [20, 19, 8], 175);
-var creep3 = new Enemy(12, 15, "Creepier Balder Guy", "creep", 30, 4, [1,20], -2, "You know you are being watched. Always... ", "you feel it staring through your eyes, Into your Soul.", 5, ["Even though it seems nearly dead, it continues its steady gaze deep into your eyes.", "it seems to have lost some hair in this fight. You blink, realizing it was already bald.", "it seems to be observing, only attacking to see how you react.", "it is sitting there, staring at you. Waiting and observing your every move."], [11, 10, 10], 165);
-var creep4 = new Enemy(15, 20, "Creepiest Bald Guy", "creep", 45, 5, [1,10], -2, "You know you are being watched. Always... ", "you feel it staring through your eyes, Into your Soul.", 5, ["Even though it seems nearly dead, it continues its steady gaze deep into your eyes.", "it seems to have lost some hair in this fight. You blink, realizing it was already bald.", "it seems to be observing, only attacking to see how you react.", "it is sitting there, staring at you. Waiting and observing your every move."], [11, 10, 12], 125);
+var creep3 = new Enemy(12, 15, "Creepier Balder Guy", "creep", 30, 4, [1,20], -2, "You know you are being watched. Always... ", "you feel it staring through your eyes, Into your Soul.", 5, ["Even though it seems nearly dead, it continues its steady gaze deep into your eyes.", "it seems to have lost some hair in this fight. You blink, realizing it was already bald.", "it seems to be observing, only attacking to see how you react.", "it is sitting there, staring at you. Waiting and observing your every move."], [11, 10, 10], 120);
+var creep4 = new Enemy(15, 20, "Creepiest Bald Guy", "creep", 45, 5, [1,10], -2, "You know you are being watched. Always... ", "you feel it staring through your eyes, Into your Soul.", 5, ["Even though it seems nearly dead, it continues its steady gaze deep into your eyes.", "it seems to have lost some hair in this fight. You blink, realizing it was already bald.", "it seems to be observing, only attacking to see how you react.", "it is sitting there, staring at you. Waiting and observing your every move."], [11, 10, 12], 80);
 var terracotta = new Enemy(0, 12, "clay soldier", "terracotta", 5, 5, [1,8], 0, "Intricately carved hinges begin to move,", "Beginning its advance towards you.", 1, ["It lays on the ground, cracks running through it.", "It wobbles, an arm and a leg missing.", "There are small cracks beginning to run through its body.", "it stands there, it's carefully carved tiny eyes staring at you."],[1,2,0], 100);
 var thug = new Enemy(7, 0, "Thug", "thug", 100, 5, [1,1000], 0, "A thug approaches you on the street. You prepare your fists, being much stronger than your lean appearance implies.", "'Hey, Idiot. Whose territory do you think you're Waltzing around in?'", 0, ["", "", "", "He holds his hands up in front of his face, posture like that of a fake wrestler."], [3,2,4], 300);
 var bookofdeath = new Enemy(10, 20, "Flailing Broken Binding", "bookofdeath", 3, 1, [5,100], -1, "A nearby book seems to stir..", "A book snaps into a row of paper teeth.....", 2, ["It stops, all of its pages missing.", "It squeals, trying to flee.", "Pages are everywhere","It flaps, words flying"], [10,7,4], 75);
@@ -483,7 +483,7 @@ var epiccoo = new Boss(400, 40, 15, "The Coosome", "coosome", 400, 100, [19, 64]
 
 var lastsanity = new Boss(500, 18, 16, "Last Remnants of Sanity", "lastsanity", 500, 5, [2,7], [100, 95, 100], -100, trueinsanity, trueinsanity, -100, "You feel parts of your mind fighting back, with nonsense of '<i>Something is wrong</i>.'", "You realize you need to silence these nagging voices.",["<i>You are destroying yourself...</i>","<i>Do you even know the names of the people you killed?</i>","<i></i>","<i>Something is seriously wrong with you,</i>"],bossroom, 60);
 var lastinsanity = new Boss(1000, 15, 10, "Last Remnants of Insanity", "lastinsanity", 1000, 90, [1,64], [1, 2, 3], 100, truesanity, truesanity, -100, "You feel parts of your mind begin to come together.......", "You have come to a realization: the only way to obtain your goal is to wipe insanity from your mind.",["but.. What is this place?","How do you not return to what was already there?","",""],bossroom, 25);
-
+var creepiestbaldest = new Boss(400, 40, 5, "The Knowing Eye", "creepiestbaldest", 500, 1, [5, 6], [5, 4, 20], -20, map, shinedisk, 52, "You see one blink. And with its eyes, another one is opening.", "You feel its knowing gaze, that it has nothing more to learn.", ["", "", "", "", "", ""], room34, 110);
 
 var thecoosome = coo33;
 var bosses = [adventurer, thecoosome, zarol, alpha, strangecube, jimgrind, xissor, otherXissor, epicalpha, epicjim, epiccoo, lastsanity, lastinsanity, unacceptable];
@@ -564,9 +564,16 @@ getMinion(epiccoo, trapfall);
 for (var i=0; i<2; i++){getMinion(epiccoo, trapsword)}
 for (var i=0; i<5; i++){getMinion(epiccoo, trapdart)}
 
-minions = [coompanion, cube, shield, sheild, nyancat, balorb, strikorb, tankorb, superminion, miniminion, enteddy, fairy, chicken, trapfall, trapfire];
+mincreep2 = toMinion(creep2, "Creepy Bald Guy", 10);
+mincreep3 = toMinion(creep3, "Creepier Bald Guy", 15);
+mincreep4 = toMinion(creep4, "Creepiest Bald Guy", 20);
+for (var i=0; i<2; i++){getMinion(creepiestbaldest, creep4)}
+for (var i=0; i<4; i++){getMinion(creepiestbaldest, creep3)}
+for (var i=0; i<20; i++){getMinion(creepiestbaldest, creep2)}
 
-var alltraps = [trapfall, trapfire, trapdart, trapsword];
+minions = [coompanion, cube, shield, sheild, nyancat, balorb, strikorb, tankorb, superminion, miniminion, creep4, creep3, creep2, enteddy, fairy, chicken, trapfall, trapfire];
+
+var alltraps = [trapfall, trapfire, trapdart, trapsword, creepybaldguy];
 function getMinion(source, minion){
     //if source is player, make div of minion with id=minion.div+minion.id.   new div is only hp
     source.minions.push(new Minion(minion.hp, minion.maxhp, minion.atk, minion.ddev, minion.def, minion.agil, [minion.healchance[0], minion.healchance[1], minion.heal], minion.sane, minion.lvl, minion.name, minion.div, minion.message, minion.desc, minion.atkIntBase, minion.dist));
