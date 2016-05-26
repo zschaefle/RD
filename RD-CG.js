@@ -486,7 +486,7 @@ var lastinsanity = new Boss(1000, 15, 10, "Last Remnants of Insanity", "lastinsa
 
 
 var thecoosome = coo33;
-var bosses = [adventurer, thecoosome, zarol, alpha, strangecube, jimgrind, xissor, otherXissor, epicalpha, epicjim, epiccoo, lastsanity, lastinsanity, unacceptable];
+var bosses = [adventurer, thecoosome, alpha, jimgrind, strangecube, epiccoo, epicalpha, epicjim, xissor, otherXissor, lastsanity, lastinsanity, unacceptable, zarol];
 
 
 function Minion(hp, maxhp, atk, ddev, de, agil, heal, sane, lvl, name, pic, message, desc, interval, distract){
@@ -524,7 +524,7 @@ function Minion(hp, maxhp, atk, ddev, de, agil, heal, sane, lvl, name, pic, mess
 function toMinion(minion, newname, distract){
     return new Minion(minion.hp, minion.maxhp, minion.atk, minion.ddev, minion.def, minion.agil, [minion.healchance[0], minion.healchance[1], minion.heal], minion.sane, minion.turn, newname, minion.div, minion.message, minion.cry, minion.atkIntBase, distract);
 }
-var coompanion = toMinion(coosome, "Coompanion", 100);
+//var coompanion = toMinion(coosome, "Coompanion", 100);
 var trapfall = new Minion(100, 100, 80, 10, 10, [5, 1], [1, 2, 0], -1, 7, "Ceiling trap", "trapfall", "traap heeere", "it's a tarp!", 1000, 0);
 var trapfire = new Minion(5, 5, 1, 0, 1, [5, 1], [1, 2, 0], -1, 7, "Fire Trap", "trapfire", "Fiiiirrrreeeee", "it's a tarp!", 14, 1);
 var trapdart = new Minion(1, 1, 10, 1, 0, [0,1], [1, 2, 0], -1, 7, "Dart Trap", "trapdart", "You stumble over a small box.", "it's a tarp!", 190, 2);
@@ -564,7 +564,7 @@ getMinion(epiccoo, trapfall);
 for (var i=0; i<2; i++){getMinion(epiccoo, trapsword)}
 for (var i=0; i<5; i++){getMinion(epiccoo, trapdart)}
 
-minions = [coompanion, cube, shield, sheild, nyancat, balorb, strikorb, tankorb, superminion, miniminion, enteddy, fairy, chicken, trapfall, trapfire];
+minions = [cube, shield, sheild, nyancat, balorb, strikorb, tankorb, superminion, miniminion, enteddy, fairy, chicken, trapfall, trapfire];
 
 var alltraps = [trapfall, trapfire, trapdart, trapsword];
 function getMinion(source, minion){
@@ -746,22 +746,22 @@ function genRoom() {
     roommessage += room.message;
     
     
-    localrand = rand(20);
-    if (localrand == 1){roommessage += " Your feet are suddenly covered in water, with more rising from an unseen source."; room.water = 1}
-    if (localrand == 2){roommessage += " Vines lazily wind their way towards you."; room.plant = 1}
-    if (localrand == 3){roommessage += " You feel a gust of wind from the south."; room.south = 1}
-    if (localrand == 4){roommessage += " The very air around you seems to emit a warm glow."; room.dark = 0; room.light = 1;}
-    if (localrand == 5){roommessage += " The air muffles and dilutes not sound, but light."; room.dark = 1; room.light = 0;}
-    if (localrand == 6){roommessage += " You can hear the clicking and whirring  of unseen machinery."; room.manmade = 1;}
-    if (localrand == 7){roommessage += " A large crowd of flies is hovering in a corner, seemingly growling at you."; room.animal = 1;}
-    if (localrand == 8){roommessage += " You become lost in a cloud of dark light."; room.dark = 1, room.light = 1;}
-    if (localrand == 9){roommessage += " There seems to be a lot of gold here. You must resist the urge to loot it all."; room.items = 1;}
-    if (localrand == 10){roommessage += " Everything around you seems smoother, or Curvier"; room.manmade = 1;}
-    if (localrand == 11){roommessage += " You have a moment of dizziness, a thought of doubt."; pla.sane -= 1;}
-    if (localrand == 12){roommessage += " You hear whispering. You turn quickly, but nothing is there."; pla.sane -= 3;}
-    if (localrand == 13){roommessage += " You feel a tap on your shoulder, and turn around to find that there is nothing there."; pla.sane -= 5;}
-    if (localrand == 14){roommessage += " No matter to the circumstances, you are tired. You take a moment to rest."; pla.sane += 5;}
-    if (localrand == 15){
+    var avent = rand(20);
+    if (avent == 1){roommessage += " Your feet are suddenly covered in water, with more rising from an unseen source."; room.water = 1}
+    if (avent == 2){roommessage += " Vines lazily wind their way towards you."; room.plant = 1}
+    if (avent == 3){roommessage += " You feel a gust of wind from the south."; room.south = 1}
+    if (avent == 4){roommessage += " The very air around you seems to emit a warm glow."; room.dark = 0; room.light = 1;}
+    if (avent == 5){roommessage += " The air muffles and dilutes not sound, but light."; room.dark = 1; room.light = 0;}
+    if (avent == 6){roommessage += " You can hear the clicking and whirring  of unseen machinery."; room.manmade = 1;}
+    if (avent == 7){roommessage += " A large crowd of flies is hovering in a corner, seemingly growling at you."; room.animal = 1;}
+    if (avent == 8){roommessage += " You become lost in a cloud of dark light."; room.dark = 1, room.light = 1;}
+    if (avent == 9){roommessage += " There seems to be a lot of gold here. You must resist the urge to loot it all."; room.items = 1;}
+    if (avent == 10){roommessage += " Everything around you seems smoother, or Curvier"; room.manmade = 1;}
+    if (avent == 11){roommessage += " You have a moment of dizziness, a thought of doubt."; pla.sane -= 1;}
+    if (avent == 12){roommessage += " You hear whispering. You turn quickly, but nothing is there."; pla.sane -= 3;}
+    if (avent == 13){roommessage += " You feel a tap on your shoulder, and turn around to find that there is nothing there."; pla.sane -= 5;}
+    if (avent == 14){roommessage += " No matter to the circumstances, you are tired. You take a moment to rest."; pla.sane += 5;}
+    if (avent == 15){
         roommessage += " You blink. Something seems off.";
         var item = room.north;
         room.north = room.east;
@@ -769,14 +769,14 @@ function genRoom() {
         room.south = room.west;
         room.west = item;
     }
-    if (localrand == 16){roommessage += " You feel a sence of refreshment, of redefining who you are."; pla.sane +=3}
+    if (avent == 16){roommessage += " You feel a sence of refreshment, of redefining who you are."; pla.sane +=3}
     pla.sane += room.sanity;
     pla.sane += (equippeditems[0].sane)/5;
     pla.sane += (equippeditems[1].sane)/5;
     for (i in pla.minions){
         pla.sane += (pla.minions[i].sane / 5);
     }
-    if(localrand == 17){
+    if(avent == 17){
         roommessage += " the door to the north seems locked, as if you need a key.";
         room.north = 0;
         lockedroomz = true;
@@ -811,8 +811,16 @@ function genRoom() {
             
         }
     }
+
     
     if (search){
+        if (room == specroom1 && equippeditems[0].name == "Stone Key"){
+            prepbattle(adventurer);
+            search = false;
+
+        } else{
+            room == room1;
+        }
           if (cresentstone.quant > 0 && rand(3) == 1){
                roommessage += prepbattle(unacceptable);
                cresentstone.quant = 0
