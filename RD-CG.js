@@ -1624,6 +1624,13 @@ function check(entity){
             pla.sane -= 1;
             pla.sane += entity.sane; 
             if (entity.boss == 1){
+                if (entity == creepiestbaldest){
+                    room = room1
+                    //bossrush end stuffs here
+                }
+
+
+
                 if (entity.name == "Zarol"){
                     
                     limbo(1, "At the moment of your victory, a swirling vortex of malevolence forms. You attempt in vain to escape it, but you are not yet strong enough. You find yourself in a familiar place...");
