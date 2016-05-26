@@ -249,7 +249,7 @@ room35 = new Room(1, 0, rand(2)-1, rand(2)-1, 1, 0, 1, 0, 0, 0, 1, 2, "You stumb
 room36 = new Room(1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 6, "You stand on a hill, on a path surrounded by flowers of many different colors. You decide to search for a specific flower, yet not knowing what it looks like.", "Turning ", ", you know your search has come to an end as you spot a fower adorned terrace.", "You stop and smell the flowers.");
 room37 = new Room(1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, -7, "yesssssssssssssss", "You exit through the ", ", stumbling over vines.", " \"I don't know...\" you mutter to yourself");
 
-specroom1 = new Room(0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, "You stand in what appears to be an arena. The ground at first appears to be sand, but upon closer inspection it turns out to be ground bones. The stands are filled with hoards to creepy bald guys, and a few cultists. You suddenly get a feeling you will not be leaving this arena alive.")
+specroom1 = new Room(0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, "You stand in what appears to be an arena. The ground at first appears to be sand, but upon closer inspection it turns out to be ground bones. The stands are filled with hoards to creepy bald guys, and a few cultists. There is a stone pedistal in the center that requires a key.... You suddenly get a feeling you will not be leaving this arena alive.", "You leave to the ", ", the creepy bald guys disapointed at your alive-ness.")
 //room = new Room(plant, manmade, water, dark, animal, light, items, north, east, south, west, sane, message, exitA, exitB, exitFail);
 
 bossroom = new Room(0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, -2, "You find yourself in a wide open room. The ceiling is high and dark. An ominous feeling of doom hangs over you.", "Exhausted, you leave through the ", " door.", "You somehow walk into a nonexistent wall.");
@@ -738,11 +738,7 @@ function genRoom() {
     if (search || turn == 1){
          room = ablerooms[rand(ablerooms.length)-1];
     }
-    if (lockedroom){
-         room = specroom1;
-         search = false;
-    }
-    
+
     roommessage += room.message;
     
     
@@ -777,9 +773,7 @@ function genRoom() {
         pla.sane += (pla.minions[i].sane / 5);
     }
     if(avent == 17){
-        roommessage += " the door to the north seems locked, as if you need a key.";
-        room.north = 0;
-        lockedroomz = true;
+        room = specroom1
 
     }
     
@@ -814,13 +808,15 @@ function genRoom() {
 
     
     if (search){
-        if (room == specroom1 && equippeditems[0].name == "Stone Key"){
-            prepbattle(adventurer);
+        if (room == specroom1){
+            if (equippeditems[0].name == "Stone Key"){
+                roommessage += "You insert your stone key into the pedstal..... You are overcome with dread."
+                prepbattle(adventurer);
+            }
+            
             search = false;
 
-        } else{
-            room == room1;
-        }
+        } 
           if (cresentstone.quant > 0 && rand(3) == 1){
                roommessage += prepbattle(unacceptable);
                cresentstone.quant = 0
@@ -959,11 +955,7 @@ function move(direction){
         if (room.exitA == "" || room.exitA == " ") {room.exitA = "You go ";}
         if (room.exitB == "" || room.exitB == " ") {room.exitB = ".";}
         if(direction === 1){
-            if (lockedroomz == true){
-                room.north = 1;
-                lockedroom == true;
-            }
-
+           
 
             if (room.north === 1){
                 success = true;
