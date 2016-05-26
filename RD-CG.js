@@ -464,9 +464,9 @@ function buildZarol(){
 }
 zarol = buildZarol();
 var adventurer = new Boss(190, 20, 0, "Adventurer", "adventurer", 190, 5, [5,100], [100,50,30], -7, herosword, heroshield, 10, "You hear the footsteps of someone else.", "It is an Adventurer, Readying his stance for Battle!", ["He seems oddly unaware of the massive amounts of damage you have dealt him. Much like you are.", "", "", "", "He seems more confident of himself, more sure of his strides.",""],bossroom,100);
-var coo33 = new Boss(125, 5, 10, "coo33", "coosome", 170, 75, [3, 16], [64, 64-5, 8], -2, fishingrod, pencil, 15, "You hear something behind you.", "\'Here,  Fishy..   Fishy...\'", ["It's bloodied eyes dart across you, searching for ways to finish you off quickly.", "It looks angry, but seems to have survived worse.", "It is smiling, although panting. It seems as though it's malnourishedness is taking effect.", "He seems unfazed, a low growl and a chuckle murmured from within.","It takes a deep breath, the type one might take after a good nights sleep.","It seems to be toying with you, darting through the room."],roomBoss2, 52);
-var coosome = new Boss(140, 25, 14, "Coosome", "coosome", 150, 2, [1, 7], [8, 7, 20], -1, fishingrod, pencil, -100, "You hear something behind you.", "\'Here,  Fishy..   Fishy...\'", ["It's bloodied eyes dart across you, searching for ways to finish you off quickly.", "It looks angry, but seems to have survived worse.", "It is smiling, although panting. It seems as though it's malnourishedness is taking effect.", "He seems unfazed, a low growl and a chuckle murmured from within.","It takes a deep breath, the type one might take after a good nights sleep.","It seems to be toying with you, darting through the room."],roomBoss2, 68);
-var colton = new Boss(120, 10, 10, "Colton", "coosome", 140, 8, [5, 16], [5, 2, 12], -1, drawingpad, pencil, -100, "You hear something behind you.", "\'Here,  Fishy..   Fishy...\'", ["It's bloodied eyes dart across you, searching for ways to finish you off quickly.", "It looks angry, but seems to have survived worse.", "It is smiling, although panting. It seems as though it's malnourishedness is taking effect.", "He seems unfazed, a low growl and a chuckle murmured from within.","It takes a deep breath, the type one might take after a good nights sleep.","It seems to be toying with you, darting through the room."],roomBoss2, 82);
+var coo33 = new Boss(125, 5, 10, "coo33", "coosome", 170, 75, [3, 16], [64, 64-5, 8], -2, fishingrod, pencil, 50, "You hear something behind you.", "\'Here,  Fishy..   Fishy...\'", ["It's bloodied eyes dart across you, searching for ways to finish you off quickly.", "It looks angry, but seems to have survived worse.", "It is smiling, although panting. It seems as though it's malnourishedness is taking effect.", "He seems unfazed, a low growl and a chuckle murmured from within.","It takes a deep breath, the type one might take after a good nights sleep.","It seems to be toying with you, darting through the room."],roomBoss2, 52);
+var coosome = new Boss(140, 25, 14, "Coosome", "coosome", 150, 2, [1, 7], [8, 7, 20], -1, fishingrod, pencil, 50, "You hear something behind you.", "\'Here,  Fishy..   Fishy...\'", ["It's bloodied eyes dart across you, searching for ways to finish you off quickly.", "It looks angry, but seems to have survived worse.", "It is smiling, although panting. It seems as though it's malnourishedness is taking effect.", "He seems unfazed, a low growl and a chuckle murmured from within.","It takes a deep breath, the type one might take after a good nights sleep.","It seems to be toying with you, darting through the room."],roomBoss2, 68);
+var colton = new Boss(120, 10, 10, "Colton", "coosome", 140, 8, [5, 16], [5, 2, 12], -1, drawingpad, pencil, 50, "You hear something behind you.", "\'Here,  Fishy..   Fishy...\'", ["It's bloodied eyes dart across you, searching for ways to finish you off quickly.", "It looks angry, but seems to have survived worse.", "It is smiling, although panting. It seems as though it's malnourishedness is taking effect.", "He seems unfazed, a low growl and a chuckle murmured from within.","It takes a deep breath, the type one might take after a good nights sleep.","It seems to be toying with you, darting through the room."],roomBoss2, 82);
 
 var jimgrind = new Boss(200, 35, 35, "Jim Grind", "jimgrind", 200, 2, [1, 44], [12, 11, 12], -2, jimsword, jimarmor, 25, "Someone is in the room with you. You turn just fast enough to see him. He knows he has been spotted.", "A stern look on his face; A deadly look in his eyes.", ["", "You can see small gaps in his defence now, chinks in his armor.", "His breathing is heavy, and his swings are slower, yet just as powerful.", "He stands with a confident air about him, holding his sword firmly.", "His armor is beginning to glow, even the largest chinks in his armor closing as the armor reshapes into its original form.", "He seems unaware of your blows, simply tanking all damage you may deal to him."], roomBoss4, 260);
 var strangecube = new Boss(250, 1, -5, "Strange Cube", "cube", 350, 2, [10,100], [100,99,75], -3, inactivecube, device, 30,"A strange cube is sitting on the ground in front or you.","Sudden arcs of electricity jump across its surface as it rises into the air.", ["Although grounded, it still musters up powerful shocks upon you.", "It appears to have physical damage, and is barely able to keep itself aloft.", "It is wavering now, seeming to have less energy within it, focusing on attacks.", "It floats evenly in front of you, electricity visibly through internal circuits.", "electricity is visible streaking across its surface, arcing to nearby surfaces.", "It's magnetic fields are powerful, you can feel them pulling on your magnetic accessories."],bossroom,75);
@@ -486,7 +486,7 @@ var lastinsanity = new Boss(1000, 15, 10, "Last Remnants of Insanity", "lastinsa
 var creepiestbaldest = new Boss(400, 40, 5, "The Knowing Eye", "creepiestbaldest", 500, 1, [5, 6], [5, 4, 20], -20, map, shinedisk, 52, "You see one blink. And with its eyes, another one is opening.", "You feel its knowing gaze, that it has nothing more to learn.", ["", "", "", "", "", ""], room34, 110);
 
 var thecoosome = coo33;
-var bosses = [adventurer, thecoosome, zarol, alpha, strangecube, jimgrind, xissor, otherXissor, epicalpha, epicjim, epiccoo, lastsanity, lastinsanity, unacceptable];
+var bosses = [adventurer, thecoosome, alpha, jimgrind, strangecube, epiccoo, epicalpha, epicjim, xissor, otherXissor, lastsanity, lastinsanity, unacceptable, creepiestbaldest, zarol];
 
 
 function Minion(hp, maxhp, atk, ddev, de, agil, heal, sane, lvl, name, pic, message, desc, interval, distract){
@@ -524,7 +524,7 @@ function Minion(hp, maxhp, atk, ddev, de, agil, heal, sane, lvl, name, pic, mess
 function toMinion(minion, newname, distract){
     return new Minion(minion.hp, minion.maxhp, minion.atk, minion.ddev, minion.def, minion.agil, [minion.healchance[0], minion.healchance[1], minion.heal], minion.sane, minion.turn, newname, minion.div, minion.message, minion.cry, minion.atkIntBase, distract);
 }
-var coompanion = toMinion(coosome, "Coompanion", 100);
+var coompanion = toMinion(coo33, "Coompanion", 100);
 var trapfall = new Minion(100, 100, 80, 10, 10, [5, 1], [1, 2, 0], -1, 7, "Ceiling trap", "trapfall", "traap heeere", "it's a tarp!", 1000, 0);
 var trapfire = new Minion(5, 5, 1, 0, 1, [5, 1], [1, 2, 0], -1, 7, "Fire Trap", "trapfire", "Fiiiirrrreeeee", "it's a tarp!", 14, 1);
 var trapdart = new Minion(1, 1, 10, 1, 0, [0,1], [1, 2, 0], -1, 7, "Dart Trap", "trapdart", "You stumble over a small box.", "it's a tarp!", 190, 2);
@@ -567,11 +567,11 @@ for (var i=0; i<5; i++){getMinion(epiccoo, trapdart)}
 mincreep2 = toMinion(creep2, "Creepy Bald Guy", 10);
 mincreep3 = toMinion(creep3, "Creepier Bald Guy", 15);
 mincreep4 = toMinion(creep4, "Creepiest Bald Guy", 20);
-for (var i=0; i<2; i++){getMinion(creepiestbaldest, creep4)}
-for (var i=0; i<4; i++){getMinion(creepiestbaldest, creep3)}
-for (var i=0; i<20; i++){getMinion(creepiestbaldest, creep2)}
+for (var i=0; i<2; i++){getMinion(creepiestbaldest, mincreep4)}
+for (var i=0; i<4; i++){getMinion(creepiestbaldest, mincreep3)}
+for (var i=0; i<20; i++){getMinion(creepiestbaldest, mincreep2)}
 
-minions = [coompanion, cube, shield, sheild, nyancat, balorb, strikorb, tankorb, superminion, miniminion, creep4, creep3, creep2, enteddy, fairy, chicken, trapfall, trapfire];
+minions = [coompanion, cube, shield, sheild, nyancat, balorb, strikorb, tankorb, superminion, miniminion, mincreep2, mincreep3, mincreep2, enteddy, fairy, chicken, trapfall, trapfire];
 
 var alltraps = [trapfall, trapfire, trapdart, trapsword, creepybaldguy];
 function getMinion(source, minion){
@@ -753,22 +753,22 @@ function genRoom() {
     roommessage += room.message;
     
     
-    localrand = rand(20);
-    if (localrand == 1){roommessage += " Your feet are suddenly covered in water, with more rising from an unseen source."; room.water = 1}
-    if (localrand == 2){roommessage += " Vines lazily wind their way towards you."; room.plant = 1}
-    if (localrand == 3){roommessage += " You feel a gust of wind from the south."; room.south = 1}
-    if (localrand == 4){roommessage += " The very air around you seems to emit a warm glow."; room.dark = 0; room.light = 1;}
-    if (localrand == 5){roommessage += " The air muffles and dilutes not sound, but light."; room.dark = 1; room.light = 0;}
-    if (localrand == 6){roommessage += " You can hear the clicking and whirring  of unseen machinery."; room.manmade = 1;}
-    if (localrand == 7){roommessage += " A large crowd of flies is hovering in a corner, seemingly growling at you."; room.animal = 1;}
-    if (localrand == 8){roommessage += " You become lost in a cloud of dark light."; room.dark = 1, room.light = 1;}
-    if (localrand == 9){roommessage += " There seems to be a lot of gold here. You must resist the urge to loot it all."; room.items = 1;}
-    if (localrand == 10){roommessage += " Everything around you seems smoother, or Curvier"; room.manmade = 1;}
-    if (localrand == 11){roommessage += " You have a moment of dizziness, a thought of doubt."; pla.sane -= 1;}
-    if (localrand == 12){roommessage += " You hear whispering. You turn quickly, but nothing is there."; pla.sane -= 3;}
-    if (localrand == 13){roommessage += " You feel a tap on your shoulder, and turn around to find that there is nothing there."; pla.sane -= 5;}
-    if (localrand == 14){roommessage += " No matter to the circumstances, you are tired. You take a moment to rest."; pla.sane += 5;}
-    if (localrand == 15){
+    var avent = rand(20);
+    if (avent == 1){roommessage += " Your feet are suddenly covered in water, with more rising from an unseen source."; room.water = 1}
+    if (avent == 2){roommessage += " Vines lazily wind their way towards you."; room.plant = 1}
+    if (avent == 3){roommessage += " You feel a gust of wind from the south."; room.south = 1}
+    if (avent == 4){roommessage += " The very air around you seems to emit a warm glow."; room.dark = 0; room.light = 1;}
+    if (avent == 5){roommessage += " The air muffles and dilutes not sound, but light."; room.dark = 1; room.light = 0;}
+    if (avent == 6){roommessage += " You can hear the clicking and whirring  of unseen machinery."; room.manmade = 1;}
+    if (avent == 7){roommessage += " A large crowd of flies is hovering in a corner, seemingly growling at you."; room.animal = 1;}
+    if (avent == 8){roommessage += " You become lost in a cloud of dark light."; room.dark = 1, room.light = 1;}
+    if (avent == 9){roommessage += " There seems to be a lot of gold here. You must resist the urge to loot it all."; room.items = 1;}
+    if (avent == 10){roommessage += " Everything around you seems smoother, or Curvier"; room.manmade = 1;}
+    if (avent == 11){roommessage += " You have a moment of dizziness, a thought of doubt."; pla.sane -= 1;}
+    if (avent == 12){roommessage += " You hear whispering. You turn quickly, but nothing is there."; pla.sane -= 3;}
+    if (avent == 13){roommessage += " You feel a tap on your shoulder, and turn around to find that there is nothing there."; pla.sane -= 5;}
+    if (avent == 14){roommessage += " No matter to the circumstances, you are tired. You take a moment to rest."; pla.sane += 5;}
+    if (avent == 15){
         roommessage += " You blink. Something seems off.";
         var item = room.north;
         room.north = room.east;
@@ -776,14 +776,14 @@ function genRoom() {
         room.south = room.west;
         room.west = item;
     }
-    if (localrand == 16){roommessage += " You feel a sence of refreshment, of redefining who you are."; pla.sane +=3}
+    if (avent == 16){roommessage += " You feel a sence of refreshment, of redefining who you are."; pla.sane +=3}
     pla.sane += room.sanity;
     pla.sane += (equippeditems[0].sane)/5;
     pla.sane += (equippeditems[1].sane)/5;
     for (i in pla.minions){
         pla.sane += (pla.minions[i].sane / 5);
     }
-    if(localrand == 17){
+    if(avent == 17){
         roommessage += " the door to the north seems locked, as if you need a key.";
         room.north = 0;
         lockedroomz = true;
@@ -818,8 +818,16 @@ function genRoom() {
             
         }
     }
+
     
     if (search){
+        if (room == specroom1 && equippeditems[0].name == "Stone Key"){
+            prepbattle(adventurer);
+            search = false;
+
+        } else{
+            room == room1;
+        }
           if (cresentstone.quant > 0 && rand(3) == 1){
                roommessage += prepbattle(unacceptable);
                cresentstone.quant = 0
