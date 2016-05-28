@@ -1048,7 +1048,7 @@ function screenchange(number) {
         screen6.style.height = "239px";
         screen6.style.padding = "10px";
     }
-    console.log("changed to screen "+number);
+    prints("changed to screen "+number);
 }
 
 function RDinit() {
