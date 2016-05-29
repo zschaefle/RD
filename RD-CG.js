@@ -384,6 +384,7 @@ var antmound = new item(5,3, -2, -4, 6, "Ant Mound", "antmound", "It's strangely
 var planck = new item(0, 2, 11, 2, 5, "Plan ck", "planck", "like plan c, but more, and smaller. Like 1.616199x10<sup>-35</sup> meters small.");
 var nail = new item(6, 0, 1, -1, 4, "Nail", "nail", "It's rusted. Or is it?");
 var chisel = new item(6, 3, 0, 3, 5, "Chisel", "chisel", "You can use it to carve a statue if you get bored.")
+var oddplug = new item(5, 0, 3, 3, 4, "Odd Plug", "oddplug", "Something about it seems off.....")
 //lvl 3 items ----
 var ichor = new item(7, 7, -4, -8, 5, "Ichor", "ichor", "Blood of the gods. How did you even get this?");
 var purity = new item(4, 13, 3, 7, 5, "Purity", "purity", "You don't know how you obtained a concept, but you feel good about it.")
@@ -420,6 +421,8 @@ var xissors = new item(22, 4, 15, -1, 10, "Xissors", "xissors", "It's actually o
 var otherxissors = new item(22, 4, 15, -1, 10, "Other Xissors", "otherxissors", "It's actually only half of a scissor.   Good for cutting clothing");
 var compxissors = new item(45, 10, 24, -6, 20, "Complete Xissors", "compxissors", "It's finaly complete.");
 
+var bossrushtrophy = new item(0,0,0,0, 100, "Sword Trophy", "bossrushtrophy", "Good job. You pat yourself on the back.")
+
 var cressence = new item(25, 30, 20, 10, 5, "Cressence", "cressence","It's brimming with power. You have the cressence.");
 
 var core = new item(5, 75, 20, 0, 7, "The Core", "core", "Glowing with unworldly power, it provides an inpenitrable field.")
@@ -429,8 +432,8 @@ var trueinsanity = new item(35, -3, -10, -3, 5, "True Insanity", "trueinsanity",
 var truesanity = new item(15, 15, 30, 7, 5, "True Sanity", "truesanity", "You feel at peace. You have achieved true sanity.");
 
 
-var bossitems = [core, rod, truesanity,trueinsanity,heroshield, herosword, fishingrod, pencil, spoon, alphaxe, sivgoggles, shurikenbag, jimsword, jimarmor, inactivecube, card, device, lapis, hatandboots, godrobe, xissors, otherxissors, compxissors, cresentstone, cressence, heatrock, thehatchet, drawingpad];
-var allitems = [lapis, rod, core, trueinsanity, truesanity, inactivecube, spoon, shurikenbag, hatandboots, device, card, jimsword, jimarmor, alphaxe, sivgoggles, pencil, fishingrod, drawingpad, heroshield, herosword, xissors, otherxissors, compxissors, godrobe, cressence, cresentstone,  circularsaw, rotflesh, no_thing, sissors ,bloodpill, onepin, woodstick, acorncap, boardgame, brokenglasses, bobbypin, crowbar, recording, crate, fakesword, hoodie, journal, keyboard, lamp, nerfgun, organs, reflectivevest, sharktooth, steeltoedboots, styrofoamchestplate, wandofwater, wings, redbook, brokenseashell, redball, fakebeard, planc, ashjar, lifethread, septagram, shinedisk, tornclaw, bikeweel, cookie, heavenchip, catears, antmound, planck, err, ichor, purity, darkcrystal, heatrock, potato, otatop, squiglasses, map, buttton, cable, rock, fourclover, sevenclover, safetypin, stonekey, nail, chisel, thehatchet];
+var bossitems = [core, rod, truesanity,trueinsanity,heroshield, herosword, fishingrod, pencil, spoon, alphaxe, sivgoggles, shurikenbag, jimsword, jimarmor, inactivecube, card, device, lapis, hatandboots, godrobe, xissors, otherxissors, compxissors, cresentstone, cressence, heatrock, thehatchet, drawingpad, bossrushtrophy, oddplug];
+var allitems = [lapis, rod, core, trueinsanity, truesanity, inactivecube, spoon, shurikenbag, hatandboots, device, card, jimsword, jimarmor, alphaxe, sivgoggles, pencil, fishingrod, drawingpad, heroshield, herosword, xissors, otherxissors, compxissors, godrobe, cressence, cresentstone,  circularsaw, rotflesh, no_thing, sissors ,bloodpill, onepin, woodstick, acorncap, boardgame, brokenglasses, bobbypin, crowbar, recording, crate, fakesword, hoodie, journal, keyboard, lamp, nerfgun, organs, reflectivevest, sharktooth, steeltoedboots, styrofoamchestplate, wandofwater, wings, redbook, brokenseashell, redball, fakebeard, planc, ashjar, lifethread, septagram, shinedisk, tornclaw, bikeweel, cookie, heavenchip, catears, antmound, planck, err, ichor, purity, darkcrystal, heatrock, potato, otatop, squiglasses, map, buttton, cable, rock, fourclover, sevenclover, safetypin, stonekey, nail, chisel, oddplug, thehatchet, bossrushtrophy];
 
 
 
@@ -757,7 +760,6 @@ function genRoom() {
     
     var avent = rand(30);
 	
-	var avent = 17;
 	
     if (avent == 1){roommessage += " Your feet are suddenly covered in water, with more rising from an unseen source."; room.water = 1}
     if (avent == 2){roommessage += " Vines lazily wind their way towards you."; room.plant = 1}
@@ -1267,7 +1269,7 @@ function RDloot() {
 	
 	
 	if (room == specroom2){
-		if (equippeditems[0].Name == "Electrical device"){
+		if (equippeditems[0].Name == "Odd Plug"){
 			printb("You insert the device into the console.....");
 			prepbattle(thecore);
 		} else {
@@ -1671,7 +1673,9 @@ function check(entity){
             pla.sane += entity.sane; 
             if (entity.boss == 1){
                 if (entity == creepiestbaldest){
-                    room = room1
+                    roomgen()
+					getitem(bossrushtrophy)
+					Unlock(oddplug)
                     //bossrush end stuffs here
                 }
 
