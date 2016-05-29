@@ -250,12 +250,14 @@ room36 = new Room(1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 6, "You stand on a hill, on a
 room37 = new Room(1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, -7, "yesssssssssssssss", "You exit through the ", ", stumbling over vines.", " \"I don't know...\" you mutter to yourself");
 
 specroom1 = new Room(0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, "You stand in what appears to be an arena. The ground at first appears to be sand, but upon closer inspection it turns out to be ground bones. The stands are filled with hoards to creepy bald guys, and a few cultists. There is a stone pedistal in the center that requires a key.... You suddenly get a feeling you will not be leaving this arena alive.", "You leave to the ", ", the creepy bald guys disapointed at your alive-ness.")
+specroom2 = new Room(0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 5, "You approch a darkened futuristic room. The walls have a strange blue ambient light cast upon them by a large central sphere. The sphere seems to be a producing some form of power, however it is barely running. Strange rods hang at the shere's sides.", "Glad the explotions are over, you exit to the ", ".", "UNexpected ERR");
 //room = new Room(plant, manmade, water, dark, animal, light, items, north, east, south, west, sane, message, exitA, exitB, exitFail);
 
 bossroom = new Room(0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, -2, "You find yourself in a wide open room. The ceiling is high and dark. An ominous feeling of doom hangs over you.", "Exhausted, you leave through the ", " door.", "You somehow walk into a nonexistent wall.");
 roomBoss2 = new Room(0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 1, -2, "You are in a small stone cavern, many twisting passageways leading through a winding cave system. You feel a drop of water plop on your head.", "You climb out through a ", "ern cave.", "You climb through a tunnel, only to find yourself in a room similar to the one you came from.");
 roomBoss3 = new Room(1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 2, "Suddenly you are in a forest. A crossroads leading in all directions, yet you feel leaving will not be that easy. Searching for why you feel that way, you notice a few houses around you, well made, and decide to lean on one to rest for a moment. Part of it chips off. You glance around hurriedly, hoping no one saw what you did. The house probably wasn't as sturdy as you expected.", "Free to leave now, you choose to go to the ", ", hoping it will lead to better fortunes and maybe even happiness.", "You somehow can't leave even with exits everywhere. You blame Zakiah.");
 roomBoss4 = new Room(0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 3, "You find yourself in a room, walls covered in mechanical and mystical constructs alike. Trees are visible through the sparsely placed windows.", "You find a button hidden on the ", "ern wall, pressing it against your better judgement.", "You become distracted by the intricacies of this room.");
+
 
 var rooms = [room1, room2, room3, room4, room5, room6, room7, room8, room9, room10, room11, room12, room13, room14, room15, room16, room17, room18, room19, room20, room21, room22, room23, room24, room25, room26, room27, room28, room29, room30, room31, room32, room33, room34, room35, room36, room37];
 
@@ -420,12 +422,15 @@ var compxissors = new item(45, 10, 24, -6, 20, "Complete Xissors", "compxissors"
 
 var cressence = new item(25, 30, 20, 10, 5, "Cressence", "cressence","It's brimming with power. You have the cressence.");
 
+var core = new item(5, 75, 20, 0, 7, "The Core", "core", "Glowing with unworldly power, it provides an inpenitrable field.")
+var rod = new item(100, 5, 20, 0, 10, "The Nuclear Rod", "rod", "Causes spontainous nuclear fission, meaning: KABOOM!");
+
 var trueinsanity = new item(35, -3, -10, -3, 5, "True Insanity", "trueinsanity", "You feel at peace. You have achived true insanity.");
 var truesanity = new item(15, 15, 30, 7, 5, "True Sanity", "truesanity", "You feel at peace. You have achieved true sanity.");
 
 
-var bossitems = [truesanity,trueinsanity,heroshield, herosword, fishingrod, pencil, spoon, alphaxe, sivgoggles, shurikenbag, jimsword, jimarmor, inactivecube, card, device, lapis, hatandboots, godrobe, xissors, otherxissors, compxissors, cresentstone, cressence, heatrock, thehatchet, drawingpad];
-var allitems = [lapis, trueinsanity, truesanity, inactivecube, spoon, shurikenbag, hatandboots, device, card, jimsword, jimarmor, alphaxe, sivgoggles, pencil, fishingrod, drawingpad, heroshield, herosword, xissors, otherxissors, compxissors, godrobe, cressence, cresentstone,  circularsaw, rotflesh, no_thing, sissors ,bloodpill, onepin, woodstick, acorncap, boardgame, brokenglasses, bobbypin, crowbar, recording, crate, fakesword, hoodie, journal, keyboard, lamp, nerfgun, organs, reflectivevest, sharktooth, steeltoedboots, styrofoamchestplate, wandofwater, wings, redbook, brokenseashell, redball, fakebeard, planc, ashjar, lifethread, septagram, shinedisk, tornclaw, bikeweel, cookie, heavenchip, catears, antmound, planck, err, ichor, purity, darkcrystal, heatrock, potato, otatop, squiglasses, map, buttton, cable, rock, fourclover, sevenclover, safetypin, stonekey, nail, chisel, thehatchet];
+var bossitems = [core, rod, truesanity,trueinsanity,heroshield, herosword, fishingrod, pencil, spoon, alphaxe, sivgoggles, shurikenbag, jimsword, jimarmor, inactivecube, card, device, lapis, hatandboots, godrobe, xissors, otherxissors, compxissors, cresentstone, cressence, heatrock, thehatchet, drawingpad];
+var allitems = [lapis, rod, core, trueinsanity, truesanity, inactivecube, spoon, shurikenbag, hatandboots, device, card, jimsword, jimarmor, alphaxe, sivgoggles, pencil, fishingrod, drawingpad, heroshield, herosword, xissors, otherxissors, compxissors, godrobe, cressence, cresentstone,  circularsaw, rotflesh, no_thing, sissors ,bloodpill, onepin, woodstick, acorncap, boardgame, brokenglasses, bobbypin, crowbar, recording, crate, fakesword, hoodie, journal, keyboard, lamp, nerfgun, organs, reflectivevest, sharktooth, steeltoedboots, styrofoamchestplate, wandofwater, wings, redbook, brokenseashell, redball, fakebeard, planc, ashjar, lifethread, septagram, shinedisk, tornclaw, bikeweel, cookie, heavenchip, catears, antmound, planck, err, ichor, purity, darkcrystal, heatrock, potato, otatop, squiglasses, map, buttton, cable, rock, fourclover, sevenclover, safetypin, stonekey, nail, chisel, thehatchet];
 
 
 
@@ -440,7 +445,7 @@ function Boss(hp, atk, de, name, divname, maxhp, ddev, agil, heal, sane, loot, l
         this.maxhp = parseInt(maxhp);
         this.agil = agil;
         this.message = message.toString();
-        this.cry = cry.toString();
+        this.cry = cry;
         this.lvl = turn;
         this.heal = heal[2];
         this.rundown = rundown;
@@ -476,6 +481,7 @@ var alpha = new Boss(350, 34, 0, "Alpha", "alpha", 500, 6, [2,3], [5,4,10], -3, 
 var xissor = new Boss(200, 9, 20, "Xissor", "xissor", 200, 20, [1,10], [100,99,25], -2, xissors, godrobe, -100, "Somebody smashes through the ceiling....", "She turns around quickly, then charges at you while screaming!",["","","","","",""], bossroom, 75);
 var otherXissor = new Boss(400, 25, 35, "The Other Xissor", "otherxissor", 400, 40, [1,5], [100,90,25], -10, otherxissors, godrobe, -100, "Sombody else is here.", "She turns around slowly, then quickly draws her blade on you.",["","","","","",""], bossroom, 75);
 var unacceptable = new Boss(600, 10, 10, "Cressence", "unacceptable", 1000, 10, [1, 5], [100, 40, 150], 10, cressence, cressence, -100, "The cresent stone begins to glow...", "Startled by something, you drop the stone. A swriling vortex of energy begins to appear.", ["It begins to get smaller, trying despreately to disapear back to where it came from.","The color in it is weakening, it's losing it's magnificent shape.","It seems energitic, bursting with power.","It begins to spin both counter-clockwise and clockwise at the same time.","It glowes brightly, the power of its essence stronger."], bossroom, 200);
+var thecore = new Boss(500, 100, 50, "The Core", "thecore", 1000, 25, [0, 1], [100,60, 100], 0, core, rod, -100, "CAUTION CAUTION CAUTION CAUTION", "The core begins to speed up. The rods target you. You prepare for some explotions.", ["The core itself may soon impload.",":CAUTION::CAUTION::CAUTION::CAUTION:","The core seems unphased.",":CAUTION: :CAUTION: :CAUTION: :CAUTION:","The room is filled with explotions","You know you're doomed"],bossroom, 150);
 
 var epicalpha = new Boss(450, 50, 10, "Alpha 949", "alpha", 450, 12, [5, 6], [10, 8, 20], -6, sivgoggles, shurikenbag, -100, "You find yourself in a familiar looking room. Looking around, you realize you have some unfinished business. You hear sudden quick footsteps from behind you.", "you turn to see a familiar figure dashing towards you, Swinging a large axe!", ["", "", "", "", "", ""], roomBoss3, 90);
 var epicjim = new Boss(320, 45, 150, "Jim Grind", "jimgrind", 360, 2, [0, 1], [8, 7, 35], -2, jimarmor, hatandboots, -100, "You find yourself in a familiar looking room. Looking around, you realize you have some unfinished business. Someone is in the room with you. You turn to face him. You both know who won last time. ", "A stern look on his face; A deadly look in his eyes.", ["", "You can see small gaps in his defence now, chinks in his armor.", "His breathing is heavy, and his swings are slower, yet just as powerful.", "He stands with a confident air about him, holding his sword firmly.", "His armor is beginning to glow, even the largest chinks in his armor closing as the armor reshapes into its original form.", "He seems unaware of your blows, simply tanking all damage you may deal to him."], roomBoss4, 190);
@@ -486,7 +492,7 @@ var lastinsanity = new Boss(1000, 15, 10, "Last Remnants of Insanity", "lastinsa
 var creepiestbaldest = new Boss(400, 40, 5, "The Knowing Eye", "creepiestbaldest", 500, 1, [5, 6], [5, 4, 20], -20, map, shinedisk, 52, "You see one blink. And with its eyes, another one is opening.", "You feel its knowing gaze, that it has nothing more to learn.", ["", "", "", "", "", ""], room34, 110);
 
 var thecoosome = coo33;
-var bosses = [adventurer, thecoosome, alpha, jimgrind, strangecube, epiccoo, epicalpha, epicjim, xissor, otherXissor, lastsanity, lastinsanity, unacceptable, creepiestbaldest, zarol];
+var bosses = [adventurer, thecoosome, alpha, jimgrind, strangecube, epiccoo, epicalpha, epicjim, xissor, otherXissor, lastsanity, lastinsanity, unacceptable, creepiestbaldest, zarol, thecore];
 
 
 function Minion(hp, maxhp, atk, ddev, de, agil, heal, sane, lvl, name, pic, message, desc, interval, distract){
@@ -749,7 +755,10 @@ function genRoom() {
     roommessage += room.message;
     
     
-    var avent = rand(20);
+    var avent = rand(30);
+	
+	var avent = 17;
+	
     if (avent == 1){roommessage += " Your feet are suddenly covered in water, with more rising from an unseen source."; room.water = 1}
     if (avent == 2){roommessage += " Vines lazily wind their way towards you."; room.plant = 1}
     if (avent == 3){roommessage += " You feel a gust of wind from the south."; room.south = 1}
@@ -781,8 +790,20 @@ function genRoom() {
     }
     if(avent == 17){
         room = specroom1
+		roommessage = room.message
+		search = false
+		room.items = 0
+    }
+	
+	 if(avent == 18){
+		
+        room = specroom2
+		roommessage = room.message
+		search = false
+		room.items = 0
 
     }
+    
     
     //Determining lootable
     if (rand(2) == 1 && room.items == 1){
@@ -1228,6 +1249,9 @@ function prints(stuff) {
 
 //Looting and getting items
 function RDloot() {
+
+	
+	
     if (lootable) {
         gentables();
         var itemget = lootitems[rand(lootitems.length)-1]
@@ -1240,6 +1264,28 @@ function RDloot() {
         getitem(itemget);
         lootable = false;
     } else {printb("there is nothing to loot here.")}
+	
+	
+	if (room == specroom2){
+		if (equippeditems[0].Name == "Electrical device"){
+			printb("You insert the device into the console.....");
+			prepbattle(thecore);
+		} else {
+			printb("It looks as though the console requires a device of some sort.")
+		}
+	}
+	
+	
+	if (room == specroom1){
+		if (equippeditems[0].Name == "Stone Key"){
+			printb("You insert and turn the key. Gates open all over to reaveal familar faces...");
+			prepbattle(adventurer);
+		} else {
+			printb("It looks as though the pedistal requires a key of some sort.")
+		}
+	} else {
+		console.log("Caution")
+	}
 }
 function getitem(item){
     item.quant += 1;
