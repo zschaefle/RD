@@ -250,7 +250,7 @@ room36 = new Room(1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 6, "You stand on a hill, on a
 room37 = new Room(1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, -7, "yesssssssssssssss", "You exit through the ", ", stumbling over vines.", " \"I don't know...\" you mutter to yourself");
 
 specroom1 = new Room(0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, "You stand in what appears to be an arena. The ground at first appears to be sand, but upon closer inspection it turns out to be ground bones. The stands are filled with hoards to creepy bald guys, and a few cultists. There is a stone pedistal in the center that requires a key.... You suddenly get a feeling you will not be leaving this arena alive.", "You leave to the ", ", the creepy bald guys disapointed at your alive-ness.")
-specroom2 = new Room(0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 5, "You approch a darkened futuristic room. The walls have a strange blue ambient light cast upon them by a large central sphere. The sphere seems to be a producing some form of power, however it is barely running. Strange rods hang at the shere's sides.", "Glad the explotions are over, you exit to the ", ".", "UNexpected ERR");
+specroom2 = new Room(0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 5, "You approch a darkened futuristic room. The walls have a strange blue ambient light cast upon them by a large central sphere. The sphere seems to be a producing some form of power, however it is barely running. Strange rods hang at the sphere's sides.", "Glad the explotions are over, you exit to the ", ".", "UNexpected ERR");
 //room = new Room(plant, manmade, water, dark, animal, light, items, north, east, south, west, sane, message, exitA, exitB, exitFail);
 
 bossroom = new Room(0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, -2, "You find yourself in a wide open room. The ceiling is high and dark. An ominous feeling of doom hangs over you.", "Exhausted, you leave through the ", " door.", "You somehow walk into a nonexistent wall.");
@@ -369,6 +369,8 @@ var rock = new item(3, 2, 0, 2, 2, "Rock", "rock", "A small rock. It's tasty. Ma
 var fourclover = new item(0, 1, 7, 15, 4, "Clover", "fourclover", "A four leaf clover. How lucky!");
 var sevenclover = new item(0, 1, 15, 20, 4, "Clover", "sevenclover", "A seven leaf clover. Quite lucky?");
 var stonekey = new item(1, 1, 3, 5, 5, "Stone Key", "stonekey", "A stone key. It looks like it fits into a door somewhere.")
+var happyshirt = new item(0, 2, 3, 10, 3, "Happy Shirt", "happyshirt", "It makes you smile when clouds are gray.")
+
 //lvl 2 items ----
 var heavenchip = new item(4, 4, 4, 4, 4, "Heaven Chip", "heavenchip", "Tastes like heaven");
 var planc = new item(8, 1, 4, -8, 7, "Plan C", "planc", "It's your backup plan.");
@@ -383,8 +385,10 @@ var tornclaw = new item(8, 4, 7, -12, 5, "Torn Claw", "tornclaw", "A claw that m
 var antmound = new item(5,3, -2, -4, 6, "Ant Mound", "antmound", "It's strangely slush like.");
 var planck = new item(0, 2, 11, 2, 5, "Plan ck", "planck", "like plan c, but more, and smaller. Like 1.616199x10<sup>-35</sup> meters small.");
 var nail = new item(6, 0, 1, -1, 4, "Nail", "nail", "It's rusted. Or is it?");
-var chisel = new item(6, 3, 0, 3, 5, "Chisel", "chisel", "You can use it to carve a statue if you get bored.")
-var oddplug = new item(5, 0, 3, 3, 4, "Odd Plug", "oddplug", "Something about it seems off.....")
+var chisel = new item(6, 3, 0, 3, 5, "Chisel", "chisel", "You can use it to carve a statue if you get bored.");
+var oddplug = new item(5, 0, 3, 3, 4, "Odd Plug", "oddplug", "Something about it seems off.....");
+var tech = new item(6, 0, 4, 4, 4, "Tech", "tech", "It seems to be reacting to something nearby...")
+
 //lvl 3 items ----
 var ichor = new item(7, 7, -4, -8, 5, "Ichor", "ichor", "Blood of the gods. How did you even get this?");
 var purity = new item(4, 13, 3, 7, 5, "Purity", "purity", "You don't know how you obtained a concept, but you feel good about it.")
@@ -433,7 +437,7 @@ var truesanity = new item(15, 15, 30, 7, 5, "True Sanity", "truesanity", "You fe
 
 
 var bossitems = [core, rod, truesanity,trueinsanity,heroshield, herosword, fishingrod, pencil, spoon, alphaxe, sivgoggles, shurikenbag, jimsword, jimarmor, inactivecube, card, device, lapis, hatandboots, godrobe, xissors, otherxissors, compxissors, cresentstone, cressence, heatrock, thehatchet, drawingpad, bossrushtrophy, oddplug];
-var allitems = [lapis, rod, core, trueinsanity, truesanity, inactivecube, spoon, shurikenbag, hatandboots, device, card, jimsword, jimarmor, alphaxe, sivgoggles, pencil, fishingrod, drawingpad, heroshield, herosword, xissors, otherxissors, compxissors, godrobe, cressence, cresentstone,  circularsaw, rotflesh, no_thing, sissors ,bloodpill, onepin, woodstick, acorncap, boardgame, brokenglasses, bobbypin, crowbar, recording, crate, fakesword, hoodie, journal, keyboard, lamp, nerfgun, organs, reflectivevest, sharktooth, steeltoedboots, styrofoamchestplate, wandofwater, wings, redbook, brokenseashell, redball, fakebeard, planc, ashjar, lifethread, septagram, shinedisk, tornclaw, bikeweel, cookie, heavenchip, catears, antmound, planck, err, ichor, purity, darkcrystal, heatrock, potato, otatop, squiglasses, map, buttton, cable, rock, fourclover, sevenclover, safetypin, stonekey, nail, chisel, oddplug, thehatchet, bossrushtrophy];
+var allitems = [lapis, rod, core, trueinsanity, truesanity, inactivecube, spoon, shurikenbag, hatandboots, device, card, jimsword, jimarmor, alphaxe, sivgoggles, pencil, fishingrod, drawingpad, heroshield, herosword, xissors, otherxissors, compxissors, godrobe, cressence, cresentstone,  circularsaw, rotflesh, no_thing, sissors ,bloodpill, onepin, woodstick, acorncap, boardgame, brokenglasses, bobbypin, crowbar, recording, crate, fakesword, hoodie, journal, keyboard, lamp, nerfgun, organs, reflectivevest, sharktooth, steeltoedboots, styrofoamchestplate, wandofwater, wings, redbook, brokenseashell, redball, fakebeard, planc, ashjar, lifethread, septagram, shinedisk, tornclaw, bikeweel, cookie, heavenchip, catears, antmound, planck, err, ichor, purity, darkcrystal, heatrock, potato, otatop, squiglasses, map, buttton, cable, rock, fourclover, sevenclover, safetypin, stonekey, nail, chisel, oddplug, happyshirt, tech, thehatchet, bossrushtrophy];
 
 
 
@@ -760,6 +764,7 @@ function genRoom() {
     
     var avent = rand(30);
 	
+
 	
     if (avent == 1){roommessage += " Your feet are suddenly covered in water, with more rising from an unseen source."; room.water = 1}
     if (avent == 2){roommessage += " Vines lazily wind their way towards you."; room.plant = 1}
@@ -1675,7 +1680,7 @@ function check(entity){
                 if (entity == creepiestbaldest){
                     roomgen()
 					getitem(bossrushtrophy)
-					Unlock(oddplug)
+					
                     //bossrush end stuffs here
                 }
 
@@ -1842,7 +1847,9 @@ function limbob(type, message){
         case 1:
             if (enm.hp <= 0){
                 runs += 1;
-
+                if (runs == 1){
+                    Unlock(oddplug);
+                }
 
                 if (runs == 2){
                     Unlock(cresentstone);
