@@ -765,6 +765,8 @@ function genRoom() {
          room = ablerooms[rand(ablerooms.length)-1];
     }
 
+ 
+
     roommessage += room.message;
     
     
@@ -845,6 +847,11 @@ function genRoom() {
             roommessage += prepbattle(localrand);
             
         }
+    }
+
+    if (room == room38){
+        roommessage += prepbattle(terracotta);
+        search = false;
     }
 
     
@@ -1749,6 +1756,17 @@ function check(entity){
                     round = 0
                 }
                 prepbattle(bosses[round])
+            }
+            if (room == room38 && enm.hp <= 0){
+                round += 1
+                if (round < 31){
+                    prepbattle(terracotta)
+                } else{
+                    roomgen()
+                    round = 0;
+                    //terracotta end here.
+                }
+                
             }
         }
         if (entity.name == pla.name){
