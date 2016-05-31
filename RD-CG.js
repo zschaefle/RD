@@ -392,6 +392,7 @@ var oddplug = new item(5, 0, 3, 3, 4, "Odd Plug", "oddplug", "Something about it
 var tech = new item(6, 0, 4, 4, 4, "Tech", "tech", "It seems to be reacting to something nearby...")
 var infamy = new item(2, 15, 3, 6, 7, "Infamy", "infamy", "You're not famous anymore.")
 //lvl 3 items ----
+var shieldbadge = new item(-10, 20, -5, 1, 13, "Badge of Shielding", "shieldbadge", "A pin, showing your triumph over the art of defence.");
 var ichor = new item(7, 7, -4, -8, 5, "Ichor", "ichor", "Blood of the gods. How did you even get this?");
 var purity = new item(4, 13, 3, 7, 5, "Purity", "purity", "You don't know how you obtained a concept, but you feel good about it.")
 var err = new item(0, 0, 0, 0, 4, "Error", "err", "It was quite unexpected.");
@@ -438,9 +439,9 @@ var trueinsanity = new item(35, -3, -10, -3, 5, "True Insanity", "trueinsanity",
 var truesanity = new item(15, 15, 30, 7, 5, "True Sanity", "truesanity", "You feel at peace. You have achieved true sanity.");
 
 
-var bossitems = [core, rod, truesanity,trueinsanity,heroshield, herosword, fishingrod, pencil, spoon, alphaxe, sivgoggles, shurikenbag, jimsword, jimarmor, inactivecube, card, device, lapis, hatandboots, godrobe, xissors, otherxissors, compxissors, cresentstone, cressence, heatrock, thehatchet, drawingpad, bossrushtrophy, oddplug];
+var bossitems = [core, rod, truesanity,trueinsanity,heroshield, herosword, fishingrod, pencil, spoon, alphaxe, sivgoggles, shurikenbag, jimsword, jimarmor, inactivecube, card, device, lapis, hatandboots, godrobe, xissors, otherxissors, compxissors, cresentstone, cressence, heatrock, thehatchet, drawingpad, bossrushtrophy, oddplug, shieldbadge];
 
-var allitems = [lapis, rod, core, trueinsanity, truesanity, inactivecube, spoon, shurikenbag, hatandboots, device, card, jimsword, jimarmor, alphaxe, sivgoggles, pencil, fishingrod, drawingpad, heroshield, herosword, xissors, otherxissors, compxissors, godrobe, cressence, cresentstone,  circularsaw, rotflesh, no_thing, sissors ,bloodpill, onepin, woodstick, acorncap, boardgame, brokenglasses, bobbypin, crowbar, recording, crate, fakesword, hoodie, journal, keyboard, lamp, nerfgun, organs, reflectivevest, sharktooth, steeltoedboots, styrofoamchestplate, wandofwater, wings, redbook, brokenseashell, redball, fakebeard, planc, ashjar, lifethread, septagram, shinedisk, tornclaw, bikeweel, cookie, heavenchip, catears, antmound, planck, err, ichor, purity, darkcrystal, heatrock, potato, otatop, squiglasses, map, buttton, cable, croptop, rock, fourclover, sevenclover, safetypin, stonekey, nail, chisel, oddplug, happyshirt, tech, infamy, thehatchet, bossrushtrophy];
+var allitems = [lapis, rod, core, trueinsanity, truesanity, inactivecube, spoon, shurikenbag, hatandboots, device, card, jimsword, jimarmor, alphaxe, sivgoggles, pencil, fishingrod, drawingpad, heroshield, herosword, xissors, otherxissors, compxissors, godrobe, cressence, cresentstone,  circularsaw, rotflesh, no_thing, sissors ,bloodpill, onepin, woodstick, acorncap, boardgame, brokenglasses, bobbypin, crowbar, recording, crate, fakesword, hoodie, journal, keyboard, lamp, nerfgun, organs, reflectivevest, sharktooth, steeltoedboots, styrofoamchestplate, wandofwater, wings, redbook, brokenseashell, redball, fakebeard, planc, ashjar, lifethread, septagram, shinedisk, tornclaw, bikeweel, cookie, heavenchip, catears, antmound, planck, err, ichor, purity, darkcrystal, heatrock, potato, otatop, squiglasses, map, buttton, cable, croptop, rock, fourclover, sevenclover, safetypin, stonekey, nail, chisel, oddplug, happyshirt, tech, infamy, thehatchet, bossrushtrophy, shieldbadge];
 
 
 
@@ -697,7 +698,7 @@ function Unlock(item){
     if (item.findable == 1){
         item.findable = 0;
         roommessage += unlockmessages[rand(unlockmessages.length-1)];
-        prints("unlocked " + item.name);
+        prints("unlocked " + item.Name);
     }
 }
 
@@ -1276,7 +1277,7 @@ function RDloot() {
         gentables();
         var itemget = lootitems[rand(lootitems.length)-1]
         if (itemget == rock){
-            Unlock(heatrock)
+            Unlock(heatrock);
         }
         
         
@@ -1745,6 +1746,9 @@ function check(entity){
                     pla.healval = 2;
                     pla.ddev = 5;
                     pla.baseagil = [1, 18];
+                }
+                if (entity == epicjim) {
+                    Unlock(shieldbadge);
                 }
             }
             screenchange(1);
