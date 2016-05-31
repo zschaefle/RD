@@ -697,7 +697,8 @@ function Unlock(item){
     if (item.findable == 1){
         item.findable = 0;
         roommessage += unlockmessages[rand(unlockmessages.length-1)];
-        prints("unlocked " + item.name);
+        printa(roommessage);
+        prints("unlocked " + item.Name);
     }
 }
 
@@ -765,7 +766,7 @@ function genRoom() {
          room = ablerooms[rand(ablerooms.length)-1];
     }
 
- 
+
 
     roommessage += room.message;
     
