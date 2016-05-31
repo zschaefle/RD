@@ -1828,7 +1828,7 @@ var limbostuff = [0, ""];
 
 function limbo(type, message){
     var thing = document.getElementById("grave2");
-    suffix = [["You where brutaly evicerated by ", "."], ["You where slain by ", ". It mocks your death"],["You where killed by ",". The gods did not favor you today."], ["Your futile exsistance was ended by ", "."],["You where kneecaped by ", ". The cats will miss you."], ["You are dead. ","mocks your death and thinks 'hey, that was easy'."], ["Sometimes, the gods say no. ", " was favored by the gods."], ["Your entrails where removed by ", "."], ["Your face was torn off by ", "."], ["You didn't click fast enough. ", " was faster"], ["You have lost. ", " aplauds your failure."]];
+    suffix = [["You where brutaly evicerated by ", "."], ["You were slain by ", ". It mocks your death"],["You where killed by ",". The gods did not favor you today."], ["Your futile exsistance was ended by ", "."],["You where kneecaped by ", ". The cats will miss you."], ["You are dead. ","mocks your death and thinks 'hey, that was easy'."], ["Sometimes, the gods say no. ", " was favored by the gods."], ["Your entrails where removed by ", "."], ["Your face was torn off by ", "."], ["You didn't click fast enough. ", " was faster"], ["You have lost. ", " aplauds your failure."]];
     prefix = suffix[rand(suffix.length-1)];
     thing.innerHTML = prefix[0] + enm.name + prefix[1];
     gravetime = 500;
