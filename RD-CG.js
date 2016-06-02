@@ -188,6 +188,9 @@ function player(){
     this.minions = [];
     this.id = 0;
     this.minionTree = [];
+    this.atkmod = 1;
+    this.defmod = 1;
+    this.agilmod = 1;
 }
 var pla = new player();
 function Room(plant, manmade, water, dark, animal, light, items, north, east, south, west, sane, message, exitA, exitB, exitFail){
@@ -289,6 +292,9 @@ function Enemy(atk, de, name, pic, maxhp, ddev, agil, sane, message, cry, lvl, r
         this.sane = sane;
         this.minions = [];
         this.minionTree = [];
+        this.atkmod = 1;
+        this.defmod = 1;
+        this.agilmod = 1;
 }
 var nullenm = new Enemy(0, 0, "", "", 0, 0, [1,100], 0, "", "", 0, ["<20%", "<50%", "<85%", "<=100%", "<200%", ">=200%"], [2, 3, 4], 1000);
 var creepybaldguy = new Enemy(5, 10, "Creepy Bald Guy", "creep", 18, 2, [1,100], -1, "You know you are being watched. Always... ", "you feel it staring through your eyes, Into your Soul.", 1, ["Even though it seems nearly dead, it continues its steady gaze deep into your eyes.", "it seems to have lost some hair in this fight. You blink, realizing it was already bald.", "it seems to be observing, only attacking to see how you react.", "it is sitting there, staring at you. Waiting and observing your every move."], [2,3,4], 200);
@@ -475,6 +481,9 @@ function Boss(hp, atk, de, name, divname, maxhp, ddev, agil, heal, sane, loot, l
         this.minions = [];
         this.room = room;
         this.minionTree = [];
+        this.atkmod = 1;
+        this.defmod = 1;
+        this.agilmod = 1;
 }
 
 function buildZarol(){
@@ -539,6 +548,9 @@ function Minion(hp, maxhp, atk, ddev, de, agil, heal, sane, lvl, name, pic, mess
         if (distract <= 70){this.descdist = "quite"}
         if (distract <= 40){this.descdist = "a bit"}
         if (distract <= 15){this.descdist = "not"}
+        this.atkmod = 1;
+        this.defmod = 1;
+        this.agilmod = 1;
 }
 //takes enemy or boss, new name and divname, and distract chance, returns minion
 function toMinion(minion, newname, distract){
@@ -1637,7 +1649,7 @@ function Damage(source, target){
         message = target.name + " dodged "+ source.name +"'s attack";
     } else {
         var deviation = rand(source.ddev * 2)- source.ddev;
-        var dmg = (source.atk+deviation)-(target.def);
+        var dmg = ((source.atk * source.atkmod)+deviation)-(target.def * target.defmod);
         if (dmg <= 0){
             dmg = 1;
         }
