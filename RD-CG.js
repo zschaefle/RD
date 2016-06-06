@@ -872,16 +872,16 @@ function genRoom() {
     if (search){
         if (room == specroom1){
             if (equippeditems[0].name == "Stone Key"){
-                roommessage += "You insert your stone key into the pedstal..... You are overcome with dread."
+                roommessage += "You insert your stone key into the pedstal..... You are overcome with dread.";
                 prepbattle(adventurer);
             }
             
             search = false;
 
         } 
-          if (cresentstone.quant > 0 && rand(3) == 1){
+        if (cresentstone.quant > 0 && rand(3) == 1){
                roommessage += prepbattle(unacceptable);
-               cresentstone.quant = 0
+               cresentstone.quant = 0;
             
             }
         if (equippeditems[0].Name == "Sissors" && equippeditems[1].Name == "Life Thread" && noKillXissor){
@@ -906,30 +906,31 @@ function genRoom() {
         
         if (noKillEpic && turn == 35){
             if (pla.atk >= pla.def && pla.atk >= pla.agil[0]){
-                roommessage = ""
+                roommessage = "";
                 roommessage += prepbattle(epicalpha);
             } else if (pla.def >= pla.atk && pla.def >= pla.agil[0]){
-                roommessage = ""
+                roommessage = "";
                 roommessage += prepbattle(epiccoo);
             } else if (pla.agil[0] >= pla.atk && pla.agil[0] >= pla.def){
-                roommessage = ""
+                roommessage = "";
                 roommessage += prepbattle(epicjim);
             } else{
                 if (pla.sane <= 0){
-                    finalsanity = -1
+                    finalsanity = -1;
                     
                 }
                 if (pla.sane > 0){
-                    finalsanity = 1
+                    finalsanity = 1;
                 }
             }
         }
         
         if (pla.lvl >= 5 && search){
             var enemyspawn = rand(5);
-			if (enemyspawn == 3){
-				roommessage += prepbattle(creep4);
-			}
+            if (enemyspawn == 3){
+                roommessage += prepbattle(creep4);
+            }
+            search = false;
         }
         
         if (pla.lvl >= 4 && search){
@@ -944,7 +945,8 @@ function genRoom() {
             if (enemyspawn == 3){
                 roommessage += prepbattle(creep3);
             }
-        
+
+            search = false;
         }
 
 
@@ -965,6 +967,7 @@ function genRoom() {
             if (enemyspawn == 3 && room.animal == 1 && room.light == 1){
                 roommessage += prepbattle(nerveball);
             }
+            search = false;
         }
         if (pla.lvl >= 2 && search){
             var enemyspawn = rand(5); 
@@ -980,11 +983,12 @@ function genRoom() {
             }
             if (enemyspawn == 4 && room.items == 0){
                 roommessage += prepbattle(mimic);
-                lootable = true
+                lootable = true;
             }
             if (enemyspawn == 5){
                 roommessage += prepbattle(creep2);
             }
+            search = false;
             //----
             
         }
@@ -1003,6 +1007,7 @@ function genRoom() {
             if (enemyspawn == 4){
                 roommessage += prepbattle(muffin);
             }
+            search = false;
         }
     }
     printa(roommessage);
