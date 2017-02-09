@@ -3,159 +3,11 @@ HYPER VERSION
 http://steampoweredairship.com/unexpected-error/rd/
 https://drive.google.com/open?id=1HYPd5PBuNX24mbP4z_BhIiDxqP5lRM1dOc4g5BSVc8I
 https://drive.google.com/open?id=1S_5sqfRwNeyYip_296_XltTGRayP3fW6amOfEyVC5hM
-___CHANGELOG___
----2.6+ -- continuous update
-    5/23 + added safety pin
-    5/24 + added multiple coosomes, buffed epic coo
-         + added sword trap and dart trap
-         + added debuginfo variable
 
-
----2.5- the expansive update
-    +enemies can now spawn with traps
-    +added unlocks capability
-    +added creepyer bald guys
-    +added some semicolons
-    +added rooms 32, 33, 34, and roomBoss3
-    +added trap minions fire and fall
-    +added minions sheild and shield
-    +buffed epic alpha
-    +nerfed epic jim
-    +fixed zarol
-
---2.4-that one confusing update where we had two different strains for a couple weeks and then decided to put them back together in a weird way--
-    +combined the two versions
-    +added ascention counting variable "runs"
-    +added levelup descriptions
-    +"balanced" zarol
-    +buffed the coosome
-    +added minion descriptions
-    *fixed cube thing
-
---2.3-fattening update--
-    +does not actually fatten you
-    +added agility canceling
-            newagil = [((source.agil[0]*target.agil[1])-((target.agil[0]*source.agil[1])/2)), (source.agil[1]*target.agil[1])];
-    +incrased base agil
-    +added room 31
-    +added 3 new items
-    +added 1 minion
-    +changing sanity is more viable
-        +items affect sanity each room (item.sane/5)
-        +healing repairs sanity (+.2)
-        -killing enemies reduces sanity (-1)
-    *fixed minions being too common
-    *fixed adventurer recreation (didnt have div stat)
-    *nerfed the coosome
-
---------------The late game update-----------------
-    + zarol gets buffed based on player lvl
-    +buffed base agility
-    +limbo less penalizing
-    *buffed the coosome
-
-------------2.1 ----------------
-    + bug fixes
-    + balanced epics
-    + minions now obtainable
-    + added potato and otatop
-    + added rooms 29 - 30
-    
---0.1.9+1--the Beefy update--
-    -didn't add beef
-    +started to name updates
-    +added minion related functions: killMinion, getMinionTree
-    +added rooms 25-28
-    + mimics now drop items
-    +adjusted monolith time to fit the new sanity spawns
-    *prettied up minion displaying
-    *fixed spelling
-    Balances
-        *nerfed the coosome, again
-        *buffed axeurlegs
-
---0.1.9-- the bug fix update-
-    -Monoliths now unequip items
-        -Code used unequip function with square brackets instead of parenthesis
-    -All items equipable
-        -Items had differing divnames and variable names
-    -fixed ablerooms
-        -used sqrt still, converted to cbrt
-
---0.1.8-the Bug Filled update-
-    -Bugs  ------DO NOT ADD MORE ANYTHING TO ANYTHING UNTIL ALL BUGS ARE FIXED
-        -Monoliths don't unequip items
-        -Double loot from bosses (Latency of one room?)
-        -some items not equipable
-        -only gives maximum insanity room from sanity ~-30 and beyond
-        -the thing with the minion healing?
-    +minions
-
---0.1.7--
-    -Separated fighting aspects (attacking, healing) in preparation for Companions
-    -Standardised all fighting classes to the following attribute names: (name hp maxhp atk def ddev agil sane)
-    -much balancing
-    -fixed fighting final sanities repetitively
-
---------0.1.6---
-
-    +Sanity
-    -modified item tables
-    -items now sorted by lvl
-    +monoliths
-    +more item graphics
-    -Items that need graphics:
-        *white chestplate
-        *all of the orbs
-        *Chicken
-        *redball
-        *True sanity
-        *true insanity
-        *Enchanted armor
-        *alpha axe
-        *alpha glasses
-        *pencil
-        *fishing rod
-        *hat and boots
-        *broken seashell
-        
--another colton update-2.0-sanity update--
-    +added limbo
-    +fixed some spelling probably
-    +manipulated things into references
-    +might be some other stuff idk
-    Bug- dying in room after boss causes fighting dead boss, get loot again
-
---------0.1.4---
-    + added agil modifiers
-    + added a few new items
-    + added secret boss
-    + buffed all the enemies
-    + nerfed the coosome
-    + some new enemies
-
---------0.1.3---
-    - balanced bosses
-    + added some new items
-
----the colton update--
-    +fixed stuff
-    +fixed things
-    +probably fixed some spelling
-    +changed up the inventory order
-    -bugs maybe? I dunno
-
---------0.1.1---
-    - Fixed item damage not being added to base stats
-    
---------0.1.0--- 
-    - Fixed grammar problems with new rooms
-    - Fixed enemies not spawning
-    - Added changelog
 
 */
 //creates random number between 1 and num.
-var debuginfo = true
+var debuginfo = false;
 
 function rand(num){
     return (Math.ceil(Math.random() * num));
@@ -191,6 +43,7 @@ function player(){
     this.atkmod = 1;
     this.defmod = 1;
     this.agilmod = 1;
+	this.defending = false;
 }
 var pla = new player();
 function Room(plant, manmade, water, dark, animal, light, items, north, east, south, west, sane, message, exitA, exitB, exitFail){
@@ -272,7 +125,7 @@ var rooms = [room1, room2, room3, room4, room5, room6, room7, room8, room9, room
 //var enem = new Enemy(atk, def, name, pic, maxhp, ddev, [n, d], sane, message, cry, lvl, [<20%, <50%, <85%, <=100%, <200%, >200%], [endheal, switchheal, heal], interval);
 function Enemy(atk, de, name, pic, maxhp, ddev, agil, sane, message, cry, lvl, rundown, heal, interval){
     
-        this.hp = 0;
+        this.hp = maxhp;
         this.atk = parseInt(atk);
         this.def = parseInt(de);
         this.name = name.toString();
@@ -295,6 +148,7 @@ function Enemy(atk, de, name, pic, maxhp, ddev, agil, sane, message, cry, lvl, r
         this.atkmod = 1;
         this.defmod = 1;
         this.agilmod = 1;
+		this.defending = false;
 }
 var nullenm = new Enemy(0, 0, "", "", 0, 0, [1,100], 0, "", "", 0, ["<20%", "<50%", "<85%", "<=100%", "<200%", ">=200%"], [2, 3, 4], 1000);
 var creepybaldguy = new Enemy(5, 10, "Creepy Bald Guy", "creep", 18, 2, [1,100], -1, "You know you are being watched. Always... ", "you feel it staring through your eyes, Into your Soul.", 1, ["Even though it seems nearly dead, it continues its steady gaze deep into your eyes.", "it seems to have lost some hair in this fight. You blink, realizing it was already bald.", "it seems to be observing, only attacking to see how you react.", "it is sitting there, staring at you. Waiting and observing your every move."], [2,3,4], 200);
@@ -435,9 +289,7 @@ var otherxissors = new item(22, 4, 15, -1, 10, "Other Xissors", "otherxissors", 
 var compxissors = new item(45, 10, 24, -6, 20, "Complete Xissors", "compxissors", "It's finaly complete.");
 
 var bossrushtrophy = new item(0,0,0,0, 100, "Sword Trophy", "bossrushtrophy", "Good job. You pat yourself on the back.")
-
 var cressence = new item(25, 30, 20, 10, 5, "Cressence", "cressence","It's brimming with power. You have the cressence.");
-
 var core = new item(5, 75, 20, 0, 7, "The Core", "core", "Glowing with unworldly power, it provides an inpenitrable field.")
 var rod = new item(100, 5, 20, 0, 10, "The Nuclear Rod", "rod", "Causes spontainous nuclear fission, meaning: KABOOM!");
 
@@ -448,10 +300,6 @@ var truesanity = new item(15, 15, 30, 7, 5, "True Sanity", "truesanity", "You fe
 var bossitems = [core, rod, truesanity,trueinsanity,heroshield, herosword, fishingrod, pencil, spoon, alphaxe, sivgoggles, shurikenbag, jimsword, jimarmor, inactivecube, card, device, lapis, hatandboots, godrobe, xissors, otherxissors, compxissors, cresentstone, cressence, heatrock, thehatchet, drawingpad, bossrushtrophy, oddplug, shieldbadge];
 
 var allitems = [lapis, rod, core, trueinsanity, truesanity, inactivecube, spoon, shurikenbag, hatandboots, device, card, jimsword, jimarmor, alphaxe, sivgoggles, pencil, fishingrod, drawingpad, heroshield, herosword, xissors, otherxissors, compxissors, godrobe, cressence, cresentstone,  circularsaw, rotflesh, no_thing, sissors ,bloodpill, onepin, woodstick, acorncap, boardgame, brokenglasses, bobbypin, crowbar, recording, crate, fakesword, hoodie, journal, keyboard, lamp, nerfgun, organs, reflectivevest, sharktooth, steeltoedboots, styrofoamchestplate, wandofwater, wings, redbook, brokenseashell, redball, fakebeard, planc, ashjar, lifethread, septagram, shinedisk, tornclaw, bikeweel, cookie, heavenchip, catears, antmound, planck, err, ichor, purity, darkcrystal, heatrock, potato, otatop, squiglasses, map, buttton, cable, croptop, rock, fourclover, sevenclover, safetypin, stonekey, nail, chisel, oddplug, happyshirt, tech, infamy, thehatchet, bossrushtrophy, shieldbadge];
-
-
-
-
 
 
 function Boss(hp, atk, de, name, divname, maxhp, ddev, agil, heal, sane, loot, loot2, turn, message, cry, rundown, room, interval){
@@ -484,6 +332,7 @@ function Boss(hp, atk, de, name, divname, maxhp, ddev, agil, heal, sane, loot, l
         this.atkmod = 1;
         this.defmod = 1;
         this.agilmod = 1;
+		this.defending = false;
 }
 
 function buildZarol(){
@@ -551,6 +400,7 @@ function Minion(hp, maxhp, atk, ddev, de, agil, heal, sane, lvl, name, pic, mess
         this.atkmod = 1;
         this.defmod = 1;
         this.agilmod = 1;
+		this.defending = false;
 }
 //takes enemy or boss, new name and divname, and distract chance, returns minion
 function toMinion(minion, newname, distract){
@@ -590,7 +440,7 @@ getMinion(colton, sheild);
 for (var i=0; i<2; i++){getMinion(colton, trapsword)}
 for (var i=0; i<3; i++){getMinion(colton, trapdart)}
 
-getMinion(epiccoo, shield); getMinion(epiccoo, shield);
+getMinion(epiccoo, shield);
 getMinion(epiccoo, trapfire);
 getMinion(epiccoo, trapfall);
 for (var i=0; i<2; i++){getMinion(epiccoo, trapsword)}
@@ -710,7 +560,6 @@ function Unlock(item){
     if (item.findable == 1){
         item.findable = 0;
         roommessage += unlockmessages[rand(unlockmessages.length-1)];
-
         prints("unlocked " + item.Name);
     }
 }
@@ -721,7 +570,7 @@ var room;
 var lootable = false;
 var chestmessages = ["There is a small chest about the size of your fist lurking in the corner. ", "A golden chest sits with elegant details and pure beauty.", "There\'s a lumpy sack over there", "You hear the wheeze of a chest.  \"Open me\" it calls, with the music of its collapsing wood.", "In a rotting monster carcass, you glimpse something... interesting.", "There\'s a lump in the ground. Like a squirrel buried a tasty rock and then ran off and died.", "Something calls your attention. It sucks you in. You imagine riches.", "You smell something.  It smells like goods.", "You glimpse a confection of wood and nails, almost big enough to hold something.", "There is a small door that seems to have something sticking out, perhaps something useful."];
 var runmessages = ["Run", "Dodge", "Sprint", "Jump", "Duck", "Roll", "Slide", "Feint", "Fake", "Switch", "Distract", "Twist", "Lurch", "Insult", "Shout"];
-var unlockmessages=["You hear the sound of something unlocking from far away.", "You feel the dongeon blink, and you have a moment of deja vu.", "A feeling of release washes over you, the feeling of access.", "You feel something click, almost like a realization."];
+var unlockmessages = ["You hear the sound of something unlocking from far away.", "You feel the dongeon blink, and you have a moment of deja vu.", "A feeling of release washes over you, the feeling of access.", "You feel something click, almost like a realization."];
 var score = 0;
 var isBossRoom = false;
 var healable = true;
@@ -786,8 +635,6 @@ function genRoom() {
     
     var avent = rand(30);
 	
-
-	
     if (avent == 1){roommessage += " Your feet are suddenly covered in water, with more rising from an unseen source."; room.water = 1}
     if (avent == 2){roommessage += " Vines lazily wind their way towards you."; room.plant = 1}
     if (avent == 3){roommessage += " You feel a gust of wind from the south."; room.south = 1}
@@ -811,26 +658,23 @@ function genRoom() {
         room.west = item;
     }
     if (avent == 16){roommessage += " You feel a sence of refreshment, of redefining who you are."; pla.sane +=3}
+    if (avent == 17){
+        room = specroom1;
+		roommessage = room.message;
+		search = false;
+		room.items = 0;
+    }
+	if (avent == 18){
+        room = specroom2;
+		roommessage = room.message;
+		search = false;
+		room.items = 0;
+    }
     pla.sane += room.sanity;
     pla.sane += (equippeditems[0].sane)/5;
     pla.sane += (equippeditems[1].sane)/5;
     for (i in pla.minions){
         pla.sane += (pla.minions[i].sane / 5);
-    }
-    if(avent == 17){
-        room = specroom1
-		roommessage = room.message
-		search = false
-		room.items = 0
-    }
-	
-	 if(avent == 18){
-		
-        room = specroom2
-		roommessage = room.message
-		search = false
-		room.items = 0
-
     }
     
     
@@ -859,7 +703,6 @@ function genRoom() {
         var localrand = bosses[i];
         if (localrand.turn == turn){
             roommessage += prepbattle(localrand);
-            
         }
     }
 
@@ -949,9 +792,6 @@ function genRoom() {
             search = false;
         }
 
-
-
-        
         if (pla.lvl >= 3 && search){
             var enemyspawn = rand(5); 
 
@@ -993,7 +833,7 @@ function genRoom() {
             
         }
         if (pla.lvl >= 1 && search){
-            var enemyspawn = rand(5);
+            var enemyspawn = rand(6);
 
             if (enemyspawn == 1 && room.water == 1 && room.animal == 1){
                 roommessage += prepbattle(anenemy);
@@ -1002,10 +842,10 @@ function genRoom() {
                 roommessage += prepbattle(axeurlegs);
             }
             if (enemyspawn == 3){
-                roommessage += prepbattle(creepybaldguy);
-            }
-            if (enemyspawn == 4){
                 roommessage += prepbattle(muffin);
+            }
+            if (enemyspawn >= 5){
+                roommessage += prepbattle(creepybaldguy);
             }
             search = false;
         }
@@ -1322,8 +1162,6 @@ function RDloot() {
 		} else {
 			printb("It looks as though the pedistal requires a key of some sort.")
 		}
-	} else {
-		console.log("Caution")
 	}
 }
 function getitem(item){
@@ -1427,6 +1265,7 @@ function prepbattle(enemy){
     search = false
     enm = enemy;
     console.log(enm.name);
+	pla.defending = false
     var localrand = rand(100);
     if (localrand == 1){
         enm.minions.push(alltraps[rand(alltraps.length-1)]);
@@ -1606,6 +1445,8 @@ function plaFight(watdo){
     switch (watdo){
         //attacking
         case 1:
+			pla.defending = false
+			prints("player is no longer defending")
             if (pla.hp > 0){
                 if (enm.name == "Adventurer" || enm.name == "Yourself"){
                     plaTotal += 1;
@@ -1621,7 +1462,19 @@ function plaFight(watdo){
                 plaTotal += 1;
             }
             break;
+		//defending
+		case 3:
+			if (pla.hp > 0){
+				pla.defending = true;
+			}
+			prints("player is Defending")
+			break;
     }
+	if (pla.defending == true) {
+		if (pla.def < 0){
+			pla.defmod = .5;
+		} else {pla.defmod = 2;}
+	} else {pla.defmod = 1;}
 }
 
 
@@ -1655,9 +1508,12 @@ function Damage(source, target){
     } else {
         var deviation = rand(source.ddev * 2)- source.ddev;
         var dmg = ((source.atk * source.atkmod)+deviation)-(target.def * target.defmod);
-        if (dmg <= 0){
-            dmg = 1;
-        }
+		if (target.defending){
+			dmg = Math.floor(dmg/1.5);
+			if (dmg < 0) {dmg = 0;}
+		} else {
+			if (dmg <= 0){dmg = 1;}
+		}
         message = source.name+" deals <strong>"+dmg+"</strong> damage to "+ target.name;
         target.hp = target.hp-dmg;
     }
@@ -1845,7 +1701,7 @@ var limbostuff = [0, ""];
 
 function limbo(type, message){
     var thing = document.getElementById("grave2");
-    suffix = [["You where brutaly evicerated by ", "."], ["You were slain by ", ". It mocks your death"],["You where killed by ",". The gods did not favor you today."], ["Your futile exsistance was ended by ", "."],["You where kneecaped by ", ". The cats will miss you."], ["You are dead. ","mocks your death and thinks 'hey, that was easy'."], ["Sometimes, the gods say no. ", " was favored by the gods."], ["Your entrails where removed by ", "."], ["Your face was torn off by ", "."], ["You didn't click fast enough. ", " was faster"], ["You have lost. ", " aplauds your failure."]];
+    suffix = [["You where brutaly evicerated by ", "."], ["You were slain by ", ". It mocks your death"],["You where killed by ",". The gods did not favor you today."], ["Your futile exsistance was ended by ", "."],["You where kneecaped by ", ". The cats will miss you."], ["You are dead. "," mocks your death and thinks 'hey, that was easy'."], ["Sometimes, you are favored by the gods. ", " was favored this time."], ["Your entrails where removed by ", "."], ["Your face was torn off by ", "."], ["You were fast, but ", " was faster"], ["You have lost. ", " aplauds your failure."]];
     prefix = suffix[rand(suffix.length-1)];
     thing.innerHTML = prefix[0] + enm.name + prefix[1];
     gravetime = 500;
