@@ -269,10 +269,10 @@ class Enemy(object):
 		self.agilmod = 1
 		self.defending = False
 		self.equipped = equip
-bosses = []
+
 creepybaldguy = Enemy(5, 10, "Creepy Bald Guy", "creep", 18, 2, [1,100], -1, "You know you are being watched. Always... ", "you feel it staring through your eyes, Into your Soul.", 1, ["Even though it seems nearly dead, it continues its steady gaze deep into your eyes.", "it seems to have lost some hair in this fight. You blink, realizing it was already bald.", "it seems to be observing, only attacking to see how you react.", "it is sitting there, staring at you. Waiting and observing your every move."], [2,3,4], 200)
 
-
+bosses = []
 class Boss(object):
 	def __init__(self, hp, atk, de, name, img, maxhp, ddev, agil, heal, sane, loot, loot2, turn, message, cry, rundown, room, interval, equip = [nothing]):
 		self.hp = hp
@@ -396,9 +396,9 @@ def genRoom():
 	global roommessage
 	global turn
 	global search
+	global finalsanity
 	
 	prints("Generating room.")
-	global finalsanity
 	gentables()
 	turn += 1
 	healable = True
@@ -704,6 +704,7 @@ def attack(source, atk, target):
 			for i in target.equipped: #loop through equipped items
 				for x in i.dfnChunks: #loop through each item's defence chunks
 					tanked = 0
+					if ((("truedefence" in x.ench) or atk.pierce < 2) and not (atk.pierce == 1 and x.piercable == True)) and ((target.defending and not x.all) or x.all) and i.durability > 0: #if you actually count the defence
 						print "Armored! defence:"
 						#Damage reduction
 						if x.dfn == True: #all damage goes to armor
