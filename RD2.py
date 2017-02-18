@@ -12,7 +12,7 @@ GREY = (100,100,100)
 pygame.init()
 font = pygame.font.SysFont('Calibri', 15, True, False)
 size = (995, 259)
-screen = pygame.display.set_mode(size)
+#screen = pygame.display.set_mode(size)
 clock = pygame.time.Clock()
 debug = True
 
@@ -32,15 +32,181 @@ def prints(stuff):
 		
 def rand(num):
 	return random.randint(1, num)
-#
+
+#Rooms for the dongeon
+rooms = []
+class Room():
+	def __init__(self, plant, manmade, water, dark, animal, light, items, north, east, south, west, sane, message, exitA, exitB, exitFail, normal = True):
+		self.plant = plant
+		self.manmade = manmade
+		self.water = water
+		self.dark = dark
+		self.animal = animal
+		self.light = light
+		self.items = items
+		self.north = north
+		self.east = east
+		self.south = south
+		self.west = west
+		self.message = message
+		self.exitA = exitA
+		self.exitB = exitB
+		self.exitFail = exitFail
+		self.sanity = sane
+		if normal:
+			global rooms
+			rooms.append(self)
+
+room1 = Room(0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, -4 ,"Your eyes burn as you look into the lit black.  Green lines stretch to a vanishing point, showing you a door, a wall and a cliff.  Your eyesight blurs, reduced to craggy blocks.", "Your legs jitter as you walk on thin green lines, forming an exit to what you believe to be ", ".", "You feel like taking any extra steps in may be fatal.")
+room2 = Room(1, 0, 0, 1, 1, 1, 1, rand(2)-1, 1, 2, rand(2)-1, 1, "This room is overrun by nature. There are twisted, moist vines covering the walls and most likely any exits.", "You carefully make your way to the ", ", occasionally tripping.", "You trip on your way over to the wall, only finding no exit.")
+room3 = Room(0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, "You\'re in a linoleum cube, bare and featureless.   A circular opening appears behind you, and an open pit is just ahead.   A featureless voice speaks to you through static speakers.   You can\'t understand a single word.", "As you walk toward the ", ", the circular door smoothly opens in the wall ahead of you.", "The voice seems to be insulting you as you stumble about, slightly confused.")
+room4 = Room(1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 3, "You find yourself in a lonely forest.  The snow on the ground mists in the sun, slowly turning into slush.  You take a moment to mourn the death of winter. Global warming man.  That\'s what it does.", "There's a small door in one of the trees to the ", ". You pull it open and and fall through.", "")
+room5 = Room(0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, -2, "You stand on clouds, up to your ankles in condensation.  You see birds flying nearby.  You could swear that you see a large animal lurching its way towards you on lopsided legs.", " ", " ", " ")
+room6 = Room(0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, -1, "You are in a room, a large centrepiece of machinery whirring to life, bursts of energy coming from within. There are voices yelling urgently at you from a viewport in the wall above.", "You manage to dodge the now falling rubble and make it through the ", "ern sliding doors.", "A zap of lightning from the core of the room leaps through the viewport, and you hear a scream of pain.")
+room7 = Room(0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 1, "The walls cave inwards, rough rock with red striped sedimentary motif. The floor is loose packed sand, soft against your feet.  You look ahead, where the walls become lower and the ground gets rough.  You\'ll need to crawl.", "You crawl to the ", " exit, scraping your elbow.", "You realize that this is not an Indiana Jones movie, and that this wall will not open with enough force.")
+room8 = Room(0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 4, "You see a single shelf, packed full of books, reaching upwards like a ladder into the darkness. ", "You grip the ", "ern shelves, pulling yourself up past musty tomes.", "You become distracted by the books, taking a moment to flip through one.")
+room9 = Room(0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, -1, "There are huge wooden beams stretching across an empty cavern.  Coals smoulder in campfires across the expanse, lighting the room with grey dusk.  Rotting homes half-formed out of clay fill the room with a musty stench.", "You walk past small encampments and crusty artefacts to a hole in the ", "ern wall.", "You glance into one of the rooms. You spot a skeleton and an old vase. No exits here.")
+room10 = Room(0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, -1, "The sun shines in your eyes.  You feel water underneath you.  Shielding your eyes from the glare, you see the boat you\'re standing on, a small and splintery craft.  The way it bobs under your weight alarms you.  A curl of rope under your feet obscures the bottom of the boat.", "you take hold of the paddles, paddling the boat to the ", ".", "Paddle as you may, the swirling currents quickly rush  you back into place.")
+room11 = Room(0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 2, "You are on a cold, stormy beach. Litter is strewn across the sand, and a man with a prosthetic arm is purposefully cleaning it up, glancing around as if expecting someone, or some<i>thing</i>.", "As you meander your way to the ", ", the man shouts at you angrily, something about litter.", "You wade about in the ocean, unsure as to whether you are looking for something, or mourning.")
+room12 = Room(0, 1, 0, 0, 1, 1, 1, rand(2)-1, rand(2)-1, 0, 1, rand(2), "You are in a room, full of red books with no titles, no markings at all. They fill the room, but you can hear a sort of carnal snore from somewhere in the room. You decide that would be best to keep away from whatever is producing the noise.", "You manage to sneak your way through to the ", ", cringing at the occasional shifting book.", "You wander throughout the room, surprisingly small for the quantity of books it holds.")
+room13 = Room(rand(2)-1, rand(2)-1, rand(2)-1, rand(2)-1, rand(2)-1, rand(2)-1, rand(2)-1, 1, 1, 1, 1, -7, "You find yourself in a room filled with bright darkness. Things seem to appear and disappear as if they were both there, and not there. You feel very dull all of a sudden, as if you have realized the futility of life.", "You walk slowly to what you think is a door, tripping over invisible things along the way to the ", ".", "You feel it would be best to leave as soon as possible.")
+room14 = Room(1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, -3, "You find yourself in what at first appears to be a dog park, but upon closer inspection of the large black walls surrounding the area as well as the absence of any dogs and the presence of many hooded figures, you realize that this is not a dog park. Not a dog park at all.","After searching the "," side of the dog park, you don't find an exit, yet.....","The hooded figures are staring, and coming closer.....")
+room15 = Room(0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, -1, "You stand before the barrier,your quest finally over, you are filled with DETERMINATION. That is until you realize that this was not the end off your quest and you must continue. Go on.","You walk through the "," side of the barrier","You bump into the barrier, and you realize that it lives up to it's name")
+room16 = Room(0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, -3, "You find yourself in a room full of mirrors. Seeing yourself repeated thousands of times causes you to realize the monster you have become. How many creatures have you killed since you came here? You realize that you are a murderer.","You step into the "," mirror.","You bump into yourself.")
+room17 = Room(1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 1, 5, "You are momentarily blinded, when the light fades you look around. You seem to be in a tranquil cavern. There is a pond in the center, where lights dance peacefully on it's surface. You sit to rest for a time.", "You get up, though you wish to stay, but a hole to the ", " beckons you. You wave goodbye to the lights, they dance a farewell.", "A cavern wall seems to be where you are thinking of going, so you stay where you are..")
+room18 = Room(1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 3, "You find yourself standing in a river, with a waterfall nearby. You take some time to rest in the lush greenery that surrounds you. You feel at peace.","You explore the forest to the ", ".","You walk straight into the waterfall.")
+room19 = Room(rand(2)-1, rand(2)-1, rand(2)-1, rand(2)-1, rand(2)-1, rand(2)-1, rand(2)-1, rand(2)-1, 1, rand(2)-1, rand(2)-1, -10, "you Are forced to ponDer your doings, finding that you aRe in fact <i>perfectly</i> sane. buT that is what they all say\;", "northnorthwesteastsouth", "westeastnorthsouth", "eastnorthwestsouthsoutheastsouthnorthupwest")
+room20 = Room(0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, -2,"You find yourself in the very confined space that is the interior of an elevator. There is a corpse on the floor here, foaming at the mouth. A camera in one of the corners is watching you. A sound like fingernails on a chalkboard echoes throughout the room", "You leave through the elevator door on the ", " side.", "You bump into the wall.")
+room21 = Room(0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, -6, "You step somewhere, you can't tell where, because there is literally nothing.", "You will yourself out, towards the... ", ", yeah, the east, that's right, you always wanted to go south.", "The nothingness seems to extend to that direction, and moving that way is fruitless.")
+room22 = Room(0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, -5, "You step somewhere, you can't tell where, because there is literally nothing except a overwhelmingly bright light.", "You will yourself out, towards the...", ", yeah, the west, that's right, you always wanted to go south.", "The nothingness seems to extend to that direction, and moving that way is fruitless.")
+room23 = Room(1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 10, "You step into a wondrous room filled with peaceful plants and animals. Waterfalls and large lush trees fill the landscape. It seems as if you have found a utopia.", "You must use all of your willpower to leave this peaceful utopia to the ",".", "You find yourself sliping deeper into this peace.")
+room24 = Room(0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, -8, "As soon as you enter this room, you know you should not have. Various instruments of torture are strewn about the room. The room is filled with the wailing of the not yet dead corpses and the torture machines at work. The smell is indescribable.", "You quickly leave to the ",".", "You find yourself lost among the horrors of this room." )
+room25 = Room(0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, -7, "It is dark. Creepily dark. You can hear a faint whispering.", "You somehow find the light in the ", ".", "The whispering is getting louder.")
+room26 = Room(0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 5, "You are in your bedroom. It is clean and tidy in here. there is a doorway that leads to the main room.", "You walk to the ", ", out of your bedroom and into the main room.", "You decide against the act of heading that direction, maybe later.")
+room27 = Room(0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, -2, "You are in your bedroom. It is messy and looks slightly looted. there is a doorway that leads to the main room.", "You walk to the ", ", out of your bedroom and into the main room.", "You decide against the act of heading north, maybe later.")
+room28 = Room(1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 2, "You are in a peaceful courtyard with a bird fountain in the center, surrounded by walls and a tower made of quartz and marble.", "You walk to the ", ", through an intricately carved doorway.", "There is a wall here, you decide it would be too much trouble to climb it.")
+room29 = Room(0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, "Your feet burn as you stand in the hot sand. You survey the endless expanse of desert around you, and realize that the in the years you have spent trekking through this wasteland have been useless.", "You continue your fruitless trek to the ", ".", "You become quite dizzy, probably an effect of dehydration.")
+room30 = Room(0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, "You stand on top of a factory, the clanging of machinery behind you. Smoke pollutes the sky and obscures the sun. The occasional sizzle of laser cutters quietly supports the clanging.", "You walk through the factory, carefully avoiding the dangerous machines. You exit to the ", ".", "You breath in some of the smoke. It burns in the back of your throat, making it hard to breath.")
+room31 = Room(0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, -2, "You are in a large warehouse, through the grimy windows you can see it is dusk. The occasional object is stored here, but everything is covered in spiderwebs.", "You open a large door in the ", "ern wall, someone helping from the other side.", "As you move, the strands of web begin catching.")
+room32 = Room(1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, -9, "Everything is blurry. You blink and try to focus, realizing the world around you is out of focus, not your eyes.", "You squint on your way ", ", if but only to reduce visual exposure.", "You chuckle to yourself, thinking about how this place needs glasses.")
+room33 = Room(0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, "You feel a knotting feeling in your gut, and lose sense of location. Glancing up, you find yourself in a room with other people, you try to get their attention, but they don't look up from their computers. At a loss, you sit down at a terminal, and begin browsing for anything to help you (and some cat pictures along the way).", "As you look through the files on your screen, you see one simply titled '", ".exe', clicking it, you feel the same knot, and the scenery changes.", "You can't leave. Goddamnit Zakiah")
+room34 = Room(0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, -5, "You feel the walls watching you. You look closer, seeing that these are no ordinary walls, not walls at all, but millions of creepy bald guys.", "You sprint in a ", "ernly direction, Eager to escape their watching eyes.", "You hear your blood rushing, Everything going out of focus, knowing they are all watching only making it worse.")
+room35 = Room(1, 0, rand(2)-1, rand(2)-1, 1, 0, 1, 0, 0, 0, 1, 2, "You stumble on a root that wasn't there a second ago, and glance around. You are now in a grove of many trees. Every one of the trees is thin, tall, and either willow or cottonwood. It is rather peaceful, and you take a moment to rest your weary legs", "You trek off to the ", ", knowing that it is the right thing to do.", "Valiently, you make an effort to leave. Though after some time walking, you find yourself back in the grove.")#room35.light = (room35.dark - 1) * (room35.dark - 1)
+room36 = Room(1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 6, "You stand on a hill, on a path surrounded by flowers of many different colors. You decide to search for a specific flower, yet not knowing what it looks like.", "Turning ", ", you know your search has come to an end as you spot a fower adorned terrace.", "You stop and smell the flowers.")
+room37 = Room(1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, -7, "yesssssssssssssss", "You exit through the ", ", stumbling over vines.", " \"I don't know...\" you mutter to yourself")
+room38 = Room(0, 1, 0, 1, 0, 1, rand(1), 0, 1, 0, 1, 6, "You are in a large overhang, light from outside illuminating a massive array of small, intricately detailed clay soldiers.", "You clamber towards the ", "ern light, holding your hands above your eyes to block the light", "You stumble over the remains of the small clay soldiers, cracking them even further.")
+
+bossroom = Room(0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, -2, "You find yourself in a wide open room. The ceiling is high and dark. An ominous feeling of doom hangs over you.", "Exhausted, you leave through the ", " door.", "You somehow walk into a nonexistent wall.", False)
+roomBoss2 = Room(0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 1, -2, "You are in a small stone cavern, many twisting passageways leading through a winding cave system. You feel a drop of water plop on your head.", "You climb out through a ", "ern cave.", "You climb through a tunnel, only to find yourself in a room similar to the one you came from.", False)
+roomBoss3 = Room(1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 2, "Suddenly you are in a forest. A crossroads leading in all directions, yet you feel leaving will not be that easy. Searching for why you feel that way, you notice a few houses around you, well made, and decide to lean on one to rest for a moment. Part of it chips off. You glance around hurriedly, hoping no one saw what you did. The house probably wasn't as sturdy as you expected.", "Free to leave now, you choose to go to the ", ", hoping it will lead to better fortunes and maybe even happiness.", "You somehow can't leave even with exits everywhere. You blame Zakiah.", False)
+roomBoss4 = Room(0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 3, "You find yourself in a room, walls covered in mechanical and mystical constructs alike. Trees are visible through the sparsely placed windows.", "You find a button hidden on the ", "ern wall, pressing it against your better judgement.", "You become distracted by the intricacies of this room.", False)
+
+
+#items go here, not ready yet
+class item(object):
+	def __init__(self, offence, defence, agility, sanity, score, name, divname, desc):
+		self.atk = offence
+		self.dfn = defence
+		self.agil = agility
+		self.score = score
+		self.sane = sanity
+		self.Name = name
+		self.div = getImg("items/"+divname)
+		self.desc = desc
+		self.quant = 0
+		self.findable = 0
+
+lapis = item(1000, 1000, 1000, 0, 1000, "coo33's Lapis", "lapis", "The Jem of the Gods.  Or at least the god of 7.")
+hatandboots = item(5, 50, 8, 0, 10, "Hat and Boots", "hatandboots", "Can't Bump your head anymore, and probably won't stub your toes.")
+zaroltrophy = item(0, 0, 0, 20, 50, "Zarol Trophy", "zaroltrophy", "Thinking back, Seriously. How the hell did you do that?")
+heroshield = item(0, 8, -2, 0, 10, "Heroes Shield", "heroshield", "You feel a bit bad, killing someone with origins probably alike yours.")
+herosword = item(6, 0, 2, 0, 10, "Heroes Sword", "herosword", "A fitting weapon for a hero. But are <i>you</i> a hero?")
+fishingrod = item(5, 4, 2, 0, 10, "Fishing Rod", "fishingrod", "Hook, Line, and Sink.")
+drawingpad = item(1, 3, 7, 12, 10, "Drawing Pad", "drawingpad", "Using this, you can stay positive. Because everything else is in here.")
+pencil = item(7, 2, -1, -5, 10, "The Pencil", "pencil", "Quite oversized, you use it as a blunt weapon. But you feel there is more to it.")
+spoon = item(50, 1, 7, -8, 10, "the Spoon", "spoon", "It's just a spoon. But something feels powerful about it...")
+alphaxe = item(20, -2, -2, 0, 10, "Alpha's Axe", "alphaxe", "A large heavy axe, with surprisingly powerful hits.")
+sivgoggles = item(4, 6, 35, -15, 10, "Alpha's Glasses", "sivgoggles", "Gazing through them, You can see things. Where they are, and where they are going.")
+hair = item(0, 1, 2, -100, 10, "Alpha's Hair", "hair", "You stole this from a boss. Well, stole isn't the right word. More of Generated through Desire.")
+shurikenbag = item(35, 2, 45, -35, 20, "Shuriken Pouch", "shurikenbag", "A small, blood filled pouch, when you reach your hand into it, you always pull out a shuriken.")
+jimsword = item(25, 5, -5, 0, 10, "Jim's Sword", "jimsword", "")
+jimarmor = item(0, 35, -20, 0, 10, "Enchanted Armor", "jimarmor", "Glimmering metallic armor, Material flowing smoothly within it to fill the gaps in its structure.")
+inactivecube = item(25, 7, 20, 0, 10, "Inactive Cube", "inactivecube", "")
+card = item(2, 25, 25, 0, 20, "00000111", "card", "")
+device = item(40, 0, 6, 0, 20, "Electrical device", "device", "You have no idea how it works, but it looks far beyond any tech you have seen.")
+		
+		
+#New items, with the better system
+#single chunk of armor calculation
+class dfnChunk(object):
+	def __init__(self, agil, protection = True, passive = False, durable = False, piercable = True, ench = []):
+		#added to agil when active
+		self.agil = agil
+		#protection - True tanks all incoming damage into durability damage, number is max damage tanked
+		self.dfn = protection
+		#Passive - True always applies, False only applies when defending
+		self.all = passive
+		#durable - True doesn't effect durability, False does
+		self.dur = durable
+		self.piercable = piercable
+		#list of Enchantments, all dealt with seperately
+		self.ench = ench
+
+#single chunk of damage calculation
+class atkChunk(object):
+	def __init__(self, dmg, agil, defend = True, eternal = False, piercing = 0, proj = False, ench = []):
+		self.dmg = dmg
+		#added to agil when damaging w/ chunk
+		self.agil = agil
+		#whether or not this chunk cancels defend
+		self.dfn = defend
+		#if these stats are added to attack chunk even if not used (needs to be equiped)
+		self.etrn = eternal
+		#piercing level. 0 counts all armor chunks, 1 doesn't count piercable chunks, 2 skips all chunks (aside from special enchants)
+		self.pierce = piercing
+		#projectiles. False, or the ammount of ammo required to use this chunk
+		self.proj = proj
+		#list of Enchantments, all dealt with seperately
+		self.ench = ench
+
+allitems = []
+class Item(object):
+	def __init__(self, offence, defence, durability, sanity, score, name, desc, img, destructable = True, ammo = False, regenammo = [], ench = []):
+		self.atkChunks = offence
+		self.dfnChunks = defence
+		self.durability = durability
+		self.sane = sanity
+		self.score = score
+		self.Name = name
+		self.desc = desc
+		self.img = getImg("items/"+img)
+		self.destructable = destructable #if true, this item is removed when durability reaches 0.
+		self.ammo = ammo
+		self.regenammo = regenammo
+		self.ench = ench #probably just mending
+		#quantity
+		self.quant = 0
+		self.findable = 0
+		
+		global allitems
+		allitems.append(self)
+		
+		
+nothing = Item([], [], 1, 0, 0, "", "", "no_thing", False)
+allitems.remove(nothing)
+#acorncap = Item([], [])
+
+
+
 class Player(object):
 	def __init__(self):
 		self.name = "player"
 		self.hp = 100
 		self.baseatk = 8
-		self.atk = 8
+		self.atk = []
 		self.basedef = 0
-		self.dfn = 0
+		self.dfn = []
+		self.passdfn = []
 		self.ddev = 10
 		self.healval = 1
 		self.maxhp = 100
@@ -57,10 +223,12 @@ class Player(object):
 		self.defmod = 1
 		self.agilmod = 1
 		self.defending = False
+		self.equipped = [nothing]
 pla = Player()
 
+
 class Enemy(object):
-	def __init__(self, atk, de, name, pic, maxhp, ddev, agil, sane, message, cry, lvl, rundown, heal, interval):
+	def __init__(self, atk, de, name, pic, maxhp, ddev, agil, sane, message, cry, lvl, rundown, heal, interval, equip = [nothing]):
 		self.hp = maxhp
 		self.atk = atk
 		self.dfn = de
@@ -85,13 +253,13 @@ class Enemy(object):
 		self.defmod = 1
 		self.agilmod = 1
 		self.defending = False
+		self.equipped = equip
 
 creepybaldguy = Enemy(5, 10, "Creepy Bald Guy", "creep", 18, 2, [1,100], -1, "You know you are being watched. Always... ", "you feel it staring through your eyes, Into your Soul.", 1, ["Even though it seems nearly dead, it continues its steady gaze deep into your eyes.", "it seems to have lost some hair in this fight. You blink, realizing it was already bald.", "it seems to be observing, only attacking to see how you react.", "it is sitting there, staring at you. Waiting and observing your every move."], [2,3,4], 200)
 
-#items go here, not ready yet
 
 class Boss(object):
-	def __init__(self, hp, atk, de, name, img, maxhp, ddev, agil, heal, sane, loot, loot2, turn, message, cry, rundown, room, interval):
+	def __init__(self, hp, atk, de, name, img, maxhp, ddev, agil, heal, sane, loot, loot2, turn, message, cry, rundown, room, interval, equip = [nothing]):
 		self.hp = hp
 		self.rehp = hp
 		self.atk = atk
@@ -121,6 +289,7 @@ class Boss(object):
 		self.defmod = 1
 		self.agilmod = 1
 		self.defending = False
+		self.equipped = equip
 
 adventurer = Boss(190, 20, 0, "Adventurer", "adventurer", 190, 5, [5,100], [100,50,30], -7, herosword, heroshield, 10, "You hear the footsteps of someone else.", "It is an Adventurer, Readying his stance for Battle!", ["He seems oddly unaware of the massive amounts of damage you have dealt him. Much like you are.", "", "", "", "He seems more confident of himself, more sure of his strides.",""],bossroom,100);
 bosses = [adventurer]
@@ -145,11 +314,11 @@ def gentables():
 	for i in allitems:
 		item = allitems[i]
 		if item.findable == 0:
-			if (pla.lvl == 1 and (item.atk + item.def + (item.agil / 3) + (item.sane / 3)) <= 5):
+			if (pla.lvl == 1 and (item.atk + item.dfn + (item.agil / 3) + (item.sane / 3)) <= 5):
 				lootitems.append(item)
-			if (pla.lvl == 2 and (item.atk + item.def + (item.agil / 2) + (item.sane / 2)) <= 10):
+			if (pla.lvl == 2 and (item.atk + item.dfn + (item.agil / 2) + (item.sane / 2)) <= 10):
 				lootitems.append(item)
-			if (pla.lvl == 3 and (item.atk + item.def + item.agil + item.sane) <= 15):
+			if (pla.lvl == 3 and (item.atk + item.dfn + item.agil + item.sane) <= 15):
 				lootitems.append(item)
 			if pla.lvl >= 4:
 				lootitems.append(item)
@@ -160,10 +329,10 @@ def gentables():
 		localrand = rooms[i]
 		if (sanity < 2):
 			if (localrand.sanity >= Math.floor(Math.cbrt(sanity) - pla.lvl) and localrand.sanity <= Math.floor(Math.cbrt(sanity) + (pla.lvl * 1.5))):
-			ablerooms.append(rooms[i])
-		else if (sanity >= 2):
+				ablerooms.append(rooms[i])
+		elif (sanity >= 2):
 			if (localrand.sanity <= Math.floor(Math.cbrt(sanity) + pla.lvl) and localrand.sanity >= Math.floor(Math.cbrt(sanity) - (pla.lvl * 1.5))):
-			ablerooms.append(rooms[i])
+				ablerooms.append(rooms[i])
 	
 	if (ablerooms.length == 0 and pla.trueSane == 0):
 		prints("Ablerooms empty. Sanity: "+ sanity + " pla.sane: " + pla.sane)
@@ -187,8 +356,6 @@ def gentables():
 			if (i.sanity >= 0 and pla.trueSane > 0):
 				ablerooms.append(i)
 
-
-
 equippeditems = [nothing, nothing]
 runs = 1
 turn = 0
@@ -202,6 +369,7 @@ healable = True
 noKillEpic = True
 roommessage = ""
 search = True
+
 
 #The meat of the game, Generates the room randomly
 def genRoom():
@@ -427,14 +595,83 @@ def genRoom():
 				roommessage += prepbattle(creepybaldguy)
 	return roommessage
 
+def getitem(item):
+	item.quant += 1
+	score += item.score
+	printb("You found "+item.Name + ".<br/>you place the newfound loot in your backpack.")
+	RDrefresh()
 
 
+#refresh an entity's stats
+def Refresh(ent):
+	#ent.atk = []
+	
+	#Rebuild entity's defence chunks
+	#ent.dfn, ent.passdfn = []
+	agilmod = 0
+	for i in ent.equipped:
+		for x in i.dfnChunks:
+			if x.passive or ent.defending:
+				agilmod += x.agil
+	
+	ent.agil[0] = ent.baseagil[0] + agilmod
+			
+def attack(source, target):
+	attacking = True
+	for i in target.minions:
+		if (rand(100) <= i.dist and attacking):
+			attack(source, i)
+			if (i.hp <= 0):
+				killMinion(target, i)
+				getMinionTree(enm, 1)
+				enm.minionTree = minionTree
+				getMinionTree(pla, 1)
+				pla.minionTree = minionTree
+			attacking = false
+	if (attacking):
+		Damage(source, target)
+		#check(target);
+		attacking = False
 
-
+def Damage(source, atk, target):
+	#Agility
+	#add agil mod of used chunk
+	newagil = [((target.agil[0]*source.agil[1])-((source.agil[0]*target.agil[1])/2)), (target.agil[1]*source.agil[1])]
+	#prints(newagil)
+	if (rand(newagil[1]) <= newagil[0]):
+		message = target.name + " dodged "+ source.name +"'s attack"
+		
+	else:
+		initdmg = atk.dmg + random.randint(0, source.ddev * 2)- source.ddev
+		dmg = initdmg
+		finaldmg = dmg
+		for i in ent.equipped: #loop through equipped items
+			for x in i.dfnChunks: #loop through each item's defence chunks
+				if (("truedefence" in x.ench) or atk.piercing < 2) and not (atk.piercing == 1 and x.piercable == True): #if you actually count the defence
+					if x.dfn == True: #all damage goes to armor
+						
+					else: #some damage goes to armor
+						
+						
+					
+					
+		dmg = (source.atk)-(target.dfn)
+		if (target.defending):
+			dmg = Math.floor(dmg/1.5)
+			if (dmg < 0):
+				dmg = 0
+		else:
+			if (dmg <= 0):
+				dmg = 1
+		message = source.name+" deals <strong>"+dmg+"<strong> damage to "+ target.name
+		target.hp -= dmg
+	#printc(target, message)
+	prints(message)
 
 
 print genRoom()
 raw_input(":")
+
 
 
 

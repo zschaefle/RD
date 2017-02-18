@@ -1137,9 +1137,7 @@ function RDloot() {
         if (itemget == rock){
             Unlock(heatrock);
         }
-        
-        
-        
+		
         getitem(itemget);
         lootable = false;
     } else {printb("there is nothing to loot here.")}
