@@ -33,6 +33,10 @@ def prints(stuff):
 def rand(num):
 	return random.randint(1, num)
 
+def cbrt(num):
+	return num ** (1.0/3.0)
+	
+	
 #Rooms for the dongeon
 rooms = []
 class Room():
@@ -56,6 +60,10 @@ class Room():
 		if normal:
 			global rooms
 			rooms.append(self)
+		
+        if (self.exitA == "" or self.exitA == " " or self.exitB == "" or self.exitB == " "):
+			self.exitA = "You go "
+			self.exitB = "."
 
 room1 = Room(0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, -4 ,"Your eyes burn as you look into the lit black.  Green lines stretch to a vanishing point, showing you a door, a wall and a cliff.  Your eyesight blurs, reduced to craggy blocks.", "Your legs jitter as you walk on thin green lines, forming an exit to what you believe to be ", ".", "You feel like taking any extra steps in may be fatal.")
 room2 = Room(1, 0, 0, 1, 1, 1, 1, rand(2)-1, 1, 2, rand(2)-1, 1, "This room is overrun by nature. There are twisted, moist vines covering the walls and most likely any exits.", "You carefully make your way to the ", ", occasionally tripping.", "You trip on your way over to the wall, only finding no exit.")
@@ -102,7 +110,6 @@ roomBoss3 = Room(1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 2, "Suddenly you are in a fore
 roomBoss4 = Room(0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 3, "You find yourself in a room, walls covered in mechanical and mystical constructs alike. Trees are visible through the sparsely placed windows.", "You find a button hidden on the ", "ern wall, pressing it against your better judgement.", "You become distracted by the intricacies of this room.", False)
 
 
-#items go here, not ready yet
 class item(object):
 	def __init__(self, offence, defence, agility, sanity, score, name, divname, desc):
 		self.atk = offence
@@ -119,8 +126,6 @@ class item(object):
 lapis = item(1000, 1000, 1000, 0, 1000, "coo33's Lapis", "lapis", "The Jem of the Gods.  Or at least the god of 7.")
 hatandboots = item(5, 50, 8, 0, 10, "Hat and Boots", "hatandboots", "Can't Bump your head anymore, and probably won't stub your toes.")
 zaroltrophy = item(0, 0, 0, 20, 50, "Zarol Trophy", "zaroltrophy", "Thinking back, Seriously. How the hell did you do that?")
-heroshield = item(0, 8, -2, 0, 10, "Heroes Shield", "heroshield", "You feel a bit bad, killing someone with origins probably alike yours.")
-herosword = item(6, 0, 2, 0, 10, "Heroes Sword", "herosword", "A fitting weapon for a hero. But are <i>you</i> a hero?")
 fishingrod = item(5, 4, 2, 0, 10, "Fishing Rod", "fishingrod", "Hook, Line, and Sink.")
 drawingpad = item(1, 3, 7, 12, 10, "Drawing Pad", "drawingpad", "Using this, you can stay positive. Because everything else is in here.")
 pencil = item(7, 2, -1, -5, 10, "The Pencil", "pencil", "Quite oversized, you use it as a blunt weapon. But you feel there is more to it.")
@@ -171,6 +176,7 @@ class atkChunk(object):
 
 allitems = []
 class Item(object):
+	#old: 				offence, defence, agility, sanity, score, name, divname, desc
 	def __init__(self, offence, defence, durability, sanity, score, name, desc, img, destructable = True, ammo = False, regenammo = [], ench = []):
 		self.atkChunks = offence
 		self.dfnChunks = defence
@@ -190,19 +196,19 @@ class Item(object):
 		
 		global allitems
 		allitems.append(self)
-		
+
 		
 nothing = Item([], [], 1, 0, 0, "", "", "no_thing", False)
 allitems.remove(nothing)
-#acorncap = Item([], [])
 
-
+heroshield = Item([], [dfnChunk(-5, 6, False, False, False), dfnChunk(-2, 4, True)], 200, 1, 10, "Heroes Shield", "You feel a bit bad, killing someone with origins probably alike yours.", "heroshield", False)
+herosword = Item([atkChunk(6, 2)], [dfnChunk(0, 2, False, True)], 100, 1, 10, "Heroes Sword", "A fitting weapon for a hero. But are <i>you<i> a hero?", "herosword", False)
 
 class Player(object):
 	def __init__(self):
 		self.name = "player"
 		self.hp = 100
-		self.baseatk = 8
+		self.dmg = 8
 		self.atk = []
 		self.basedef = 0
 		self.dfn = []
@@ -215,6 +221,7 @@ class Player(object):
 		self.agil = [15, 100]
 		self.lvl = 1
 		self.sane = 8
+		self.sanity = 8
 		self.trueSane = 0
 		self.minions = []
 		self.id = 0
@@ -224,13 +231,21 @@ class Player(object):
 		self.agilmod = 1
 		self.defending = False
 		self.equipped = [nothing]
+	
+	def refresh(self):
+		#set self.sanity
+		pass
+		#set two attack chunks
+		#for i in 
+		
 pla = Player()
 
 
 class Enemy(object):
 	def __init__(self, atk, de, name, pic, maxhp, ddev, agil, sane, message, cry, lvl, rundown, heal, interval, equip = [nothing]):
 		self.hp = maxhp
-		self.atk = atk
+		self.dmg = atk
+		self.atk = []
 		self.dfn = de
 		self.name = name
 		self.img = getImg(pic)
@@ -254,7 +269,7 @@ class Enemy(object):
 		self.agilmod = 1
 		self.defending = False
 		self.equipped = equip
-
+bosses = []
 creepybaldguy = Enemy(5, 10, "Creepy Bald Guy", "creep", 18, 2, [1,100], -1, "You know you are being watched. Always... ", "you feel it staring through your eyes, Into your Soul.", 1, ["Even though it seems nearly dead, it continues its steady gaze deep into your eyes.", "it seems to have lost some hair in this fight. You blink, realizing it was already bald.", "it seems to be observing, only attacking to see how you react.", "it is sitting there, staring at you. Waiting and observing your every move."], [2,3,4], 200)
 
 
@@ -276,8 +291,8 @@ class Boss(object):
 		self.rundown = rundown
 		self.healchance = [heal[0], heal[1]]
 		self.boss = True
-		self.atkInt = Math.ceil(interval)
-		self.atkIntBase = Math.ceil(interval)
+		self.atkInt = math.ceil(interval)
+		self.atkIntBase = math.ceil(interval)
 		self.turn = turn
 		self.loot = loot
 		self.loot2 = loot2
@@ -290,56 +305,58 @@ class Boss(object):
 		self.agilmod = 1
 		self.defending = False
 		self.equipped = equip
+		
+		global bosses
+		bosses.append(self)
 
-adventurer = Boss(190, 20, 0, "Adventurer", "adventurer", 190, 5, [5,100], [100,50,30], -7, herosword, heroshield, 10, "You hear the footsteps of someone else.", "It is an Adventurer, Readying his stance for Battle!", ["He seems oddly unaware of the massive amounts of damage you have dealt him. Much like you are.", "", "", "", "He seems more confident of himself, more sure of his strides.",""],bossroom,100);
-bosses = [adventurer]
+adventurer = Boss(190, 20, 0, "Adventurer", "adventurer", 190, 5, [5,100], [100,50,30], -7, herosword, heroshield, 10, "You hear the footsteps of someone else.", "It is an Adventurer, Readying his stance for Battle!", ["He seems oddly unaware of the massive amounts of damage you have dealt him. Much like you are.", "", "", "", "He seems more confident of himself, more sure of his strides.",""],bossroom,100, [herosword, heroshield]);
+
 
 
 #minions go here, not needed yet
 
-
+finalsanity = 0
 ablerooms = []
 lootitems = []
-finalsanity = 0
 #based on player level, changes aspects of game such as tiers of items, and rooms.
 def gentables():
 	global lootitems
 	global pla
 	global ablerooms
 	global allitems
-	global finalsanity
 	global rooms
+	global finalsanity
 	
-	lootitems = []
-	for i in allitems:
-		item = allitems[i]
-		if item.findable == 0:
-			if (pla.lvl == 1 and (item.atk + item.dfn + (item.agil / 3) + (item.sane / 3)) <= 5):
-				lootitems.append(item)
-			if (pla.lvl == 2 and (item.atk + item.dfn + (item.agil / 2) + (item.sane / 2)) <= 10):
-				lootitems.append(item)
-			if (pla.lvl == 3 and (item.atk + item.dfn + item.agil + item.sane) <= 15):
-				lootitems.append(item)
+	lootitems = [] #doesn't work with chunks format
+	'''for i in allitems:
+		if i.findable == 0:
+			if (pla.lvl == 1 and (i.atkChunks[0].dmg + i.dfnChunks[0].dmg + (i.agil / 3) + (i.sane / 3)) <= 5):
+				lootitems.append(i)
+			if (pla.lvl == 2 and (i.atkChunks[0].dmg + i.dfn + (i.agil / 2) + (i.sane / 2)) <= 10):
+				lootitems.append(i)
+			if (pla.lvl == 3 and (i.atkChunks[0].dmg + i.dfn + i.agil + i.sane) <= 15):
+				lootitems.append(i)
 			if pla.lvl >= 4:
-				lootitems.append(item)
+				lootitems.append(i)'''
+				
 
 	#Get ablerooms
 	ablerooms = []
 	for i in rooms:
-		localrand = rooms[i]
-		if (sanity < 2):
-			if (localrand.sanity >= Math.floor(Math.cbrt(sanity) - pla.lvl) and localrand.sanity <= Math.floor(Math.cbrt(sanity) + (pla.lvl * 1.5))):
-				ablerooms.append(rooms[i])
-		elif (sanity >= 2):
-			if (localrand.sanity <= Math.floor(Math.cbrt(sanity) + pla.lvl) and localrand.sanity >= Math.floor(Math.cbrt(sanity) - (pla.lvl * 1.5))):
-				ablerooms.append(rooms[i])
+		if (pla.sanity < 2):
+			if (i.sanity >= math.floor(cbrt(pla.sanity) - pla.lvl) and i.sanity <= math.floor(cbrt(pla.sanity) + (pla.lvl * 1.5))):
+				ablerooms.append(i)
+		elif (pla.sanity >= 2):
+			if (i.sanity <= math.floor(cbrt(pla.sanity) + pla.lvl) and i.sanity >= math.floor(cbrt(pla.sanity) - (pla.lvl * 1.5))):
+				ablerooms.append(i)
 	
-	if (ablerooms.length == 0 and pla.trueSane == 0):
-		prints("Ablerooms empty. Sanity: "+ sanity + " pla.sane: " + pla.sane)
-		if (sanity < 0):
+	
+	if (len(ablerooms) == 0 and pla.trueSane == 0):
+		prints("Ablerooms empty. Sanity: "+ pla.sanity + " pla.sane: " + pla.sane)
+		if (pla.sanity < 0):
 			ablerooms = [room19]
 			finalsanity = -1
-		if (sanity > 0):
+		if (pla.sanity > 0):
 			ablerooms = [room23]
 			finalsanity = 1
 	#when reached true sanities
@@ -381,7 +398,7 @@ def genRoom():
 	global search
 	
 	prints("Generating room.")
-	RDrefresh()
+	global finalsanity
 	gentables()
 	turn += 1
 	healable = True
@@ -415,7 +432,7 @@ def genRoom():
 		search = False
 
 	if (search or turn == 1):
-		 room = ablerooms[rand(ablerooms.length)-1]
+		 room = ablerooms[rand(len(ablerooms))-1]
 	roommessage += room.message
 	
 	
@@ -495,17 +512,17 @@ def genRoom():
 	#Determining lootable
 	if (rand(2) == 1 and room.items == 1):
 		lootable = True
-		roommessage += chestmessages[rand(chestmessages.length-1)]
+		roommessage += chestmessages[rand(len(chestmessages)-1)]
 	else:
 		lootable = False
 
 	ableminions = []
-	for i in minions:
+	'''for i in minions:
 		if (i.lvl <= pla.lvl):
-			ableminions.append(i)
+			ableminions.append(i)'''
 	
-	if (rand(8) == 1 and ableminions.length > 0):
-		minion = ableminions[rand(ableminions.length)-1]
+	if (rand(8) == 1 and len(ableminions) > 0):
+		minion = ableminions[rand(len(ableminions))-1]
 		roommessage += minion.message
 		getMinion(pla, minion)
 
@@ -513,11 +530,12 @@ def genRoom():
 		if (i.turn == turn):
 			roommessage += prepbattle(i)
 			
+	#Prepbattle not done yet
 	'''if (room == room38):
 		roommessage += prepbattle(terracotta)
 		search = False'''
 
-	
+	'''
 	if search:
 		if (noKillEpic and turn == 35):
 			if (pla.atk >= pla.dfn and pla.atk >= pla.agil[0]):
@@ -592,14 +610,54 @@ def genRoom():
 			if (enemyspawn == 3):
 				roommessage += prepbattle(muffin)
 			if (enemyspawn >= 5):
-				roommessage += prepbattle(creepybaldguy)
+				roommessage += prepbattle(creepybaldguy)'''
 	return roommessage
+	
+battleprep = -1
+lastmove = 1
+def move(direction):
+	global roommessage
+	global battleprep
+	global lastmove
+    roommessage = ""
+    if (battleprep == -1):
+        success = False
+        #north
+		if(direction == 1):
+            if (room.north == 1):
+                success = True
+                roommessage = room.exitA + "north" + room.exitB
+        #east
+        if(direction == 2):
+            if (room.east == 1):
+                success = True
+                roommessage = room.exitA + "east" + room.exitB
+        #south
+        if (direction == 3):
+            if (room.south == 1):
+                success = True
+                roommessage = room.exitA + "south" + room.exitB
+        #west
+        if (direction == 4):
+            if (room.west == 1):
+                success = True
+                roommessage = room.exitA + "west" + room.exitB
+			
+        if success:
+            #clear print b
+            roommessage += "<br/>"
+            genRoom()
+            lastmove = direction
+		else:
+			#send to print b
+			#roommessage = room.exitFail
+			pass
+	
 
 def getitem(item):
 	item.quant += 1
 	score += item.score
 	printb("You found "+item.Name + ".<br/>you place the newfound loot in your backpack.")
-	RDrefresh()
 
 
 #refresh an entity's stats
@@ -607,6 +665,7 @@ def Refresh(ent):
 	#ent.atk = []
 	
 	#Rebuild entity's defence chunks
+	
 	#ent.dfn, ent.passdfn = []
 	agilmod = 0
 	for i in ent.equipped:
@@ -616,7 +675,9 @@ def Refresh(ent):
 	
 	ent.agil[0] = ent.baseagil[0] + agilmod
 			
-def attack(source, target):
+def attack(source, atk, target):
+	#determine chunk to use?
+	
 	attacking = True
 	for i in target.minions:
 		if (rand(100) <= i.dist and attacking):
@@ -627,51 +688,60 @@ def attack(source, target):
 				enm.minionTree = minionTree
 				getMinionTree(pla, 1)
 				pla.minionTree = minionTree
-			attacking = false
+			attacking = False
 	if (attacking):
-		Damage(source, target)
-		#check(target);
-		attacking = False
-
-def Damage(source, atk, target):
-	#Agility
-	#add agil mod of used chunk
-	newagil = [((target.agil[0]*source.agil[1])-((source.agil[0]*target.agil[1])/2)), (target.agil[1]*source.agil[1])]
-	#prints(newagil)
-	if (rand(newagil[1]) <= newagil[0]):
-		message = target.name + " dodged "+ source.name +"'s attack"
-		
-	else:
-		initdmg = atk.dmg + random.randint(0, source.ddev * 2)- source.ddev
-		dmg = initdmg
-		finaldmg = dmg
-		for i in ent.equipped: #loop through equipped items
-			for x in i.dfnChunks: #loop through each item's defence chunks
-				if (("truedefence" in x.ench) or atk.piercing < 2) and not (atk.piercing == 1 and x.piercable == True): #if you actually count the defence
-					if x.dfn == True: #all damage goes to armor
-						
-					else: #some damage goes to armor
-						
-						
-					
-					
-		dmg = (source.atk)-(target.dfn)
-		if (target.defending):
-			dmg = Math.floor(dmg/1.5)
-			if (dmg < 0):
-				dmg = 0
+		#add agil mod of used chunk
+		newagil = [((target.agil[0]*source.agil[1])-((source.agil[0]*target.agil[1])/2)), (target.agil[1]*source.agil[1])]
+		#prints(newagil)
+		if (rand(newagil[1]) <= newagil[0]):
+			message = target.name + " dodged "+ source.name +"'s attack"
+			
 		else:
-			if (dmg <= 0):
-				dmg = 1
-		message = source.name+" deals <strong>"+dmg+"<strong> damage to "+ target.name
-		target.hp -= dmg
-	#printc(target, message)
-	prints(message)
+			initdmg = atk.dmg + source.dmg + random.randint(0, source.ddev * 2)- source.ddev
+			prevdmg = initdmg
+			dmg = initdmg #differentiated for enchants
+			print initdmg
+			for i in target.equipped: #loop through equipped items
+				for x in i.dfnChunks: #loop through each item's defence chunks
+					tanked = 0
+						print "Armored! defence:"
+						#Damage reduction
+						if x.dfn == True: #all damage goes to armor
+							tanked = dmg
+						else: #some damage goes to armor
+							tanked = x.dfn
+						
+						#Damage calculation
+						print tanked
+						dmg -= tanked
+						if target.defending:
+							if dmg < 0:
+								dmg = 0
+						else:
+							if dmg < 1:
+								dmg = 1
+						print "newdmg:", dmg
+						#Durability reduction
+						if not x.dur: #if durability is taken into account
+							i.durability -= tanked
+							if i.durability < 0: #if armor is destroyed, only tank as much as it can
+								dmg -= i.durability
+					prevdmg = dmg
+			
+			message = source.name+" deals <strong>"+str(dmg)+"<strong> damage to "+ target.name
+			target.hp -= dmg
+			return message
+			#check(target)
+			
+		attacking = False
+		
 
-
-print genRoom()
-raw_input(":")
-
+		
+while True:
+	print genRoom()
+	print attack(pla, herosword.atkChunks[0], adventurer)
+	raw_input(":")
+	
 
 
 
