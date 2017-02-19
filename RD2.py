@@ -61,7 +61,7 @@ class Room():
 			global rooms
 			rooms.append(self)
 		
-        if (self.exitA == "" or self.exitA == " " or self.exitB == "" or self.exitB == " "):
+		if (self.exitA == "" or self.exitA == " " or self.exitB == "" or self.exitB == " "):
 			self.exitA = "You go "
 			self.exitB = "."
 
@@ -144,7 +144,7 @@ device = item(40, 0, 6, 0, 20, "Electrical device", "device", "You have no idea 
 #New items, with the better system
 #single chunk of armor calculation
 class dfnChunk(object):
-	def __init__(self, agil, protection = True, passive = False, durable = False, piercable = True, ench = []):
+	def __init__(self, agil, protection = True, passive = False, durable = False, piercable = True, enchs = {}):
 		#added to agil when active
 		self.agil = agil
 		#protection - True tanks all incoming damage into durability damage, number is max damage tanked
@@ -154,12 +154,14 @@ class dfnChunk(object):
 		#durable - True doesn't effect durability, False does
 		self.dur = durable
 		self.piercable = piercable
-		#list of Enchantments, all dealt with seperately
-		self.ench = ench
+		#list of Enchantments, all dealt with seperately.
+		#Regen: ticks before regen, ammount regenerated; Reflecting: multiplier of damage sent back to attacker; Thorns: False, or atkChunk
+		self.ench = {"regen":[-1, 0], "reflecting":0, "thorns":False, "destructive":0, "trueProtection":False, "layered":[0, 0], "bound":0}
+		self.ench.update(enchs)
 
-#single chunk of damage calculation
+#single chunk of damage calculation. when putting into list, be sure to put in order: [projectile chunks, melee chunk, eternal chunks]. any other order will make some unused by attack()
 class atkChunk(object):
-	def __init__(self, dmg, agil, defend = True, eternal = False, piercing = 0, proj = False, ench = []):
+	def __init__(self, dmg, agil, defend = True, eternal = False, piercing = 0, proj = False, enchs = {}):
 		self.dmg = dmg
 		#added to agil when damaging w/ chunk
 		self.agil = agil
@@ -167,13 +169,14 @@ class atkChunk(object):
 		self.dfn = defend
 		#if these stats are added to attack chunk even if not used (needs to be equiped)
 		self.etrn = eternal
-		#piercing level. 0 counts all armor chunks, 1 doesn't count piercable chunks, 2 skips all chunks (aside from special enchants)
-		self.pierce = piercing
 		#projectiles. False, or the ammount of ammo required to use this chunk
 		self.proj = proj
 		#list of Enchantments, all dealt with seperately
-		self.ench = ench
-
+		self.ench = {"destructive":0, "piercing":0, "heavy":0, "sweeping":0, "bound":0, "returning":[0, 0]}
+		self.ench.update(enchs)
+		#piercing level. 0 counts all armor chunks, 1 doesn't count piercable chunks, 2 skips all chunks (aside from special enchants)
+		self.pierce = piercing + self.ench["piercing"]
+		
 allitems = []
 class Item(object):
 	#old: 				offence, defence, agility, sanity, score, name, divname, desc
@@ -619,35 +622,35 @@ def move(direction):
 	global roommessage
 	global battleprep
 	global lastmove
-    roommessage = ""
-    if (battleprep == -1):
-        success = False
-        #north
+	roommessage = ""
+	if (battleprep == -1):
+		success = False
+		#north
 		if(direction == 1):
-            if (room.north == 1):
-                success = True
-                roommessage = room.exitA + "north" + room.exitB
-        #east
-        if(direction == 2):
-            if (room.east == 1):
-                success = True
-                roommessage = room.exitA + "east" + room.exitB
-        #south
-        if (direction == 3):
-            if (room.south == 1):
-                success = True
-                roommessage = room.exitA + "south" + room.exitB
-        #west
-        if (direction == 4):
-            if (room.west == 1):
-                success = True
-                roommessage = room.exitA + "west" + room.exitB
+			if (room.north == 1):
+				success = True
+				roommessage = room.exitA + "north" + room.exitB
+		#east
+		if(direction == 2):
+			if (room.east == 1):
+				success = True
+				roommessage = room.exitA + "east" + room.exitB
+		#south
+		if (direction == 3):
+			if (room.south == 1):
+				success = True
+				roommessage = room.exitA + "south" + room.exitB
+		#west
+		if (direction == 4):
+			if (room.west == 1):
+				success = True
+				roommessage = room.exitA + "west" + room.exitB
 			
-        if success:
-            #clear print b
-            roommessage += "<br/>"
-            genRoom()
-            lastmove = direction
+		if success:
+			#clear print b
+			roommessage += "<br/>"
+			genRoom()
+			lastmove = direction
 		else:
 			#send to print b
 			#roommessage = room.exitFail
@@ -660,7 +663,7 @@ def getitem(item):
 	printb("You found "+item.Name + ".<br/>you place the newfound loot in your backpack.")
 
 
-#refresh an entity's stats
+#refresh an entity's stats. probably unneeded at this point
 def Refresh(ent):
 	#ent.atk = []
 	
@@ -675,13 +678,65 @@ def Refresh(ent):
 	
 	ent.agil[0] = ent.baseagil[0] + agilmod
 			
-def attack(source, atk, target):
-	#determine chunk to use?
+#does not include: minions, dodging, calculation of boosting items
+def Damage(source, weapon, atk, target):
+		initdmg = atk.dmg + source.dmg + random.randint(0, source.ddev * 2)- source.ddev
+		prevdmg = initdmg
+		dmg = initdmg #differentiated for enchants
+		print initdmg
+		for k in range(len(target.equipped)): #loop through equipped items, counts because enchantments can do stuff
+			i = target.equipped[k]
+			for j in range(len(i.dfnChunks)): #loop through each item's defence chunks, counts because enchantments
+				x = i.dfnChunks[j]
+				tanked = 0
+				if ((x.ench["trueProtection"] or atk.pierce < 2) and not (atk.pierce == 1 and x.piercable == True)) and ((target.defending and not x.all) or x.all) and i.durability > 0: #if you actually count the defence
+					#print "Armored! defence:"
+					#Damage reduction
+					if x.dfn == True: #all damage goes to armor
+						tanked = dmg
+					else: #some damage goes to armor
+						tanked = x.dfn
+					
+					#Damage calculation
+					#print tanked
+					dmg -= tanked
+					if target.defending:
+						if dmg < 0:
+							dmg = 0
+					else:
+						if dmg < 1:
+							dmg = 1
+					
+					#print "newdmg:", dmg
+					#Durability reduction
+					weapon.durability -= atk.ench["destructive"]
+					if not x.dur: #if durability is taken into account
+						i.durability -= tanked + atk.ench["destructive"]
+						if i.durability < 0: #if armor is destroyed, only tank as much as it can
+							dmg -= i.durability
+							if dmg > prevdmg:
+								dmg = prevdmg
+					
+					if x.ench["thorns"] != False: #if it has thorns
+						if (x.ench["thorns"].proj != False) or (atk.proj == False): #if thorns applies #NEED AN EXCEPTION TO PREVENT THORNS LOOPING. THAT WOULD BE VERY BAD
+							Damage(target, i, x.ench["thorns"], source)
+					if x.ench["reflecting"] != 0:
+						Damage (source, i, atkChunk(dmg*x.ench["reflecting"], atk.agil-10, False, False, atk.pierce-1), source) #NEED AN EXCEPTION TO PREVENT THORNS LOOPING
+				prevdmg = dmg
+		
+		message = source.name+" deals <strong>"+str(dmg)+"<strong> damage to "+ target.name
+		target.hp -= dmg
+		return message #probably need to change so that this doesn't stop the function, but still sends info somewhere
+		#check(target)
+
+
+#takes in source, weapon used, and target
+def attack(source, weapon, target):
 	
 	attacking = True
 	for i in target.minions:
 		if (rand(100) <= i.dist and attacking):
-			attack(source, i)
+			attack(source, weapon, i)
 			if (i.hp <= 0):
 				killMinion(target, i)
 				getMinionTree(enm, 1)
@@ -689,58 +744,45 @@ def attack(source, atk, target):
 				getMinionTree(pla, 1)
 				pla.minionTree = minionTree
 			attacking = False
+
+			
 	if (attacking):
+		atk = atkChunk(0, 0) #give a base value in case weapon has no valid atkChunks
+		#Make the atkChunk to use in this attack
+		for i in weapon.atkChunks:
+			if i.proj == False:
+				atk = atkChunk(i.dmg, i.agil, i.dfn, i.etrn, i.pierce, i.proj, i.ench)
+				break
+			else:
+				if weapon.ammo >= i.proj: #see if enough ammo to use proj chunk
+					atk = atkChunk(i.dmg, i.agil, i.dfn, i.etrn, i.pierce, i.proj, i.ench)
+					weapon.ammo -= i.proj
+					break
+		
+		for i in source.equipped:
+			for x in i.atkChunks:
+				if x.etrn:
+					atk.dmg += x.dmg
+					atk.agil += x.agil
+					#Add the enchants!
+		
+		
 		#add agil mod of used chunk
-		newagil = [((target.agil[0]*source.agil[1])-((source.agil[0]*target.agil[1])/2)), (target.agil[1]*source.agil[1])]
+		newagil = [((target.agil[0]*(source.agil[1]+atk.agil))-(((source.agil[0]+atk.agil)*target.agil[1])/2)), (target.agil[1]*(source.agil[1]+atk.agil))]
 		#prints(newagil)
 		if (rand(newagil[1]) <= newagil[0]):
 			message = target.name + " dodged "+ source.name +"'s attack"
 			
 		else:
-			initdmg = atk.dmg + source.dmg + random.randint(0, source.ddev * 2)- source.ddev
-			prevdmg = initdmg
-			dmg = initdmg #differentiated for enchants
-			print initdmg
-			for i in target.equipped: #loop through equipped items
-				for x in i.dfnChunks: #loop through each item's defence chunks
-					tanked = 0
-					if ((("truedefence" in x.ench) or atk.pierce < 2) and not (atk.pierce == 1 and x.piercable == True)) and ((target.defending and not x.all) or x.all) and i.durability > 0: #if you actually count the defence
-						print "Armored! defence:"
-						#Damage reduction
-						if x.dfn == True: #all damage goes to armor
-							tanked = dmg
-						else: #some damage goes to armor
-							tanked = x.dfn
-						
-						#Damage calculation
-						print tanked
-						dmg -= tanked
-						if target.defending:
-							if dmg < 0:
-								dmg = 0
-						else:
-							if dmg < 1:
-								dmg = 1
-						print "newdmg:", dmg
-						#Durability reduction
-						if not x.dur: #if durability is taken into account
-							i.durability -= tanked
-							if i.durability < 0: #if armor is destroyed, only tank as much as it can
-								dmg -= i.durability
-					prevdmg = dmg
-			
-			message = source.name+" deals <strong>"+str(dmg)+"<strong> damage to "+ target.name
-			target.hp -= dmg
-			return message
-			#check(target)
-			
+			Damage(source, weapon, atk, target)
 		attacking = False
 		
+
 
 		
 while True:
 	print genRoom()
-	print attack(pla, herosword.atkChunks[0], adventurer)
+	print attack(pla, herosword, adventurer)
 	raw_input(":")
 	
 
