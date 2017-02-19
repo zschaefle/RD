@@ -155,8 +155,9 @@ class dfnChunk(object):
 		self.dur = durable
 		self.piercable = piercable
 		#list of Enchantments, all dealt with seperately.
-		#Regen: ticks before regen, ammount regenerated; Reflecting: multiplier of damage sent back to attacker; Thorns: False, or atkChunk
-		self.ench = {"regen":[-1, 0], "reflecting":0, "thorns":False, "destructive":0, "trueProtection":False, "layered":[0, 0], "bound":0}
+		#Reflecting: multiplier of damage sent back to attacker; Thorns: False, or atkChunk
+		#Destructive: direct durability damage to attacking weapon; Layered: value1 is chance for damage to be put through again, to max of value 2
+		self.ench = {"reflecting":0, "thorns":False, "destructive":0, "trueProtection":False, "layered":[0, 0], "bound":0}
 		self.ench.update(enchs)
 
 #single chunk of damage calculation. when putting into list, be sure to put in order: [projectile chunks, melee chunk, eternal chunks]. any other order will make some unused by attack()
@@ -172,7 +173,7 @@ class atkChunk(object):
 		#projectiles. False, or the ammount of ammo required to use this chunk
 		self.proj = proj
 		#list of Enchantments, all dealt with seperately
-		self.ench = {"destructive":0, "piercing":0, "heavy":0, "sweeping":0, "bound":0, "returning":[0, 0]}
+		self.ench = {"destructive":0, "piercing":0, "heavy":0, "sweeping":0, "returning":[0, 0]}
 		self.ench.update(enchs)
 		#piercing level. 0 counts all armor chunks, 1 doesn't count piercable chunks, 2 skips all chunks (aside from special enchants)
 		self.pierce = piercing + self.ench["piercing"]
@@ -180,7 +181,7 @@ class atkChunk(object):
 allitems = []
 class Item(object):
 	#old: 				offence, defence, agility, sanity, score, name, divname, desc
-	def __init__(self, offence, defence, durability, sanity, score, name, desc, img, destructable = True, ammo = False, regenammo = [], ench = []):
+	def __init__(self, offence, defence, durability, sanity, score, name, desc, img, destructable = True, ammo = False, regenammo = [], enchs = {}):
 		self.atkChunks = offence
 		self.dfnChunks = defence
 		self.durability = durability
@@ -192,7 +193,9 @@ class Item(object):
 		self.destructable = destructable #if true, this item is removed when durability reaches 0.
 		self.ammo = ammo
 		self.regenammo = regenammo
-		self.ench = ench #probably just mending
+		#Regen: ticks before regen, ammount regenerated; Bound is times the item will NOT be destroyed by thing that remove all items. ie: Zarol, Monoliths
+		self.ench = {"mending":[-1, 0], "bound":0}
+		self.ench.update(enchs)
 		#quantity
 		self.quant = 0
 		self.findable = 0
@@ -680,109 +683,133 @@ def Refresh(ent):
 			
 #does not include: minions, dodging, calculation of boosting items
 def Damage(source, weapon, atk, target):
-		initdmg = atk.dmg + source.dmg + random.randint(0, source.ddev * 2)- source.ddev
-		prevdmg = initdmg
-		dmg = initdmg #differentiated for enchants
-		print initdmg
-		for k in range(len(target.equipped)): #loop through equipped items, counts because enchantments can do stuff
-			i = target.equipped[k]
-			for j in range(len(i.dfnChunks)): #loop through each item's defence chunks, counts because enchantments
-				x = i.dfnChunks[j]
-				tanked = 0
-				if ((x.ench["trueProtection"] or atk.pierce < 2) and not (atk.pierce == 1 and x.piercable == True)) and ((target.defending and not x.all) or x.all) and i.durability > 0: #if you actually count the defence
-					#print "Armored! defence:"
-					#Damage reduction
-					if x.dfn == True: #all damage goes to armor
-						tanked = dmg
-					else: #some damage goes to armor
-						tanked = x.dfn
-					
-					#Damage calculation
-					#print tanked
-					dmg -= tanked
-					if target.defending:
-						if dmg < 0:
-							dmg = 0
-					else:
-						if dmg < 1:
-							dmg = 1
-					
-					#print "newdmg:", dmg
-					#Durability reduction
-					weapon.durability -= atk.ench["destructive"]
-					if not x.dur: #if durability is taken into account
-						i.durability -= tanked + atk.ench["destructive"]
-						if i.durability < 0: #if armor is destroyed, only tank as much as it can
-							dmg -= i.durability
-							if dmg > prevdmg:
-								dmg = prevdmg
-					
-					if x.ench["thorns"] != False: #if it has thorns
-						if (x.ench["thorns"].proj != False) or (atk.proj == False): #if thorns applies #NEED AN EXCEPTION TO PREVENT THORNS LOOPING. THAT WOULD BE VERY BAD
-							Damage(target, i, x.ench["thorns"], source)
-					if x.ench["reflecting"] != 0:
-						Damage (source, i, atkChunk(dmg*x.ench["reflecting"], atk.agil-10, False, False, atk.pierce-1), source) #NEED AN EXCEPTION TO PREVENT THORNS LOOPING
-				prevdmg = dmg
-		
-		message = source.name+" deals <strong>"+str(dmg)+"<strong> damage to "+ target.name
-		target.hp -= dmg
-		return message #probably need to change so that this doesn't stop the function, but still sends info somewhere
-		#check(target)
-
-
-#takes in source, weapon used, and target
-def attack(source, weapon, target):
+	enchValues = [0, 0] #local values needed for enchantments: layered, heavy
+	initdmg = atk.dmg + source.dmg + random.randint(0, source.ddev * 2)- source.ddev
+	prevdmg = initdmg
+	dmg = initdmg #differentiated for enchants
+	print initdmg
+	for k in range(len(target.equipped)): #loop through equipped items, counts because enchantments can do stuff
+		i = target.equipped[k]
+		enchValues[0] = 0 #reset for layered
+		for j in range(len(i.dfnChunks)): #loop through each item's defence chunks, counts because enchantments
+			x = i.dfnChunks[j]
+			tanked = 0
+			if ((x.ench["trueProtection"] or atk.pierce < 2) and not (atk.pierce == 1 and x.piercable == True)) and ((target.defending and not x.all) or x.all) and i.durability > 0: #if you actually count the defence
+				#print "Armored! defence:"
+				#Damage reduction
+				if x.dfn == True: #all damage goes to armor
+					tanked = dmg
+				else: #some damage goes to armor
+					tanked = x.dfn
+				
+				#Damage calculation
+				#print tanked
+				dmg -= tanked
+				if target.defending:
+					if dmg < 0:
+						dmg = 0
+				else:
+					if dmg < 1:
+						dmg = 1
+				
+				#print "newdmg:", dmg
+				#Durability reduction
+				weapon.durability -= x.ench["destructive"]
+				if not x.dur: #if durability is taken into account
+					i.durability -= tanked + atk.ench["destructive"]
+					if i.durability < 0: #if armor is destroyed, only tank as much as it can
+						dmg -= i.durability
+						if dmg > prevdmg:
+							dmg = prevdmg
+				
+				if x.ench["thorns"] != False: #if it has thorns
+					if (x.ench["thorns"].proj != False) or (atk.proj == False): #if thorns applies #NEED AN EXCEPTION TO PREVENT THORNS LOOPING. THAT WOULD BE VERY BAD
+						Damage(target, i, x.ench["thorns"], source)
+				if x.ench["reflecting"] != 0:
+					Damage (source, i, atkChunk(dmg*x.ench["reflecting"], atk.agil-10, False, False, atk.pierce-1), source) #NEED AN EXCEPTION TO PREVENT THORNS LOOPING
+			if enchValues[0] < x.ench["layered"][1]: #test layered max
+				if (random.randint(0, 100) < x.ench["layered"][0]):
+					j -= 1
+					enchValues[0] += 1
+			prevdmg = dmg
+			if enchValues[1] < atk.ench["heavy"]:
+				enchValues[1] += 1
+				dmg = initdmg
 	
-	attacking = True
-	for i in target.minions:
-		if (rand(100) <= i.dist and attacking):
-			attack(source, weapon, i)
-			if (i.hp <= 0):
-				killMinion(target, i)
-				getMinionTree(enm, 1)
-				enm.minionTree = minionTree
-				getMinionTree(pla, 1)
-				pla.minionTree = minionTree
-			attacking = False
+	message = source.name+" deals <strong>"+str(dmg)+"<strong> damage to "+ target.name
+	target.hp -= dmg
+	return message #probably need to change so that this doesn't stop the function, but still sends info somewhere
+	#check(target)
 
-			
-	if (attacking):
-		atk = atkChunk(0, 0) #give a base value in case weapon has no valid atkChunks
-		#Make the atkChunk to use in this attack
+
+#takes in source, weapon used, and target.		[how many hits allowed, previous target, sweeping]
+def attack(source, weapon, target, enchValues = [1, None, None]):
+	
+	#Sweeping
+	enchValues[1] = target #can't hit the same person twice in a row
+	if enchValues[2] == None: #figure out if weapon has sweeping
 		for i in weapon.atkChunks:
-			if i.proj == False:
-				atk = atkChunk(i.dmg, i.agil, i.dfn, i.etrn, i.pierce, i.proj, i.ench)
+			if i.ench["sweeping"] > 0:
+				enchValues[2] = i
 				break
-			else:
-				if weapon.ammo >= i.proj: #see if enough ammo to use proj chunk
+	
+	for x in range(enchValues[0]):#Sweeping, or hitting multiple times in any way
+		attacking = True #more of "notHitMinion" or "attackingTarget"
+		for i in target.minions:
+			if (rand(100) <= i.dist and attacking) and (enchValues[1] != i):
+				message, enchValues = attack(source, weapon, i, enchValues)
+				if (i.hp <= 0):
+					killMinion(target, i)
+					getMinionTree(enm, 1)
+					enm.minionTree = minionTree
+					getMinionTree(pla, 1)
+					pla.minionTree = minionTree
+				attacking = False
+
+		if (attacking):
+			atk = atkChunk(0, 0) #give a base value in case weapon has no valid atkChunks
+			#Make the atkChunk to use in this attack
+			for i in weapon.atkChunks:
+				if i.proj == False:
 					atk = atkChunk(i.dmg, i.agil, i.dfn, i.etrn, i.pierce, i.proj, i.ench)
-					weapon.ammo -= i.proj
+					
 					break
-		
-		for i in source.equipped:
-			for x in i.atkChunks:
-				if x.etrn:
-					atk.dmg += x.dmg
-					atk.agil += x.agil
-					#Add the enchants!
-		
-		
-		#add agil mod of used chunk
-		newagil = [((target.agil[0]*(source.agil[1]+atk.agil))-(((source.agil[0]+atk.agil)*target.agil[1])/2)), (target.agil[1]*(source.agil[1]+atk.agil))]
-		#prints(newagil)
-		if (rand(newagil[1]) <= newagil[0]):
-			message = target.name + " dodged "+ source.name +"'s attack"
+				else:
+					if weapon.ammo >= i.proj: #see if enough ammo to use proj chunk
+						atk = atkChunk(i.dmg, i.agil, i.dfn, i.etrn, i.pierce, i.proj, i.ench)
+						weapon.ammo -= i.proj
+						break
 			
-		else:
-			Damage(source, weapon, atk, target)
-		attacking = False
-		
+			for i in source.equipped: #add boosts from other items
+				for x in i.atkChunks:
+					if x.etrn:
+						atk.dmg += x.dmg
+						atk.agil += x.agil
+						#Add the enchants together, use the higher value
+			
+			if atk.ench["sweeping"] > 0:
+				enchValues[0] = 1+atk.ench["sweeping"]
+			
+			if atk.proj != False and i.ench["returning"][0] != 0:
+				if i.ench["returning"][0] > random.randint(0, 100):
+					weapon.ammo += i.ench["returning"][1]
+			
+			#add agil mod of used chunk
+			newagil = [((target.agil[0]*(source.agil[1]+atk.agil))-(((source.agil[0]+atk.agil)*target.agil[1])/2)), (target.agil[1]*(source.agil[1]+atk.agil))]
+			#prints(newagil)
+			if (rand(newagil[1]) <= newagil[0]):
+				message = target.name + " dodged "+ source.name +"'s attack"
+				
+			else:
+				message = Damage(source, weapon, atk, target)
+			attacking = False
+			return message, enchValues
 
 
-		
+
 while True:
 	print genRoom()
-	print attack(pla, herosword, adventurer)
+	print attack(pla, herosword, adventurer)[0]
 	raw_input(":")
 	
 
