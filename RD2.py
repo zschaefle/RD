@@ -2,6 +2,8 @@ import random
 import pygame
 import math
 
+#look for:   #VISUALS   to find where HTML visuals were removed
+
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
@@ -217,7 +219,7 @@ class Player(object):
 		self.dmg = 8
 		self.atk = []
 		self.basedef = 0
-		self.dfn = []
+		self.dfn = 0
 		self.passdfn = []
 		self.ddev = 10
 		self.healval = 1
@@ -736,15 +738,16 @@ def Damage(source, weapon, atk, target):
 				enchValues[1] += 1
 				dmg = initdmg
 	
+	dmg -= target.dfn
 	message = source.name+" deals <strong>"+str(dmg)+"<strong> damage to "+ target.name
 	target.hp -= dmg
-	return message #probably need to change so that this doesn't stop the function, but still sends info somewhere
+	return message
 	#check(target)
 
 
 #takes in source, weapon used, and target.		[how many hits allowed, previous target, sweeping]
 def attack(source, weapon, target, enchValues = [1, None, None]):
-	
+	messages = []
 	#Sweeping
 	enchValues[1] = target #can't hit the same person twice in a row
 	if enchValues[2] == None: #figure out if weapon has sweeping
@@ -758,12 +761,11 @@ def attack(source, weapon, target, enchValues = [1, None, None]):
 		for i in target.minions:
 			if (rand(100) <= i.dist and attacking) and (enchValues[1] != i):
 				message, enchValues = attack(source, weapon, i, enchValues)
+				messages.append(message)
 				if (i.hp <= 0):
-					killMinion(target, i)
-					getMinionTree(enm, 1)
-					enm.minionTree = minionTree
-					getMinionTree(pla, 1)
-					pla.minionTree = minionTree
+					target.minions.remove(i)
+					#VISUALS 'source.name+"'s "+ minion.name+ " is dead."'
+					target.minionTree = getMinionTree(target, 1)
 				attacking = False
 
 		if (attacking):
@@ -798,18 +800,35 @@ def attack(source, weapon, target, enchValues = [1, None, None]):
 			newagil = [((target.agil[0]*(source.agil[1]+atk.agil))-(((source.agil[0]+atk.agil)*target.agil[1])/2)), (target.agil[1]*(source.agil[1]+atk.agil))]
 			#prints(newagil)
 			if (rand(newagil[1]) <= newagil[0]):
-				message = target.name + " dodged "+ source.name +"'s attack"
+				messages.append(target.name + " dodged "+ source.name +"'s attack")
 				
 			else:
-				message = Damage(source, weapon, atk, target)
+				messages.append(Damage(source, weapon, atk, target))
 			attacking = False
-			return message, enchValues
+			return messages, enchValues
 
 
-
+#MINIONS
+def getMinionTree(entity, type):
+	if type == 2:
+		if (len(entity.minions) > 0):
+			for i in range(len(entity.minions)):
+				minionTree.append(entity.minions[i])
+				if (len(entity.minions[i].minions) > 0):
+					minionTree += getMinionTree(entity.minions[i], 2)
+			return minionTree
+	if type == 1:
+		minionTree = []
+		minionTree += getMinionTree(entity, 2)
+		return minionTree
+		
+		
+		
 while True:
 	print genRoom()
-	print attack(pla, herosword, adventurer)[0]
+	returned = attack(pla, herosword, adventurer)[0]
+	for i in returned:
+		print i
 	raw_input(":")
 	
 
