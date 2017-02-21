@@ -8,15 +8,19 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
-BLUE = (0,0,255)
-GREY = (100,100,100)
+Cbacking = (170,170,170)
 
 pygame.init()
-font = pygame.font.SysFont('Calibri', 15, True, False)
 size = (995, 259)
-#screen = pygame.display.set_mode(size)
+
+screen = pygame.display.set_mode(size)
 clock = pygame.time.Clock()
 debug = True
+
+#two sets of coord pairs
+def hitDetect(p1, p2, p3, p4):
+	if p2[0] > p3[0] and p1[0] < p4[0] and p2[1] > p3[1] and p1[1] < p4[1]:
+		return True
 
 def getImg(name):
 	full = "Assets/img/"+name+".png"
@@ -38,7 +42,77 @@ def rand(num):
 def cbrt(num):
 	return num ** (1.0/3.0)
 	
+
+class DispObj(object):
+	def refresh(self):
+		if not self.simple:
+			final = pygame.Surface(size, pygame.SRCALPHA, 32).convert_alpha()
+			for i in self.img:
+				final.blit(i.img, i.coords)
+			self.img = final
+	#coords, img is blitable object or list of DispObj. simple is wether or not is list. size is needed if not simple.
+	def __init__(self, img, coords = (0, 0), simple = True, size = (0, 0)):
+		self.coords = coords
+		self.img = img
+		self.simple = simple
+		self.refresh()
 	
+#takes single string, max width, font used, and color of text. returns list of dispObj
+def wraptext(text, fullline, Font, render = False, color = (0,0,17)):  #need way to force indent in string
+	Denting = True
+	count = fullline
+	size = Font.size(text)
+	outtext = []
+	while Denting:
+		if Font.size(text)[0] > fullline:
+			#Search for ammount of charachters that can fit in set fullline size
+			thistext = ""
+			for i in range(900):
+				if Font.size(thistext + text[i])[0] > fullline:
+					count = len(thistext)
+					break
+				else:
+					thistext += text[i]
+			thistext = text[:count]
+			#is it indentable
+			if " " in thistext:
+				for i in range(len(thistext)):
+					#find first space from end
+					if thistext[len(thistext)-(i+1)] == " ":
+						#split text, add indent, update count
+						outtext.append(thistext[:len(thistext)-(i+1)])
+						text = text[len(thistext)-(i):]
+						count = fullline
+						break
+			#unindentable, skip to next
+			else:
+				count += fullline
+		else:
+			#exit denting, add remaining to outtext, return
+			Denting = False
+			outtext.append(text)
+			
+	if render:
+		text = []
+		for i in range(len(outtext)):
+			rand = outtext[i]
+			text.append(DispObj(Font.render(rand, True, color),  (0, (i*size[1]))))
+		outtext = text
+	return outtext
+	
+
+
+#all text objects
+font = pygame.font.SysFont('couriernew', 13)
+fontComp = pygame.font.SysFont('couriernew', 16, True)
+TM1 = DispObj(wraptext("", 900, font, True), (10, 10), False, (900, 120)) #main room desc
+TM2 = DispObj(wraptext("", 900, font, True), (10, 130), False, (900, 119)) #room responses
+#TB1
+#TB2
+#TB3
+#TI1 = DispObj(wraptext()) #inventory stats
+
+		
 #Rooms for the dongeon
 rooms = []
 class Room():
@@ -105,14 +179,15 @@ room35 = Room(1, 0, rand(2)-1, rand(2)-1, 1, 0, 1, 0, 0, 0, 1, 2, "You stumble o
 room36 = Room(1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 6, "You stand on a hill, on a path surrounded by flowers of many different colors. You decide to search for a specific flower, yet not knowing what it looks like.", "Turning ", ", you know your search has come to an end as you spot a fower adorned terrace.", "You stop and smell the flowers.")
 room37 = Room(1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, -7, "yesssssssssssssss", "You exit through the ", ", stumbling over vines.", " \"I don't know...\" you mutter to yourself")
 room38 = Room(0, 1, 0, 1, 0, 1, rand(1), 0, 1, 0, 1, 6, "You are in a large overhang, light from outside illuminating a massive array of small, intricately detailed clay soldiers.", "You clamber towards the ", "ern light, holding your hands above your eyes to block the light", "You stumble over the remains of the small clay soldiers, cracking them even further.")
+room39 = Room(0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 3, "You are in a room, quite bland. You feel like it is a blank canvas, and you can do anything with it.", "You stroll to the ", ".", "Looks like you cannot, in fact, do anything with this room.")
 
 bossroom = Room(0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, -2, "You find yourself in a wide open room. The ceiling is high and dark. An ominous feeling of doom hangs over you.", "Exhausted, you leave through the ", " door.", "You somehow walk into a nonexistent wall.", False)
 roomBoss2 = Room(0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 1, -2, "You are in a small stone cavern, many twisting passageways leading through a winding cave system. You feel a drop of water plop on your head.", "You climb out through a ", "ern cave.", "You climb through a tunnel, only to find yourself in a room similar to the one you came from.", False)
 roomBoss3 = Room(1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 2, "Suddenly you are in a forest. A crossroads leading in all directions, yet you feel leaving will not be that easy. Searching for why you feel that way, you notice a few houses around you, well made, and decide to lean on one to rest for a moment. Part of it chips off. You glance around hurriedly, hoping no one saw what you did. The house probably wasn't as sturdy as you expected.", "Free to leave now, you choose to go to the ", ", hoping it will lead to better fortunes and maybe even happiness.", "You somehow can't leave even with exits everywhere. You blame Zakiah.", False)
 roomBoss4 = Room(0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 3, "You find yourself in a room, walls covered in mechanical and mystical constructs alike. Trees are visible through the sparsely placed windows.", "You find a button hidden on the ", "ern wall, pressing it against your better judgement.", "You become distracted by the intricacies of this room.", False)
+#plant, manmade, water, dark, animal, light, items, north, east, south, west, sane, message, exitA, exitB, exitFail, normal = True
 
-
-class item(object):
+class item(object): #bland old items.
 	def __init__(self, offence, defence, agility, sanity, score, name, divname, desc):
 		self.atk = offence
 		self.dfn = defence
@@ -384,7 +459,7 @@ def gentables():
 equippeditems = [nothing, nothing]
 runs = 1
 turn = 0
-room = ""
+room = room3
 lootable = False
 chestmessages = ["There is a small chest about the size of your fist lurking in the corner. ", "A golden chest sits with elegant details and pure beauty.", "There\'s a lumpy sack over there", "You hear the wheeze of a chest.  \"Open me\" it calls, with the music of its collapsing wood.", "In a rotting monster carcass, you glimpse something... interesting.", "There\'s a lump in the ground. Like a squirrel buried a tasty rock and then ran off and died.", "Something calls your attention. It sucks you in. You imagine riches.", "You smell something.  It smells like goods.", "You glimpse a confection of wood and nails, almost big enough to hold something.", "There is a small door that seems to have something sticking out, perhaps something useful."]
 runmessages = ["Run", "Dodge", "Sprint", "Jump", "Duck", "Roll", "Slide", "Feint", "Fake", "Switch", "Distract", "Twist", "Lurch", "Insult", "Shout"]
@@ -405,6 +480,7 @@ def genRoom():
 	global turn
 	global search
 	global finalsanity
+	global room
 	
 	prints("Generating room.")
 	gentables()
@@ -619,14 +695,18 @@ def genRoom():
 				roommessage += prepbattle(muffin)
 			if (enemyspawn >= 5):
 				roommessage += prepbattle(creepybaldguy)'''
-	return roommessage
+	global TM1
+	TM1.img = wraptext(roommessage, 900, font, True)
+	TM1.refresh()
 	
 battleprep = -1
 lastmove = 1
+
+
 def move(direction):
 	global roommessage
 	global battleprep
-	global lastmove
+	global room
 	roommessage = ""
 	if (battleprep == -1):
 		success = False
@@ -652,16 +732,18 @@ def move(direction):
 				roommessage = room.exitA + "west" + room.exitB
 			
 		if success:
-			#clear print b
-			roommessage += "<br/>"
+			#roommessage VISUALS figure out how to get a new line in here
+			global TM2
+			TM2.img = font.render("", True, (0, 0, 0))
 			genRoom()
+			global lastmove
 			lastmove = direction
 		else:
-			#send to print b
-			#roommessage = room.exitFail
-			pass
+			global TM2
+			TM2.img = wraptext(room.exitFail, 900, font, True)
+			TM2.refresh()
+			prints("move failed.")
 	
-
 def getitem(item):
 	item.quant += 1
 	score += item.score
@@ -822,15 +904,102 @@ def getMinionTree(entity, type):
 		minionTree += getMinionTree(entity, 2)
 		return minionTree
 		
+
+#Getting visuals for screens
+Smain = getImg("screens/screenmain")
+Sgrave = getImg("screens/gravestone")
+Scompass = getImg("screens/compass")
+Sinsane = getImg("screens/screenlastinsanity")
+Szarol = getImg("screens/screenzarol")
+
+#displays
+
+
+running = True
+Screen = 1
+mouse_down = False
+genRoom()
+
+while running:
+	for event in pygame.event.get(): #key input
+		if event.type == pygame.QUIT: 
+			running = False
+		elif event.type == pygame.MOUSEBUTTONDOWN:
+			mouse_down = True
+		elif event.type == pygame.MOUSEBUTTONUP:
+			mouse_down = False
+		elif event.type == pygame.KEYDOWN and debug:
+			if event.key == K_1:
+				prints("boop")
+				
+	mouse_pos = pygame.mouse.get_pos()
+
+	if Screen == 1: #main screen
+		screen.fill(Cbacking)
+		screen.blit(Smain, (0, 0))
 		
+		screen.blit(TM1.img, TM1.coords)
+		screen.blit(TM2.img, TM2.coords)
+		#buttons on side
+		screen.blit(Scompass, (910, 174))
 		
-while True:
-	print genRoom()
-	returned = attack(pla, herosword, adventurer)[0]
-	for i in returned:
-		print i
-	raw_input(":")
+		if mouse_down:
+			if hitDetect(mouse_pos, mouse_pos, (935, 174), (960, 199)): #north
+				mouse_down = False
+				move(1)
+			if hitDetect(mouse_pos, mouse_pos, (960, 199), (985, 224)): #east
+				mouse_down = False
+				move(2)
+			if hitDetect(mouse_pos, mouse_pos, (935, 224), (960, 249)): #south
+				mouse_down = False
+				move(3)
+			if hitDetect(mouse_pos, mouse_pos, (910, 199), (935, 224)): #west
+				mouse_down = False
+				move(4)
+		
 	
+	if Screen == 2: #inven screen
+		screen.fill(Cbacking)
+	
+	
+	if Screen == 3: #battle
+		screen.fill(Cbacking)
 
+		
+	if Screen == 4: #Grave, limbo 1
+		screen.fill(BLACK)
+		
+		
+	if Screen == 5: #Monoliths, limbo 2
+		screen.fill(BLACK)
 
-
+	
+	pygame.display.update()
+	clock.tick(50)
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
