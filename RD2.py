@@ -18,7 +18,9 @@ clock = pygame.time.Clock()
 debug = True
 
 #two sets of coord pairs
-def hitDetect(p1, p2, p3, p4):
+def hitDetect(p1, p2, p3, p4 = None):
+	if p4 == None:
+		p4 = p3
 	if p2[0] > p3[0] and p1[0] < p4[0] and p2[1] > p3[1] and p1[1] < p4[1]:
 		return True
 
@@ -213,6 +215,19 @@ inactivecube = item(25, 7, 20, 0, 10, "Inactive Cube", "inactivecube", "")
 card = item(2, 25, 25, 0, 20, "00000111", "card", "")
 device = item(40, 0, 6, 0, 20, "Electrical device", "device", "You have no idea how it works, but it looks far beyond any tech you have seen.")
 		
+class ItemDisp(object):
+	def refresh(self):
+		pass
+		
+	def __init__(self, item):
+		self.id = item.Name
+		self.item = item
+		#different displays
+		self.mini = item.img #for use in battle. resize!
+		self.norm = item.img #for use in inven, with name + desc
+		self.press = item.img #for inven, when clicked on.
+		self.side = item.img #for inven, large display
+		self.refresh()
 		
 #New items, with the better system
 #single chunk of armor calculation
@@ -280,6 +295,7 @@ class Item(object):
 			self.findable = 0
 		else:
 			self.findable = 1
+		self.divname = ItemDisp(self)
 		
 		global allitems
 		allitems.append(self)
@@ -289,10 +305,8 @@ nothing = Item([], [], 1, 0, 0, "", "", "no_thing", False)
 allitems.remove(nothing)
 acorncap = Item([], [dfnChunk(1, 1, True)], 15, 4, 9, "Acorn Cap", "If you were really tiny, like, smaller than a squirrel, this would be the perfect armor. You place it over your heart  You call it a kiss", "acorncap", 1)
 boardgame = Item([], [dfnChunk(0, 1, True), dfnChunk(-1, 1)], 32, 2, 2, "Board Game", "The cardboard is battered  from years of wear, but you can see the winding  path your piece would take if you were a winner.   You're not a winner.", "boardgame", 1)
-#bobbypin = item(1, 0, 1, 1, 1, "Bobby Pin", "bobbypin", "Ow..., it's sharp.");
 bobbypin = Item([atkChunk(1, 1)], [], 35, 1, 1, "Bobby Pin", "Ow... it's sharp.", "bobbypin", 1)
-#safetypin = item(4, 0, 3, 1, 1, "Safety pin", "safetypin", "Not actually very safe at all.<br/>Actually quite dangerous.");
-
+safetypin = Item([atkChunk(3, 4)], [], 40, 1, 1, "Safety pin", "Not actually very safe at all.<br/>Actually quite dangerous.", "safetypin", 1)
 woodstick = Item([atkChunk(1, 0)], [dfnChunk(-1, 2)], 10, 3, 1, "Wooden Stick", "It might not be the best sword, but hey, it's worth a try.", "woodstick", 1)
 
 
@@ -996,6 +1010,8 @@ Scompass = getImg("screens/compass")
 Sinsane = getImg("screens/screenlastinsanity")
 Szarol = getImg("screens/screenzarol")
 looot = font.render("Loot", True, (0, 0, 0))
+inveen = font.render("Inventory", True, (0, 0, 0))
+baack = font.render("Back", True, (0, 0, 0))
 
 running = True
 Screen = 1
@@ -1024,29 +1040,42 @@ while running:
 		screen.blit(TM1.img, TM1.coords)
 		screen.blit(TM2.img, TM2.coords)
 		#buttons on side
-		screen.blit(looot, (910, 54))
+		pygame.draw.rect(screen, Cbacking, [910, 10 , 75, 24])
+		screen.blit(inveen, (910, 10))
+		pygame.draw.rect(screen, Cbacking, [910, 37 , 75, 24])
+		screen.blit(looot, (910, 37))
 		screen.blit(Scompass, (910, 174))
 		
+		
 		if mouse_down:
-			if hitDetect(mouse_pos, mouse_pos, (935, 174), (960, 199)): #north
+			if hitDetect((935, 174), (960, 199), mouse_pos): #north
 				mouse_down = False
 				move(1)
-			if hitDetect(mouse_pos, mouse_pos, (960, 199), (985, 224)): #east
+			if hitDetect((960, 199), (985, 224), mouse_pos): #east
 				mouse_down = False
 				move(2)
-			if hitDetect(mouse_pos, mouse_pos, (935, 224), (960, 249)): #south
+			if hitDetect((935, 224), (960, 249), mouse_pos): #south
 				mouse_down = False
 				move(3)
-			if hitDetect(mouse_pos, mouse_pos, (910, 199), (935, 224)): #west
+			if hitDetect((910, 199), (935, 224), mouse_pos): #west
 				mouse_down = False
 				move(4)
-			if hitDetect(mouse_pos, mouse_pos, (910, 54), (995, 54+24)):
+			if hitDetect((910, 10), (985, 32), mouse_pos): #invetory, button size: 75 x 24 px
+				Screen = 2
+				mouse_down = False
+			if hitDetect((910, 37), (985, 61), mouse_pos): #loot
 				mouse_down = False
 				RDloot()
 	
 	if Screen == 2: #inven screen
 		screen.fill(Cbacking)
-	
+		screen.blit(Smain, (0, 0))
+		pygame.draw.rect(screen, Cbacking, [10, 225 , 75, 24])
+		screen.blit(baack, (10, 225))
+		
+		if mouse_down:
+			if hitDetect((10, 225), (85, 249), mouse_pos):
+				Screen = 1
 	
 	if Screen == 3: #battle
 		screen.fill(Cbacking)
@@ -1071,10 +1100,11 @@ while running:
 					i.durability = i.maxdur
 				if i.durability <= 0 and i.destructable:
 					removeitem(i)
-			elif i.mendTick >= (i.ench["mending"][0]+500)*2 and i.broken and i.ench["mending"][1] > 0: #take long time to repair from broken
+			elif i.mendTick >= (i.ench["mending"][0]+100)*2 and i.broken and i.ench["mending"][1] > 0: #take long time to repair from broken. and don't keep breaking it
 				i.mendTick = 0
 				i.durability += 1 #and it only fixes a little bit
-				i.broken = False
+				if i.durability > 0:
+					i.broken = False
 				
 	
 	pygame.display.update()
