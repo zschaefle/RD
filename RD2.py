@@ -207,10 +207,6 @@ fishingrod = item(5, 4, 2, 0, 10, "Fishing Rod", "fishingrod", "Hook, Line, and 
 drawingpad = item(1, 3, 7, 12, 10, "Drawing Pad", "drawingpad", "Using this, you can stay positive. Because everything else is in here.")
 pencil = item(7, 2, -1, -5, 10, "The Pencil", "pencil", "Quite oversized, you use it as a blunt weapon. But you feel there is more to it.")
 spoon = item(50, 1, 7, -8, 10, "the Spoon", "spoon", "It's just a spoon. But something feels powerful about it...")
-alphaxe = item(20, -2, -2, 0, 10, "Alpha's Axe", "alphaxe", "A large heavy axe, with surprisingly powerful hits.")
-sivgoggles = item(4, 6, 35, -15, 10, "Alpha's Glasses", "sivgoggles", "Gazing through them, You can see things. Where they are, and where they are going.")
-hair = item(0, 1, 2, -100, 10, "Alpha's Hair", "hair", "You stole this from a boss. Well, stole isn't the right word. More of Generated through Desire.")
-shurikenbag = item(35, 2, 45, -35, 20, "Shuriken Pouch", "shurikenbag", "A small, blood filled pouch, when you reach your hand into it, you always pull out a shuriken.")
 jimsword = item(25, 5, -5, 0, 10, "Jim's Sword", "jimsword", "")
 jimarmor = item(0, 35, -20, 0, 10, "Enchanted Armor", "jimarmor", "Glimmering metallic armor, Material flowing smoothly within it to fill the gaps in its structure.")
 inactivecube = item(25, 7, 20, 0, 10, "Inactive Cube", "inactivecube", "")
@@ -234,7 +230,7 @@ class dfnChunk(object):
 		#list of Enchantments, all dealt with seperately.
 		#Reflecting: multiplier of damage sent back to attacker; Thorns: False, or atkChunk
 		#Destructive: direct durability damage to attacking weapon; Layered: value1 is chance for damage to be put through again, to max of value 2
-		self.ench = {"reflecting":0, "thorns":False, "destructive":0, "trueProtection":False, "layered":[0, 0], "bound":0}
+		self.ench = {"reflecting":0, "thorns":False, "destructive":0, "trueProtection":False, "layered":[0, 0]}
 		self.ench.update(enchs)
 
 #single chunk of damage calculation. when putting into list, be sure to put in order: [projectile chunks, melee chunk, eternal chunks]. any other order will make some unused by attack()
@@ -252,16 +248,18 @@ class atkChunk(object):
 		#list of Enchantments, all dealt with seperately
 		self.ench = {"destructive":0, "piercing":0, "heavy":0, "sweeping":0, "returning":[0, 0]}
 		self.ench.update(enchs)
-		#piercing level. 0 counts all armor chunks, 1 doesn't count piercable chunks, 2 skips all chunks (aside from special enchants)
+		#piercing level. 0 counts all armor chunks, 1 doesn't count piercable chunks, 2 skips all chunks (aside from special enchants). 3 skips everything.
 		self.pierce = piercing + self.ench["piercing"]
 		
 allitems = []
 class Item(object):
 	#old: 				offence, defence, agility, sanity, score, name, divname, desc
-	def __init__(self, offence, defence, durability, sanity, score, name, desc, img, destructable = True, ammo = False, regenammo = [], enchs = {}):
+	def __init__(self, offence, defence, durability, sanity, score, name, desc, img, lvl, destructable = True, ammo = False, regenammo = [], enchs = {}):
 		self.atkChunks = offence
 		self.dfnChunks = defence
 		self.durability = durability
+		self.broken = False
+		self.maxdur = durability
 		self.sane = sanity
 		self.score = score
 		self.Name = name
@@ -269,23 +267,49 @@ class Item(object):
 		self.img = getImg("items/"+img)
 		self.destructable = destructable #if true, this item is removed when durability reaches 0.
 		self.ammo = ammo
+		self.maxammo = ammo
 		self.regenammo = regenammo
 		#Regen: ticks before regen, ammount regenerated; Bound is times the item will NOT be destroyed by thing that remove all items. ie: Zarol, Monoliths
 		self.ench = {"mending":[-1, 0], "bound":0}
 		self.ench.update(enchs)
-		#quantity
-		self.quant = 0
-		self.findable = 0
+		self.mendTick = -1
+		if self.ench["mending"][0] != -1:
+			self.mendTick = 0
+		self.lvl = lvl
+		if self.lvl == -1:
+			self.findable = 0
+		else:
+			self.findable = 1
 		
 		global allitems
 		allitems.append(self)
 
-		
+
 nothing = Item([], [], 1, 0, 0, "", "", "no_thing", False)
 allitems.remove(nothing)
+acorncap = Item([], [dfnChunk(1, 1, True)], 15, 4, 9, "Acorn Cap", "If you were really tiny, like, smaller than a squirrel, this would be the perfect armor. You place it over your heart  You call it a kiss", "acorncap", 1)
+boardgame = Item([], [dfnChunk(0, 1, True), dfnChunk(-1, 1)], 32, 2, 2, "Board Game", "The cardboard is battered  from years of wear, but you can see the winding  path your piece would take if you were a winner.   You're not a winner.", "boardgame", 1)
+#bobbypin = item(1, 0, 1, 1, 1, "Bobby Pin", "bobbypin", "Ow..., it's sharp.");
+bobbypin = Item([atkChunk(1, 1)], [], 35, 1, 1, "Bobby Pin", "Ow... it's sharp.", "bobbypin", 1)
+#safetypin = item(4, 0, 3, 1, 1, "Safety pin", "safetypin", "Not actually very safe at all.<br/>Actually quite dangerous.");
 
-heroshield = Item([], [dfnChunk(-5, 6, False, False, False), dfnChunk(-2, 4, True)], 200, 1, 10, "Heroes Shield", "You feel a bit bad, killing someone with origins probably alike yours.", "heroshield", False)
-herosword = Item([atkChunk(6, 2)], [dfnChunk(0, 2, False, True)], 100, 1, 10, "Heroes Sword", "A fitting weapon for a hero. But are <i>you<i> a hero?", "herosword", False)
+woodstick = Item([atkChunk(1, 0)], [dfnChunk(-1, 2)], 10, 3, 1, "Wooden Stick", "It might not be the best sword, but hey, it's worth a try.", "woodstick", 1)
+
+
+#--BOSS ITEMS--
+heroshield = Item([], [dfnChunk(-5, 6, False, False, False), dfnChunk(-2, 4, True)], 200, 1, 10, "Heroes Shield", "You feel a bit bad, killing someone with origins probably alike yours.", "heroshield", -1, False)
+herosword = Item([atkChunk(6, 2)], [dfnChunk(0, 2, False, True)], 100, 1, 10, "Heroes Sword", "A fitting weapon for a hero. But are <i>you<i> a hero?", "herosword", -1, False)
+#ALPHA
+alphaxe = Item([atkChunk(20, -2, True, False, 0, False, {"sweeping":2, "heavy":1})], [dfnChunk(-2, -2, True, True), dfnChunk(-10, 12)], 400, 0, 10, "Alpha's Axe", "A large heavy axe, with surprisingly powerful hits.", "alphaxe", -1, False)
+sivgoggles = Item([atkChunk(4, 15, False, True, 1, False, {"sweeping":1})], [dfnChunk(10, 2, True), dfnChunk(25, 2, False, True, True, {"trueProtection":True})], 30, -15, 10, "Alpha's Glasses", "Gazing through them, You can see things. Where they are, and where they are going.", "sivgoggles", False, False, -1, [], {"bound":4, "mending":[3, 1]})
+hair = Item([atkChunk(1, 1, False, True, 0, False, {"destructive":30})], [], 10, -100, 10, "Alpha's Hair", "You stole this from a boss. Well, stole isn't the right word. More of Generated through Desire.", "hair", -1, False, False, [], {"bound":10})
+shurikenbag = Item([atkChunk(35, 25, False, False, 1, 5, {"sweeping":5}), atkChunk(15, 20, True, False, 0, 1, {"returning":[2, 80], "destructive":10})], [dfnChunk(5, 4, True)], 100, -35, 10, "Shuriken Pouch", "A small, blood filled pouch, when you reach your hand into it, you always pull out a shuriken.", "shurikenbag", -1, False, 10, [1, 1], {"bound":1, "mending":[5, 2]})
+#COOSOME
+spoon = Item([atkChunk(50, 7, False, False, 2, 30), atkChunk(35, 6, False, False, 1, 1, {"returning":[2, 100]}), atkChunk(15, 3, True, True)], [dfnChunk(1, 1)], 100, -8, 10, "the Spoon", "It's just a spoon. But something feels powerful about it...", "spoon", -1, False, 30, [10, 1], {"mending":[500, 1], "bound":2})
+lapis = Item([atkChunk(5000, 5000, False, False, 3, False, {"sweeping":1000})], [dfnChunk(0, True, False, True, False, {"trueProtection":True, "thorns":atkChunk(5000, 5000, False, False, 3)})], 1000, 0, 0, "Lapis", "The gem of the gods. Or at least the god of 7.", "lapis", -1, False, False, [], {"bound":100, "mending":[50, 1000]})
+
+
+invenItems = []
 
 class Player(object):
 	def __init__(self):
@@ -394,6 +418,39 @@ class Boss(object):
 
 adventurer = Boss(190, 20, 0, "Adventurer", "adventurer", 190, 5, [5,100], [100,50,30], -7, herosword, heroshield, 10, "You hear the footsteps of someone else.", "It is an Adventurer, Readying his stance for Battle!", ["He seems oddly unaware of the massive amounts of damage you have dealt him. Much like you are.", "", "", "", "He seems more confident of himself, more sure of his strides.",""],bossroom,100, [herosword, heroshield]);
 
+bosses = []
+class Enm(object):
+	def __init__(self, hp, maxhp, atk, ddev, dfn, agil, heal, sane, name, img, message, cry, rundown, interval, equip = [nothing], Boss = False, room = None, turn = -1):
+		self.hp = hp #initial
+		self.maxhp = maxhp #max
+		self.atk = atk #damage += atk (if melee)
+		self.ddev = ddev #damage +- ddev
+		self.dfn = dfn #damage -= dfn
+		self.agil = agil #touple, #/# chance to dodge
+		self.heal = heal[2]
+		self.healchance = [heal[0], heal[1]] #kys
+		self.sane = sane #Added to sanity when killed
+		self.name = name
+		self.img = getImg("entities/"+img) #blitable image
+		self.message = message #added to roommessage when in room
+		self.cry = cry #start of battle message
+		self.rundown = rundown #list of messages displayed in battle, might be removed *le sad*
+		self.atkInt = math.ceil(interval)
+		self.atkIntBase = math.ceil(interval)
+		self.equipped = equip
+		self.boss = Boss
+		if self.boss:
+			self.room = room
+			self.turn = turn
+			global bosses
+			bosses.append(self)
+		
+		self.defending = False
+		self.minions = []
+		self.minionTree = []
+
+
+alpha = Enm(350, 500, 14, 6, 0, [68, 100], [5,4,10], -3, "Alpha", "alpha", "You hear sudden quick footsteps from behind you.", "you turn to see someone dashing at you, Swinging a large axe!", ["", "", "", "", "", ""], 120, [alphaxe, sivgoggles], True, roomBoss3, 20)
 
 
 #minions go here, not needed yet
@@ -410,17 +467,10 @@ def gentables():
 	global rooms
 	global finalsanity
 	
-	lootitems = [] #doesn't work with chunks format
-	'''for i in allitems:
-		if i.findable == 0:
-			if (pla.lvl == 1 and (i.atkChunks[0].dmg + i.dfnChunks[0].dmg + (i.agil / 3) + (i.sane / 3)) <= 5):
-				lootitems.append(i)
-			if (pla.lvl == 2 and (i.atkChunks[0].dmg + i.dfn + (i.agil / 2) + (i.sane / 2)) <= 10):
-				lootitems.append(i)
-			if (pla.lvl == 3 and (i.atkChunks[0].dmg + i.dfn + i.agil + i.sane) <= 15):
-				lootitems.append(i)
-			if pla.lvl >= 4:
-				lootitems.append(i)'''
+	lootitems = []
+	for i in allitems:
+		if i.findable == 1 and pla.lvl >= i.lvl:
+			lootitems.append(i)
 				
 
 	#Get ablerooms
@@ -446,14 +496,10 @@ def gentables():
 	if pla.trueSane != 0:
 		lootitems = []
 		for i in allitems:
-			if (i.sane <= 0 and pla.trueSane < 0):
-				lootitems.append(i)
-			if (i.sane >= 0 and pla.trueSane > 0):
+			if (i.sane <= 0 and pla.trueSane < 0) or (i.sane >= 0 and pla.trueSane > 0):
 				lootitems.append(i)
 		for i in rooms:
-			if (i.sanity <= 0 and pla.trueSane < 0):
-				ablerooms.append(i)
-			if (i.sanity >= 0 and pla.trueSane > 0):
+			if (i.sanity <= 0 and pla.trueSane < 0) or (i.sanity >= 0 and pla.trueSane > 0):
 				ablerooms.append(i)
 
 equippeditems = [nothing, nothing]
@@ -481,6 +527,7 @@ def genRoom():
 	global search
 	global finalsanity
 	global room
+	global lootable
 	
 	prints("Generating room.")
 	gentables()
@@ -745,10 +792,47 @@ def move(direction):
 			prints("move failed.")
 	
 def getitem(item):
-	item.quant += 1
+	#AAAAAAAAAAAAAAAHHHHHHHHHHHHHHHHHHHHH
+	
+	global invenItems
+	invenItems.append(item) #need to change to a special item, probably a custom object
+	
+	global score
+	global TM2
 	score += item.score
-	printb("You found "+item.Name + ".<br/>you place the newfound loot in your backpack.")
+	TM2.img = wraptext("You found "+item.Name + ".<br/>you place the newfound loot in your backpack.", 900, font, True)
+	TM2.refresh()
 
+def RDloot():
+	global lootable
+	global lootitems
+	if lootable:
+		gentables()
+		itemget = lootitems[random.randint(0, len(lootitems)-1)]
+		'''if (itemget == rock)
+			Unlock(heatrock);
+		}'''
+		
+		getitem(itemget)
+		lootable = False
+	else:
+		global TM2
+		TM2.img = wraptext("There is nothing to loot here.", 900, font, True)
+		TM2.refresh()
+	
+def removeitem(item): #must take valid item
+	global invenItems
+	if item in invenItems:
+		if item.ench["bound"] > 0:
+			item.ench["bound"] = item.ench["bound"] -1
+			prints("Bound item: "+item.Name)
+			if item.durability <= 0:
+				item.broken = True
+		else:
+			invenItems.remove(item)
+			prints("Removed: "+item.Name)
+	else:
+		prints(item.Name+" not found in inventory!")
 
 #refresh an entity's stats. probably unneeded at this point
 def Refresh(ent):
@@ -803,8 +887,8 @@ def Damage(source, weapon, atk, target):
 					i.durability -= tanked + atk.ench["destructive"]
 					if i.durability < 0: #if armor is destroyed, only tank as much as it can
 						dmg -= i.durability
-						if dmg > prevdmg:
-							dmg = prevdmg
+						#if dmg > prevdmg:  #only do this if rebounding is back
+						#	dmg = prevdmg
 				
 				if x.ench["thorns"] != False: #if it has thorns
 					if (x.ench["thorns"].proj != False) or (atk.proj == False): #if thorns applies #NEED AN EXCEPTION TO PREVENT THORNS LOOPING. THAT WOULD BE VERY BAD
@@ -855,7 +939,7 @@ def attack(source, weapon, target, enchValues = [1, None, None]):
 			#Make the atkChunk to use in this attack
 			for i in weapon.atkChunks:
 				if i.proj == False:
-					atk = atkChunk(i.dmg, i.agil, i.dfn, i.etrn, i.pierce, i.proj, i.ench)
+					atk = atkChunk(source.atk + i.dmg, i.agil, i.dfn, i.etrn, i.pierce, i.proj, i.ench)
 					
 					break
 				else:
@@ -911,15 +995,14 @@ Sgrave = getImg("screens/gravestone")
 Scompass = getImg("screens/compass")
 Sinsane = getImg("screens/screenlastinsanity")
 Szarol = getImg("screens/screenzarol")
-
-#displays
-
+looot = font.render("Loot", True, (0, 0, 0))
 
 running = True
 Screen = 1
 mouse_down = False
 genRoom()
 
+#main loop
 while running:
 	for event in pygame.event.get(): #key input
 		if event.type == pygame.QUIT: 
@@ -941,6 +1024,7 @@ while running:
 		screen.blit(TM1.img, TM1.coords)
 		screen.blit(TM2.img, TM2.coords)
 		#buttons on side
+		screen.blit(looot, (910, 54))
 		screen.blit(Scompass, (910, 174))
 		
 		if mouse_down:
@@ -956,7 +1040,9 @@ while running:
 			if hitDetect(mouse_pos, mouse_pos, (910, 199), (935, 224)): #west
 				mouse_down = False
 				move(4)
-		
+			if hitDetect(mouse_pos, mouse_pos, (910, 54), (995, 54+24)):
+				mouse_down = False
+				RDloot()
 	
 	if Screen == 2: #inven screen
 		screen.fill(Cbacking)
@@ -972,7 +1058,24 @@ while running:
 		
 	if Screen == 5: #Monoliths, limbo 2
 		screen.fill(BLACK)
-
+	
+	
+	#little stuff all the time
+	for i in invenItems:
+		if i.mendTick != -1:
+			i.mendTick += 1
+			if i.mendTick >= i.ench["mending"][0] and not i.broken: #mending
+				i.mendTick = 0
+				i.durability += i.ench["mending"][1]
+				if i.durability > i.maxdur:
+					i.durability = i.maxdur
+				if i.durability <= 0 and i.destructable:
+					removeitem(i)
+			elif i.mendTick >= (i.ench["mending"][0]+500)*2 and i.broken and i.ench["mending"][1] > 0: #take long time to repair from broken
+				i.mendTick = 0
+				i.durability += 1 #and it only fixes a little bit
+				i.broken = False
+				
 	
 	pygame.display.update()
 	clock.tick(50)
