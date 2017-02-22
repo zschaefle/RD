@@ -4,7 +4,7 @@ http://steampoweredairship.com/unexpected-error/rd/
 https://drive.google.com/open?id=1HYPd5PBuNX24mbP4z_BhIiDxqP5lRM1dOc4g5BSVc8I
 https://drive.google.com/open?id=1S_5sqfRwNeyYip_296_XltTGRayP3fW6amOfEyVC5hM
 
-
+LOL THIS IS GOOD
 */
 //creates random number between 1 and num.
 var debuginfo = false;
