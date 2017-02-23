@@ -1,5 +1,6 @@
 import random
 import pygame
+from pygame.locals import *
 import math
 
 #look for:   #VISUALS   to find where HTML visuals were removed
@@ -12,13 +13,18 @@ Cbacking = (170,170,170)
 
 pygame.init()
 size = (995, 259)
+font = pygame.font.SysFont('couriernew', 13)
+fontComp = pygame.font.SysFont('couriernew', 16, True)
+smallfont = pygame.font.SysFont('couriernew', 12)
 
 screen = pygame.display.set_mode(size)
 clock = pygame.time.Clock()
 debug = True
 
 #two sets of coord pairs
-def hitDetect(p1, p2, p3, p4):
+def hitDetect(p1, p2, p3, p4 = None):
+	if p4 == None:
+		p4 = p3
 	if p2[0] > p3[0] and p1[0] < p4[0] and p2[1] > p3[1] and p1[1] < p4[1]:
 		return True
 
@@ -60,15 +66,15 @@ class DispObj(object):
 #takes single string, max width, font used, and color of text. returns list of dispObj
 def wraptext(text, fullline, Font, render = False, color = (0,0,17)):  #need way to force indent in string
 	Denting = True
-	count = fullline
+	max = fullline
 	size = Font.size(text)
 	outtext = []
 	while Denting:
-		if Font.size(text)[0] > fullline:
+		if Font.size(text)[0] > max:
 			#Search for ammount of charachters that can fit in set fullline size
 			thistext = ""
-			for i in range(900):
-				if Font.size(thistext + text[i])[0] > fullline:
+			for i in range(len(text)):
+				if Font.size(thistext + text[i])[0] > max:
 					count = len(thistext)
 					break
 				else:
@@ -82,11 +88,11 @@ def wraptext(text, fullline, Font, render = False, color = (0,0,17)):  #need way
 						#split text, add indent, update count
 						outtext.append(thistext[:len(thistext)-(i+1)])
 						text = text[len(thistext)-(i):]
-						count = fullline
+						max = fullline
 						break
 			#unindentable, skip to next
 			else:
-				count += fullline
+				max += fullline
 		else:
 			#exit denting, add remaining to outtext, return
 			Denting = False
@@ -100,17 +106,36 @@ def wraptext(text, fullline, Font, render = False, color = (0,0,17)):  #need way
 		outtext = text
 	return outtext
 	
+#DispObj([
+#DispObj()
+#], ())
 
 
-#all text objects
-font = pygame.font.SysFont('couriernew', 13)
-fontComp = pygame.font.SysFont('couriernew', 16, True)
+
+class ItemDisp(object):
+	def refresh(self):
+		global smallfont
+		global font
+		self.norm = DispObj([DispObj(self.mini, (2, 2)), DispObj(font.render(self.item.Name, True, (0, 0, 0)), (54, 2)), DispObj(wraptext(self.item.desc, 311, smallfont, True), (54, 2))])
+		
+	def __init__(self, item):
+		self.id = item.Name
+		self.item = item
+		#different displays
+		self.mini = pygame.transform.scale(item.img, (50, 50)) #just the item, resized
+		self.norm =  self.mini #for use in inven, with name + desc
+		self.press = self.mini #for inven, when clicked on.
+		self.side = self.mini #for inven, large display
+		self.refresh()
+#pygame.transform.scale()
+
+#all text objects initialized
 TM1 = DispObj(wraptext("", 900, font, True), (10, 10), False, (900, 120)) #main room desc
 TM2 = DispObj(wraptext("", 900, font, True), (10, 130), False, (900, 119)) #room responses
 #TB1
 #TB2
 #TB3
-#TI1 = DispObj(wraptext()) #inventory stats
+TI1 = None
 
 		
 #Rooms for the dongeon
@@ -187,7 +212,7 @@ roomBoss3 = Room(1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 2, "Suddenly you are in a fore
 roomBoss4 = Room(0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 3, "You find yourself in a room, walls covered in mechanical and mystical constructs alike. Trees are visible through the sparsely placed windows.", "You find a button hidden on the ", "ern wall, pressing it against your better judgement.", "You become distracted by the intricacies of this room.", False)
 #plant, manmade, water, dark, animal, light, items, north, east, south, west, sane, message, exitA, exitB, exitFail, normal = True
 
-class item(object): #bland old items.
+'''class item(object): #bland old items.
 	def __init__(self, offence, defence, agility, sanity, score, name, divname, desc):
 		self.atk = offence
 		self.dfn = defence
@@ -200,20 +225,17 @@ class item(object): #bland old items.
 		self.quant = 0
 		self.findable = 0
 
-lapis = item(1000, 1000, 1000, 0, 1000, "coo33's Lapis", "lapis", "The Jem of the Gods.  Or at least the god of 7.")
 hatandboots = item(5, 50, 8, 0, 10, "Hat and Boots", "hatandboots", "Can't Bump your head anymore, and probably won't stub your toes.")
 zaroltrophy = item(0, 0, 0, 20, 50, "Zarol Trophy", "zaroltrophy", "Thinking back, Seriously. How the hell did you do that?")
 fishingrod = item(5, 4, 2, 0, 10, "Fishing Rod", "fishingrod", "Hook, Line, and Sink.")
 drawingpad = item(1, 3, 7, 12, 10, "Drawing Pad", "drawingpad", "Using this, you can stay positive. Because everything else is in here.")
 pencil = item(7, 2, -1, -5, 10, "The Pencil", "pencil", "Quite oversized, you use it as a blunt weapon. But you feel there is more to it.")
-spoon = item(50, 1, 7, -8, 10, "the Spoon", "spoon", "It's just a spoon. But something feels powerful about it...")
 jimsword = item(25, 5, -5, 0, 10, "Jim's Sword", "jimsword", "")
 jimarmor = item(0, 35, -20, 0, 10, "Enchanted Armor", "jimarmor", "Glimmering metallic armor, Material flowing smoothly within it to fill the gaps in its structure.")
 inactivecube = item(25, 7, 20, 0, 10, "Inactive Cube", "inactivecube", "")
 card = item(2, 25, 25, 0, 20, "00000111", "card", "")
 device = item(40, 0, 6, 0, 20, "Electrical device", "device", "You have no idea how it works, but it looks far beyond any tech you have seen.")
-		
-		
+	'''
 #New items, with the better system
 #single chunk of armor calculation
 class dfnChunk(object):
@@ -280,6 +302,7 @@ class Item(object):
 			self.findable = 0
 		else:
 			self.findable = 1
+		self.divname = ItemDisp(self)
 		
 		global allitems
 		allitems.append(self)
@@ -289,10 +312,8 @@ nothing = Item([], [], 1, 0, 0, "", "", "no_thing", False)
 allitems.remove(nothing)
 acorncap = Item([], [dfnChunk(1, 1, True)], 15, 4, 9, "Acorn Cap", "If you were really tiny, like, smaller than a squirrel, this would be the perfect armor. You place it over your heart  You call it a kiss", "acorncap", 1)
 boardgame = Item([], [dfnChunk(0, 1, True), dfnChunk(-1, 1)], 32, 2, 2, "Board Game", "The cardboard is battered  from years of wear, but you can see the winding  path your piece would take if you were a winner.   You're not a winner.", "boardgame", 1)
-#bobbypin = item(1, 0, 1, 1, 1, "Bobby Pin", "bobbypin", "Ow..., it's sharp.");
 bobbypin = Item([atkChunk(1, 1)], [], 35, 1, 1, "Bobby Pin", "Ow... it's sharp.", "bobbypin", 1)
-#safetypin = item(4, 0, 3, 1, 1, "Safety pin", "safetypin", "Not actually very safe at all.<br/>Actually quite dangerous.");
-
+safetypin = Item([atkChunk(3, 4)], [], 40, 1, 1, "Safety pin", "Not actually very safe at all.<br/>Actually quite dangerous.", "safetypin", 1)
 woodstick = Item([atkChunk(1, 0)], [dfnChunk(-1, 2)], 10, 3, 1, "Wooden Stick", "It might not be the best sword, but hey, it's worth a try.", "woodstick", 1)
 
 
@@ -301,7 +322,7 @@ heroshield = Item([], [dfnChunk(-5, 6, False, False, False), dfnChunk(-2, 4, Tru
 herosword = Item([atkChunk(6, 2)], [dfnChunk(0, 2, False, True)], 100, 1, 10, "Heroes Sword", "A fitting weapon for a hero. But are <i>you<i> a hero?", "herosword", -1, False)
 #ALPHA
 alphaxe = Item([atkChunk(20, -2, True, False, 0, False, {"sweeping":2, "heavy":1})], [dfnChunk(-2, -2, True, True), dfnChunk(-10, 12)], 400, 0, 10, "Alpha's Axe", "A large heavy axe, with surprisingly powerful hits.", "alphaxe", -1, False)
-sivgoggles = Item([atkChunk(4, 15, False, True, 1, False, {"sweeping":1})], [dfnChunk(10, 2, True), dfnChunk(25, 2, False, True, True, {"trueProtection":True})], 30, -15, 10, "Alpha's Glasses", "Gazing through them, You can see things. Where they are, and where they are going.", "sivgoggles", False, False, -1, [], {"bound":4, "mending":[3, 1]})
+sivgoggles = Item([atkChunk(4, 15, False, True, 1, False, {"sweeping":1})], [dfnChunk(10, 2, True), dfnChunk(25, 2, False, True, True, {"trueProtection":True})], 30, -15, 10, "Alpha's Glasses", "Gazing through them, You can see things. Where they are, and where they are going.", "sivgoggles", -1, False, False, [], {"bound":4, "mending":[3, 1]})
 hair = Item([atkChunk(1, 1, False, True, 0, False, {"destructive":30})], [], 10, -100, 10, "Alpha's Hair", "You stole this from a boss. Well, stole isn't the right word. More of Generated through Desire.", "hair", -1, False, False, [], {"bound":10})
 shurikenbag = Item([atkChunk(35, 25, False, False, 1, 5, {"sweeping":5}), atkChunk(15, 20, True, False, 0, 1, {"returning":[2, 80], "destructive":10})], [dfnChunk(5, 4, True)], 100, -35, 10, "Shuriken Pouch", "A small, blood filled pouch, when you reach your hand into it, you always pull out a shuriken.", "shurikenbag", -1, False, 10, [1, 1], {"bound":1, "mending":[5, 2]})
 #COOSOME
@@ -310,7 +331,8 @@ lapis = Item([atkChunk(5000, 5000, False, False, 3, False, {"sweeping":1000})], 
 
 
 invenItems = []
-
+score = 0
+turn = 0
 class Player(object):
 	def __init__(self):
 		self.name = "player"
@@ -341,12 +363,13 @@ class Player(object):
 	
 	def refresh(self):
 		#set self.sanity
-		pass
 		#set two attack chunks
 		#for i in 
+		global TI1
+		TI1 = DispObj([DispObj(smallfont.render("Health: "+str(self.hp), True, (0, 0, 0))), DispObj(smallfont.render("Base Dmg: "+str(self.dmg), True, (0, 0, 0)), (0, 17)), DispObj(smallfont.render("Base Dfn: "+str(self.dfn), True, (0, 0, 0)), (0, 34)), DispObj(smallfont.render("Score: "+str(score), True, (0, 0, 0)), (0, 51)), DispObj(smallfont.render("Level: "+str(self.lvl), True, (0, 0, 0)), (0, 68)), DispObj(smallfont.render("Room: "+str(turn), True, (0, 0, 0)), (0, 85))], (10, 126), False, (195, 120)) #inventory stats
 		
 pla = Player()
-
+pla.refresh()
 
 class Enemy(object):
 	def __init__(self, atk, de, name, pic, maxhp, ddev, agil, sane, message, cry, lvl, rundown, heal, interval, equip = [nothing]):
@@ -504,7 +527,6 @@ def gentables():
 
 equippeditems = [nothing, nothing]
 runs = 1
-turn = 0
 room = room3
 lootable = False
 chestmessages = ["There is a small chest about the size of your fist lurking in the corner. ", "A golden chest sits with elegant details and pure beauty.", "There\'s a lumpy sack over there", "You hear the wheeze of a chest.  \"Open me\" it calls, with the music of its collapsing wood.", "In a rotting monster carcass, you glimpse something... interesting.", "There\'s a lump in the ground. Like a squirrel buried a tasty rock and then ran off and died.", "Something calls your attention. It sucks you in. You imagine riches.", "You smell something.  It smells like goods.", "You glimpse a confection of wood and nails, almost big enough to hold something.", "There is a small door that seems to have something sticking out, perhaps something useful."]
@@ -910,7 +932,6 @@ def Damage(source, weapon, atk, target):
 	return message
 	#check(target)
 
-
 #takes in source, weapon used, and target.		[how many hits allowed, previous target, sweeping]
 def attack(source, weapon, target, enchValues = [1, None, None]):
 	messages = []
@@ -935,16 +956,16 @@ def attack(source, weapon, target, enchValues = [1, None, None]):
 				attacking = False
 
 		if (attacking):
-			atk = atkChunk(0, 0) #give a base value in case weapon has no valid atkChunks
+			atk = atkChunk(source.atk, source.agil[0]) #give a base value in case weapon has no valid atkChunks
 			#Make the atkChunk to use in this attack
 			for i in weapon.atkChunks:
 				if i.proj == False:
-					atk = atkChunk(source.atk + i.dmg, i.agil, i.dfn, i.etrn, i.pierce, i.proj, i.ench)
+					atk = atkChunk(source.atk + i.dmg, source.agil[0] + i.agil, i.dfn, i.etrn, i.pierce, i.proj, i.ench)
 					
 					break
 				else:
 					if weapon.ammo >= i.proj: #see if enough ammo to use proj chunk
-						atk = atkChunk(i.dmg, i.agil, i.dfn, i.etrn, i.pierce, i.proj, i.ench)
+						atk = atkChunk(i.dmg, source.agil[0] + i.agil, i.dfn, i.etrn, i.pierce, i.proj, i.ench)
 						weapon.ammo -= i.proj
 						break
 			
@@ -996,6 +1017,8 @@ Scompass = getImg("screens/compass")
 Sinsane = getImg("screens/screenlastinsanity")
 Szarol = getImg("screens/screenzarol")
 looot = font.render("Loot", True, (0, 0, 0))
+inveen = font.render("Inventory", True, (0, 0, 0))
+baack = font.render("Back", True, (0, 0, 0))
 
 running = True
 Screen = 1
@@ -1024,30 +1047,47 @@ while running:
 		screen.blit(TM1.img, TM1.coords)
 		screen.blit(TM2.img, TM2.coords)
 		#buttons on side
-		screen.blit(looot, (910, 54))
+		pygame.draw.rect(screen, Cbacking, [910, 10 , 75, 24])
+		screen.blit(inveen, (910, 10))
+		pygame.draw.rect(screen, Cbacking, [910, 37 , 75, 24])
+		screen.blit(looot, (910, 37))
 		screen.blit(Scompass, (910, 174))
 		
+		
 		if mouse_down:
-			if hitDetect(mouse_pos, mouse_pos, (935, 174), (960, 199)): #north
+			if hitDetect((935, 174), (960, 199), mouse_pos): #north
 				mouse_down = False
 				move(1)
-			if hitDetect(mouse_pos, mouse_pos, (960, 199), (985, 224)): #east
+			if hitDetect((960, 199), (985, 224), mouse_pos): #east
 				mouse_down = False
 				move(2)
-			if hitDetect(mouse_pos, mouse_pos, (935, 224), (960, 249)): #south
+			if hitDetect((935, 224), (960, 249), mouse_pos): #south
 				mouse_down = False
 				move(3)
-			if hitDetect(mouse_pos, mouse_pos, (910, 199), (935, 224)): #west
+			if hitDetect((910, 199), (935, 224), mouse_pos): #west
 				mouse_down = False
 				move(4)
-			if hitDetect(mouse_pos, mouse_pos, (910, 54), (995, 54+24)):
-				
+
+			if hitDetect((910, 10), (985, 32), mouse_pos): #invetory, button size: 75 x 24 px
+				Screen = 2
+				mouse_down = False
+			if hitDetect((910, 37), (985, 61), mouse_pos): #loot
+
 				mouse_down = False
 				RDloot()
 	
 	if Screen == 2: #inven screen
 		screen.fill(Cbacking)
-	
+		screen.blit(Smain, (0, 0))
+		
+		#buttons and stuff
+		screen.blit(TI1.img, TI1.coords)
+		pygame.draw.rect(screen, Cbacking, [10, 225 , 75, 24])
+		screen.blit(baack, (10, 225))
+		
+		if mouse_down:
+			if hitDetect((10, 225), (85, 249), mouse_pos):
+				Screen = 1
 	
 	if Screen == 3: #battle
 		screen.fill(Cbacking)
@@ -1072,10 +1112,11 @@ while running:
 					i.durability = i.maxdur
 				if i.durability <= 0 and i.destructable:
 					removeitem(i)
-			elif i.mendTick >= (i.ench["mending"][0]+500)*2 and i.broken and i.ench["mending"][1] > 0: #take long time to repair from broken
+			elif i.mendTick >= (i.ench["mending"][0]+100)*2 and i.broken and i.ench["mending"][1] > 0: #take long time to repair from broken. and don't keep breaking it
 				i.mendTick = 0
 				i.durability += 1 #and it only fixes a little bit
-				i.broken = False
+				if i.durability > 0:
+					i.broken = False
 				
 	
 	pygame.display.update()
