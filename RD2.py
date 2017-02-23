@@ -1041,6 +1041,7 @@ while running:
 				mouse_down = False
 				move(4)
 			if hitDetect(mouse_pos, mouse_pos, (910, 54), (995, 54+24)):
+				
 				mouse_down = False
 				RDloot()
 	
