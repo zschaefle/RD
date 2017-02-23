@@ -53,13 +53,14 @@ class DispObj(object):
 	def refresh(self):
 		if not self.simple:
 			final = pygame.Surface(size, pygame.SRCALPHA, 32).convert_alpha()
-			for i in self.img:
+			for i in self.all:
 				final.blit(i.img, i.coords)
 			self.img = final
 	#coords, img is blitable object or list of DispObj. simple is wether or not is list. size is needed if not simple.
 	def __init__(self, img, coords = (0, 0), simple = True, size = (0, 0)):
 		self.coords = coords
 		self.img = img
+		self.all = img
 		self.simple = simple
 		self.refresh()
 	
@@ -110,13 +111,37 @@ def wraptext(text, fullline, Font, render = False, color = (0,0,17)):  #need way
 #DispObj()
 #], ())
 
-
+actImg = getImg("special/active")
+dfnImg = getImg("special/defensive")
+melImg = getImg("special/melee")
+pasImg = getImg("special/passive")
+prjImg = getImg("special/projectile")
 
 class ItemDisp(object):
 	def refresh(self):
 		global smallfont
 		global font
-		self.norm = DispObj([DispObj(self.mini, (2, 2)), DispObj(font.render(self.item.Name, True, (0, 0, 0)), (54, 2)), DispObj(wraptext(self.item.desc, 311, smallfont, True), (54, 2))])
+		self.norm = DispObj([
+			DispObj(self.mini, (2, 2)), 
+			DispObj(font.render(self.item.Name, True, (0, 0, 0)), (54, 2)), 
+			DispObj(wraptext(self.item.desc, 314, smallfont, True), (54, 20), False, (314, 200))
+		], (0, 0), False, (370, 54))
+		
+		if self.item.act:
+			global actImg
+			self.norm.all.append(DispObj(actImg, (350, 2)))
+		if self.item.dfn:
+			global dfnImg
+			self.norm.all.append(DispObj(dfnImg, (350, 2)))
+		if self.item.mel or self.item.prj:
+			global melImg
+			self.norm.all.append(DispObj(melImg, (350, 2)))
+			
+			
+			
+		self.norm.refresh()
+		#self.press.refresh()
+		#self.side.refresh()
 		
 	def __init__(self, item):
 		self.id = item.Name
@@ -294,21 +319,43 @@ class Item(object):
 		#Regen: ticks before regen, ammount regenerated; Bound is times the item will NOT be destroyed by thing that remove all items. ie: Zarol, Monoliths
 		self.ench = {"mending":[-1, 0], "bound":0}
 		self.ench.update(enchs)
-		self.mendTick = -1
 		if self.ench["mending"][0] != -1:
 			self.mendTick = 0
+		else:
+			self.mendTick = -1
+			
 		self.lvl = lvl
 		if self.lvl == -1:
 			self.findable = 0
 		else:
 			self.findable = 1
-		self.divname = ItemDisp(self)
 		
+		self.act = False #active defence
+		self.dfn = False #passive defence
+		self.pas = False #passive effects
+		self.mel = False #has melee
+		self.prj = False #has projectiles
+		
+		for i in self.atkChunks: #also use to build self.side
+			if i.proj != False:
+				self.prj = True
+			else:
+				if i.etrn:
+					self.pas = True
+				else:
+					self.mel = True
+		for i in self.dfnChunks:
+			if i.all:
+				self.dfn = True
+			else:
+				self.act = True
+		
+		self.div = ItemDisp(self)
 		global allitems
 		allitems.append(self)
 
 
-nothing = Item([], [], 1, 0, 0, "", "", "no_thing", False)
+nothing = Item([], [], 1, 0, 0, "", "", "no_thing", -1, False)
 allitems.remove(nothing)
 acorncap = Item([], [dfnChunk(1, 1, True)], 15, 4, 9, "Acorn Cap", "If you were really tiny, like, smaller than a squirrel, this would be the perfect armor. You place it over your heart  You call it a kiss", "acorncap", 1)
 boardgame = Item([], [dfnChunk(0, 1, True), dfnChunk(-1, 1)], 32, 2, 2, "Board Game", "The cardboard is battered  from years of wear, but you can see the winding  path your piece would take if you were a winner.   You're not a winner.", "boardgame", 1)
@@ -765,7 +812,7 @@ def genRoom():
 			if (enemyspawn >= 5):
 				roommessage += prepbattle(creepybaldguy)'''
 	global TM1
-	TM1.img = wraptext(roommessage, 900, font, True)
+	TM1.all = wraptext(roommessage, 900, font, True)
 	TM1.refresh()
 	
 battleprep = -1
@@ -809,7 +856,7 @@ def move(direction):
 			lastmove = direction
 		else:
 			global TM2
-			TM2.img = wraptext(room.exitFail, 900, font, True)
+			TM2.all = wraptext(room.exitFail, 900, font, True)
 			TM2.refresh()
 			prints("move failed.")
 	
@@ -822,7 +869,7 @@ def getitem(item):
 	global score
 	global TM2
 	score += item.score
-	TM2.img = wraptext("You found "+item.Name + ".<br/>you place the newfound loot in your backpack.", 900, font, True)
+	TM2.all = wraptext("You found "+item.Name + ".<br/>you place the newfound loot in your backpack.", 900, font, True)
 	TM2.refresh()
 
 def RDloot():
@@ -1079,6 +1126,7 @@ while running:
 	if Screen == 2: #inven screen
 		screen.fill(Cbacking)
 		screen.blit(Smain, (0, 0))
+		screen.blit(lapis.div.norm.img, lapis.div.norm.coords)
 		
 		#buttons and stuff
 		screen.blit(TI1.img, TI1.coords)
