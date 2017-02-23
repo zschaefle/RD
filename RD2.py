@@ -1,5 +1,6 @@
 import random
 import pygame
+from pygame.locals import *
 import math
 
 #look for:   #VISUALS   to find where HTML visuals were removed
@@ -12,6 +13,9 @@ Cbacking = (170,170,170)
 
 pygame.init()
 size = (995, 259)
+font = pygame.font.SysFont('couriernew', 13)
+fontComp = pygame.font.SysFont('couriernew', 16, True)
+smallfont = pygame.font.SysFont('couriernew', 12)
 
 screen = pygame.display.set_mode(size)
 clock = pygame.time.Clock()
@@ -62,15 +66,15 @@ class DispObj(object):
 #takes single string, max width, font used, and color of text. returns list of dispObj
 def wraptext(text, fullline, Font, render = False, color = (0,0,17)):  #need way to force indent in string
 	Denting = True
-	count = fullline
+	max = fullline
 	size = Font.size(text)
 	outtext = []
 	while Denting:
-		if Font.size(text)[0] > fullline:
+		if Font.size(text)[0] > max:
 			#Search for ammount of charachters that can fit in set fullline size
 			thistext = ""
-			for i in range(900):
-				if Font.size(thistext + text[i])[0] > fullline:
+			for i in range(len(text)):
+				if Font.size(thistext + text[i])[0] > max:
 					count = len(thistext)
 					break
 				else:
@@ -84,11 +88,11 @@ def wraptext(text, fullline, Font, render = False, color = (0,0,17)):  #need way
 						#split text, add indent, update count
 						outtext.append(thistext[:len(thistext)-(i+1)])
 						text = text[len(thistext)-(i):]
-						count = fullline
+						max = fullline
 						break
 			#unindentable, skip to next
 			else:
-				count += fullline
+				max += fullline
 		else:
 			#exit denting, add remaining to outtext, return
 			Denting = False
@@ -102,17 +106,36 @@ def wraptext(text, fullline, Font, render = False, color = (0,0,17)):  #need way
 		outtext = text
 	return outtext
 	
+#DispObj([
+#DispObj()
+#], ())
 
 
-#all text objects
-font = pygame.font.SysFont('couriernew', 13)
-fontComp = pygame.font.SysFont('couriernew', 16, True)
+
+class ItemDisp(object):
+	def refresh(self):
+		global smallfont
+		global font
+		self.norm = DispObj([DispObj(self.mini, (2, 2)), DispObj(font.render(self.item.Name, True, (0, 0, 0)), (54, 2)), DispObj(wraptext(self.item.desc, 311, smallfont, True), (54, 2))])
+		
+	def __init__(self, item):
+		self.id = item.Name
+		self.item = item
+		#different displays
+		self.mini = pygame.transform.scale(item.img, (50, 50)) #just the item, resized
+		self.norm =  self.mini #for use in inven, with name + desc
+		self.press = self.mini #for inven, when clicked on.
+		self.side = self.mini #for inven, large display
+		self.refresh()
+#pygame.transform.scale()
+
+#all text objects initialized
 TM1 = DispObj(wraptext("", 900, font, True), (10, 10), False, (900, 120)) #main room desc
 TM2 = DispObj(wraptext("", 900, font, True), (10, 130), False, (900, 119)) #room responses
 #TB1
 #TB2
 #TB3
-#TI1 = DispObj(wraptext()) #inventory stats
+TI1 = None
 
 		
 #Rooms for the dongeon
@@ -189,7 +212,7 @@ roomBoss3 = Room(1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 2, "Suddenly you are in a fore
 roomBoss4 = Room(0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 3, "You find yourself in a room, walls covered in mechanical and mystical constructs alike. Trees are visible through the sparsely placed windows.", "You find a button hidden on the ", "ern wall, pressing it against your better judgement.", "You become distracted by the intricacies of this room.", False)
 #plant, manmade, water, dark, animal, light, items, north, east, south, west, sane, message, exitA, exitB, exitFail, normal = True
 
-class item(object): #bland old items.
+'''class item(object): #bland old items.
 	def __init__(self, offence, defence, agility, sanity, score, name, divname, desc):
 		self.atk = offence
 		self.dfn = defence
@@ -202,33 +225,17 @@ class item(object): #bland old items.
 		self.quant = 0
 		self.findable = 0
 
-lapis = item(1000, 1000, 1000, 0, 1000, "coo33's Lapis", "lapis", "The Jem of the Gods.  Or at least the god of 7.")
 hatandboots = item(5, 50, 8, 0, 10, "Hat and Boots", "hatandboots", "Can't Bump your head anymore, and probably won't stub your toes.")
 zaroltrophy = item(0, 0, 0, 20, 50, "Zarol Trophy", "zaroltrophy", "Thinking back, Seriously. How the hell did you do that?")
 fishingrod = item(5, 4, 2, 0, 10, "Fishing Rod", "fishingrod", "Hook, Line, and Sink.")
 drawingpad = item(1, 3, 7, 12, 10, "Drawing Pad", "drawingpad", "Using this, you can stay positive. Because everything else is in here.")
 pencil = item(7, 2, -1, -5, 10, "The Pencil", "pencil", "Quite oversized, you use it as a blunt weapon. But you feel there is more to it.")
-spoon = item(50, 1, 7, -8, 10, "the Spoon", "spoon", "It's just a spoon. But something feels powerful about it...")
 jimsword = item(25, 5, -5, 0, 10, "Jim's Sword", "jimsword", "")
 jimarmor = item(0, 35, -20, 0, 10, "Enchanted Armor", "jimarmor", "Glimmering metallic armor, Material flowing smoothly within it to fill the gaps in its structure.")
 inactivecube = item(25, 7, 20, 0, 10, "Inactive Cube", "inactivecube", "")
 card = item(2, 25, 25, 0, 20, "00000111", "card", "")
 device = item(40, 0, 6, 0, 20, "Electrical device", "device", "You have no idea how it works, but it looks far beyond any tech you have seen.")
-		
-class ItemDisp(object):
-	def refresh(self):
-		pass
-		
-	def __init__(self, item):
-		self.id = item.Name
-		self.item = item
-		#different displays
-		self.mini = item.img #for use in battle. resize!
-		self.norm = item.img #for use in inven, with name + desc
-		self.press = item.img #for inven, when clicked on.
-		self.side = item.img #for inven, large display
-		self.refresh()
-		
+	'''
 #New items, with the better system
 #single chunk of armor calculation
 class dfnChunk(object):
@@ -324,7 +331,8 @@ lapis = Item([atkChunk(5000, 5000, False, False, 3, False, {"sweeping":1000})], 
 
 
 invenItems = []
-
+score = 0
+turn = 0
 class Player(object):
 	def __init__(self):
 		self.name = "player"
@@ -355,12 +363,13 @@ class Player(object):
 	
 	def refresh(self):
 		#set self.sanity
-		pass
 		#set two attack chunks
 		#for i in 
+		global TI1
+		TI1 = DispObj([DispObj(smallfont.render("Health: "+str(self.hp), True, (0, 0, 0))), DispObj(smallfont.render("Base Dmg: "+str(self.dmg), True, (0, 0, 0)), (0, 17)), DispObj(smallfont.render("Base Dfn: "+str(self.dfn), True, (0, 0, 0)), (0, 34)), DispObj(smallfont.render("Score: "+str(score), True, (0, 0, 0)), (0, 51)), DispObj(smallfont.render("Level: "+str(self.lvl), True, (0, 0, 0)), (0, 68)), DispObj(smallfont.render("Room: "+str(turn), True, (0, 0, 0)), (0, 85))], (10, 126), False, (195, 120)) #inventory stats
 		
 pla = Player()
-
+pla.refresh()
 
 class Enemy(object):
 	def __init__(self, atk, de, name, pic, maxhp, ddev, agil, sane, message, cry, lvl, rundown, heal, interval, equip = [nothing]):
@@ -518,7 +527,6 @@ def gentables():
 
 equippeditems = [nothing, nothing]
 runs = 1
-turn = 0
 room = room3
 lootable = False
 chestmessages = ["There is a small chest about the size of your fist lurking in the corner. ", "A golden chest sits with elegant details and pure beauty.", "There\'s a lumpy sack over there", "You hear the wheeze of a chest.  \"Open me\" it calls, with the music of its collapsing wood.", "In a rotting monster carcass, you glimpse something... interesting.", "There\'s a lump in the ground. Like a squirrel buried a tasty rock and then ran off and died.", "Something calls your attention. It sucks you in. You imagine riches.", "You smell something.  It smells like goods.", "You glimpse a confection of wood and nails, almost big enough to hold something.", "There is a small door that seems to have something sticking out, perhaps something useful."]
@@ -924,7 +932,6 @@ def Damage(source, weapon, atk, target):
 	return message
 	#check(target)
 
-
 #takes in source, weapon used, and target.		[how many hits allowed, previous target, sweeping]
 def attack(source, weapon, target, enchValues = [1, None, None]):
 	messages = []
@@ -949,16 +956,16 @@ def attack(source, weapon, target, enchValues = [1, None, None]):
 				attacking = False
 
 		if (attacking):
-			atk = atkChunk(0, 0) #give a base value in case weapon has no valid atkChunks
+			atk = atkChunk(source.atk, source.agil[0]) #give a base value in case weapon has no valid atkChunks
 			#Make the atkChunk to use in this attack
 			for i in weapon.atkChunks:
 				if i.proj == False:
-					atk = atkChunk(source.atk + i.dmg, i.agil, i.dfn, i.etrn, i.pierce, i.proj, i.ench)
+					atk = atkChunk(source.atk + i.dmg, source.agil[0] + i.agil, i.dfn, i.etrn, i.pierce, i.proj, i.ench)
 					
 					break
 				else:
 					if weapon.ammo >= i.proj: #see if enough ammo to use proj chunk
-						atk = atkChunk(i.dmg, i.agil, i.dfn, i.etrn, i.pierce, i.proj, i.ench)
+						atk = atkChunk(i.dmg, source.agil[0] + i.agil, i.dfn, i.etrn, i.pierce, i.proj, i.ench)
 						weapon.ammo -= i.proj
 						break
 			
@@ -1070,6 +1077,9 @@ while running:
 	if Screen == 2: #inven screen
 		screen.fill(Cbacking)
 		screen.blit(Smain, (0, 0))
+		
+		#buttons and stuff
+		screen.blit(TI1.img, TI1.coords)
 		pygame.draw.rect(screen, Cbacking, [10, 225 , 75, 24])
 		screen.blit(baack, (10, 225))
 		
