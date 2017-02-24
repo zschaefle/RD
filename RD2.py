@@ -22,10 +22,15 @@ clock = pygame.time.Clock()
 debug = True
 
 #two sets of coord pairs
-def hitDetect(p1, p2, p3, p4 = None):
+def hitdetect(p1, p2, p3, p4 = None):
 	if p4 == None:
 		p4 = p3
 	if p2[0] > p3[0] and p1[0] < p4[0] and p2[1] > p3[1] and p1[1] < p4[1]:
+		return True
+
+#useful for mouse and buttons. if point p3 is in p1 with size p2
+def hitDetect(p1, p2, p3):
+	if p1[0] + p2[0] > p3[0] and p1[0] < p3[0] and p1[1] + p2[1] > p3[1] and p1[1] < p3[1]:
 		return True
 
 def getImg(name):
@@ -63,6 +68,7 @@ class DispObj(object):
 		self.all = img
 		self.simple = simple
 		self.refresh()
+	
 	
 #takes single string, max width, font used, and color of text. returns list of dispObj
 def wraptext(text, fullline, Font, render = False, color = (0,0,17)):  #need way to force indent in string
@@ -112,8 +118,10 @@ def wraptext(text, fullline, Font, render = False, color = (0,0,17)):  #need way
 #], ())
 
 actImg = getImg("special/active")
+ac2Img = pygame.transform.scale(actImg, (50, 50)) #probably make special img
 dfnImg = getImg("special/defensive")
 melImg = getImg("special/melee")
+me2Img = pygame.transform.scale(melImg, (50, 50)) #probably make special img
 pasImg = getImg("special/passive")
 prjImg = getImg("special/projectile")
 
@@ -162,6 +170,25 @@ TM2 = DispObj(wraptext("", 900, font, True), (10, 130), False, (900, 119)) #room
 #TB3
 TI1 = None
 
+invenItems = []
+ItemsDisp = DispObj([], (115, 10), False, (370, 239)) #I, uh, no idea what to do
+scrollMod = 0
+def refreshItems(type):
+	global ItemsDisp
+	if type == 1: #run when adding a new item to invenItems
+		ItemsDisp.all = []
+		global invenItems
+		for i in invenItems:
+			ItemsDisp.all.append(i.div.norm)
+		refreshItems(2)
+			
+	if type == 2: #update w/ scroll mod
+		global scrollMod
+		for i in ItemsDisp.all:
+			i.coords = (i.coords[0], i.coords[1]+scrollMod) #will probably have to do the offset around here somewhere too
+	
+	ItemsDisp.refresh()
+refreshItems(1)
 		
 #Rooms for the dongeon
 rooms = []
@@ -311,7 +338,11 @@ class Item(object):
 		self.score = score
 		self.Name = name
 		self.desc = desc
-		self.img = getImg("items/"+img)
+		try:#DO SOMETHING YOU CAN"T DO ON OBJECTS
+			img = str(img)
+			self.img = getImg("items/"+img)
+		except:
+			self.img = img
 		self.destructable = destructable #if true, this item is removed when durability reaches 0.
 		self.ammo = ammo
 		self.maxammo = ammo
@@ -355,6 +386,7 @@ class Item(object):
 		allitems.append(self)
 
 
+				
 nothing = Item([], [], 1, 0, 0, "", "", "no_thing", -1, False)
 allitems.remove(nothing)
 acorncap = Item([], [dfnChunk(1, 1, True)], 15, 4, 9, "Acorn Cap", "If you were really tiny, like, smaller than a squirrel, this would be the perfect armor. You place it over your heart  You call it a kiss", "acorncap", 1)
@@ -377,7 +409,6 @@ spoon = Item([atkChunk(50, 7, False, False, 2, 30), atkChunk(35, 6, False, False
 lapis = Item([atkChunk(5000, 5000, False, False, 3, False, {"sweeping":1000})], [dfnChunk(0, True, False, True, False, {"trueProtection":True, "thorns":atkChunk(5000, 5000, False, False, 3)})], 1000, 0, 0, "Lapis", "The gem of the gods. Or at least the god of 7.", "lapis", -1, False, False, [], {"bound":100, "mending":[50, 1000]})
 
 
-invenItems = []
 score = 0
 turn = 0
 class Player(object):
@@ -406,7 +437,7 @@ class Player(object):
 		self.defmod = 1
 		self.agilmod = 1
 		self.defending = False
-		self.equipped = [nothing]
+		self.equipped = [nothing, nothing, nothing, nothing]
 	
 	def refresh(self):
 		#set self.sanity
@@ -860,17 +891,50 @@ def move(direction):
 			TM2.refresh()
 			prints("move failed.")
 	
-def getitem(item):
-	#AAAAAAAAAAAAAAAHHHHHHHHHHHHHHHHHHHHH
+def getitem(item): #AAAAAAAAAAAAAAAHHHHHHHHHHHHHHHHHHHHH
 	
 	global invenItems
-	invenItems.append(item) #need to change to a special item, probably a custom object
+	invenItems.append(Item(item.atkChunks, item.dfnChunks, item.durability, item.sane, item.score, item.Name, item.desc, item.img, item.destructable, item.ammo, item.regenammo, item.ench)) #need to change to a special item, probably a custom object
 	
 	global score
 	global TM2
 	score += item.score
 	TM2.all = wraptext("You found "+item.Name + ".<br/>you place the newfound loot in your backpack.", 900, font, True)
 	TM2.refresh()
+	refreshItems(1)
+	
+	
+def equip(item):
+	global pla
+	global invenItems
+	success = False
+	if pla.equipped[2] == nothing or pla.equipped[3] == nothing: #try to do weapons first
+		if item.mel or item.prj: #is usable as weapon
+			if pla.equipped[2] == nothing:
+				pla.equipped[2] = item
+			elif pla.equipped[3] == nothing:
+				pla.equipped[3] = item
+			invenItems.remove(item)
+			success = True
+	if (pla.equipped[0] == nothing or pla.equipped[1] == nothing) and not success: #try to equip as armor/support item
+		if item.pas or item.dfn or item.act:
+			if pla.equipped[0] == nothing:
+				pla.equipped[0] = item
+			elif pla.equipped[1] == nothing:
+				pla.equipped[1] = item
+			invenItems.remove(item)
+			success = True
+	if success:
+		refreshItems(1)
+	
+def unequip(item, slot):
+	global pla
+	global invenItems
+	global nothing
+	if item != nothing:
+		invenItems.append(pla.equipped[slot])
+		pla.equipped[slot] = nothing
+		refreshItems(1)
 
 def RDloot():
 	global lootable
@@ -886,7 +950,7 @@ def RDloot():
 		lootable = False
 	else:
 		global TM2
-		TM2.img = wraptext("There is nothing to loot here.", 900, font, True)
+		TM2.all = wraptext("There is nothing to loot here.", 900, font, True)
 		TM2.refresh()
 	
 def removeitem(item): #must take valid item
@@ -1067,6 +1131,8 @@ looot = font.render("Loot", True, (0, 0, 0))
 inveen = font.render("Inventory", True, (0, 0, 0))
 baack = font.render("Back", True, (0, 0, 0))
 
+
+
 running = True
 Screen = 1
 mouse_down = False
@@ -1102,23 +1168,23 @@ while running:
 		
 		
 		if mouse_down:
-			if hitDetect((935, 174), (960, 199), mouse_pos): #north
+			if hitDetect((935, 174), (25, 25), mouse_pos): #north
 				mouse_down = False
 				move(1)
-			if hitDetect((960, 199), (985, 224), mouse_pos): #east
+			if hitDetect((960, 199), (25, 25), mouse_pos): #east
 				mouse_down = False
 				move(2)
-			if hitDetect((935, 224), (960, 249), mouse_pos): #south
+			if hitDetect((935, 224), (25, 25), mouse_pos): #south
 				mouse_down = False
 				move(3)
-			if hitDetect((910, 199), (935, 224), mouse_pos): #west
+			if hitDetect((910, 199), (25, 25), mouse_pos): #west
 				mouse_down = False
 				move(4)
 
-			if hitDetect((910, 10), (985, 32), mouse_pos): #invetory, button size: 75 x 24 px
+			if hitDetect((910, 10), (75, 24), mouse_pos): #invetory, button size: 75 x 24 px
 				Screen = 2
 				mouse_down = False
-			if hitDetect((910, 37), (985, 61), mouse_pos): #loot
+			if hitDetect((910, 37), (75, 24), mouse_pos): #loot
 
 				mouse_down = False
 				RDloot()
@@ -1126,7 +1192,29 @@ while running:
 	if Screen == 2: #inven screen
 		screen.fill(Cbacking)
 		screen.blit(Smain, (0, 0))
-		screen.blit(lapis.div.norm.img, lapis.div.norm.coords)
+		
+		#equipped items
+		if pla.equipped[0] != nothing: #dfn 1
+			screen.blit(pla.equipped[0].div.mini, (10, 10))
+		else:
+			screen.blit(ac2Img, (10, 10))
+		if pla.equipped[0] != nothing: #dfn 2
+			screen.blit(pla.equipped[0].div.mini, (60, 10))
+		else:
+			screen.blit(ac2Img, (60, 10))
+		if pla.equipped[2] != nothing: #atk 1
+			screen.blit(pla.equipped[2].div.mini, (10, 60))
+		else:
+			screen.blit(me2Img, (10, 60))
+		if pla.equipped[2] != nothing: #atk 2
+			screen.blit(pla.equipped[2].div.mini, (60, 60))
+		else:
+			screen.blit(me2Img, (60, 60))
+			
+		screen.blit(ItemsDisp.img, ItemsDisp.coords)
+			
+		
+		#screen.blit(lapis.div.norm.img, lapis.div.norm.coords)
 		
 		#buttons and stuff
 		screen.blit(TI1.img, TI1.coords)
@@ -1134,7 +1222,7 @@ while running:
 		screen.blit(baack, (10, 225))
 		
 		if mouse_down:
-			if hitDetect((10, 225), (85, 249), mouse_pos):
+			if hitDetect((10, 225), (75, 24), mouse_pos):
 				Screen = 1
 	
 	if Screen == 3: #battle
