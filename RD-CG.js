@@ -207,11 +207,12 @@ var styrofoamchestplate = new item(0, 1, -1, 2, 2, "White Chestplate", "styrofoa
 var wandofwater = new item(2, 0, 1, -1, 3, "Wand of Water", "wandofwater","You'll never be thirsty again");
 var wings = new item(1, 1, -1, -1, 1, "Wings","wings","Now you can fly!  (No you can't)");
 var organs = new item(1, 1, 3, -5, 5, "Organs", "organs", "A wet gooey mass that drips on your hand.  You can hear an almost musical wheeze.");
+var onepin = new item(4, 0, 1, 1, 2, "One Pin", "onepin", "The tip is dull from overuse.");
+var nerfgun = new item(2, 0, 1, 1, 3, "Nerf Gun", "nerfgun", "Sometimes Styrofoam bullets can hurt.");
+//--------
 var rotflesh = new item(3,2, 0, -7, 4,"Rotting Flesh","rotflesh","It's a rotting leg, snatched off a carcass that was probably dead.   Probably.");
 var crate = new item(-1, 3, -3, 2, 3, "Crate", "crate","It cowers, trying to get away from you.  You can hear it whimper.  It knows what's coming.");
 var redbook = new item(1, 2, 0, 2, 6, "Red Book", "redbook", "There are no markings, but you feel as though there are many others much like it.");
-var onepin = new item(4, 0, 1, 1, 2, "One Pin", "onepin", "The tip is dull from overuse.");
-var nerfgun = new item(2, 0, 1, 1, 3, "Nerf Gun", "nerfgun", "Sometimes Styrofoam bullets can hurt.");
 var brokenseashell = new item(-1, 2, 4, 5, 7, "Broken seashell", "brokenseashell", "It appears recently broken, but you keep it for sentimental value. Towards what, even you cannot quite tell.");
 var redball = new item(-1, 2, 1,10, 6, "Red Ball", "redball", "It is comforting, yet oddly unnerving. You keep it as an anchor to remind you of the 'real world.'");
 var crowbar = new item(3, 3, -2, 1, 3, "Crowbar", "crowbar", "A red crowbar. You feel as though the fact that it has three points is significant.");

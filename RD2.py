@@ -57,16 +57,18 @@ def cbrt(num):
 class DispObj(object):
 	def refresh(self):
 		if not self.simple:
-			final = pygame.Surface(size, pygame.SRCALPHA, 32).convert_alpha()
+			final = pygame.Surface(self.size, pygame.SRCALPHA, 32).convert_alpha()
 			for i in self.all:
 				final.blit(i.img, i.coords)
 			self.img = final
 	#coords, img is blitable object or list of DispObj. simple is wether or not is list. size is needed if not simple.
 	def __init__(self, img, coords = (0, 0), simple = True, size = (0, 0)):
 		self.coords = coords
+		self.baseCoords = coords
 		self.img = img
 		self.all = img
 		self.simple = simple
+		self.size = size
 		self.refresh()
 	
 	
@@ -108,15 +110,11 @@ def wraptext(text, fullline, Font, render = False, color = (0,0,17)):  #need way
 	if render:
 		text = []
 		for i in range(len(outtext)):
-			rand = outtext[i]
-			text.append(DispObj(Font.render(rand, True, color),  (0, (i*size[1]))))
+			x = outtext[i]
+			text.append(DispObj(Font.render(x, True, color),  (0, (i*size[1]))))
 		outtext = text
 	return outtext
 	
-#DispObj([
-#DispObj()
-#], ())
-
 actImg = getImg("special/active")
 ac2Img = pygame.transform.scale(actImg, (50, 50)) #probably make special img
 dfnImg = getImg("special/defensive")
@@ -132,8 +130,8 @@ class ItemDisp(object):
 		self.norm = DispObj([
 			DispObj(self.mini, (2, 2)), 
 			DispObj(font.render(self.item.Name, True, (0, 0, 0)), (54, 2)), 
-			DispObj(wraptext(self.item.desc, 314, smallfont, True), (54, 20), False, (314, 200))
-		], (0, 0), False, (370, 54))
+			DispObj(wraptext(self.item.desc, 314, smallfont, True), (54, 18), False, (314, 200))
+		], (0, 0), False, (370, 54)) #inven, name + desc + images
 		
 		if self.item.act:
 			global actImg
@@ -144,8 +142,6 @@ class ItemDisp(object):
 		if self.item.mel or self.item.prj:
 			global melImg
 			self.norm.all.append(DispObj(melImg, (350, 2)))
-			
-			
 			
 		self.norm.refresh()
 		#self.press.refresh()
@@ -173,19 +169,24 @@ TI1 = None
 invenItems = []
 ItemsDisp = DispObj([], (115, 10), False, (370, 239)) #I, uh, no idea what to do
 scrollMod = 0
+netSize = 0
 def refreshItems(type):
 	global ItemsDisp
 	if type == 1: #run when adding a new item to invenItems
 		ItemsDisp.all = []
 		global invenItems
+		global netSize
+		netSize = 0
 		for i in invenItems:
+			i.div.norm.baseCoords = (0, netSize)
+			netSize += i.div.norm.size[1] #add size to total size
 			ItemsDisp.all.append(i.div.norm)
 		refreshItems(2)
 			
 	if type == 2: #update w/ scroll mod
 		global scrollMod
 		for i in ItemsDisp.all:
-			i.coords = (i.coords[0], i.coords[1]+scrollMod) #will probably have to do the offset around here somewhere too
+			i.coords = (i.coords[0], i.baseCoords[1]+scrollMod)
 	
 	ItemsDisp.refresh()
 refreshItems(1)
@@ -338,11 +339,10 @@ class Item(object):
 		self.score = score
 		self.Name = name
 		self.desc = desc
-		try:#DO SOMETHING YOU CAN"T DO ON OBJECTS
-			img = str(img)
-			self.img = getImg("items/"+img)
+		try:#Do something you can only do on objects
+			self.img = pygame.transform.scale(img, (50, 50))
 		except:
-			self.img = img
+			self.img = getImg("items/"+img)
 		self.destructable = destructable #if true, this item is removed when durability reaches 0.
 		self.ammo = ammo
 		self.maxammo = ammo
@@ -391,9 +391,26 @@ nothing = Item([], [], 1, 0, 0, "", "", "no_thing", -1, False)
 allitems.remove(nothing)
 acorncap = Item([], [dfnChunk(1, 1, True)], 15, 4, 9, "Acorn Cap", "If you were really tiny, like, smaller than a squirrel, this would be the perfect armor. You place it over your heart  You call it a kiss", "acorncap", 1)
 boardgame = Item([], [dfnChunk(0, 1, True), dfnChunk(-1, 1)], 32, 2, 2, "Board Game", "The cardboard is battered  from years of wear, but you can see the winding  path your piece would take if you were a winner.   You're not a winner.", "boardgame", 1)
-bobbypin = Item([atkChunk(1, 1)], [], 35, 1, 1, "Bobby Pin", "Ow... it's sharp.", "bobbypin", 1)
+bobbypin = Item([atkChunk(2, 1)], [], 35, 1, 1, "Bobby Pin", "Ow... it's sharp.", "bobbypin", 1)
 safetypin = Item([atkChunk(3, 4)], [], 40, 1, 1, "Safety pin", "Not actually very safe at all.<br/>Actually quite dangerous.", "safetypin", 1)
 woodstick = Item([atkChunk(1, 0)], [dfnChunk(-1, 2)], 10, 3, 1, "Wooden Stick", "It might not be the best sword, but hey, it's worth a try.", "woodstick", 1)
+brokenglasses = Item([], [dfnChunk(3, 1, True), dfnChunk(-1, 0)], 10, -1, 2, "Broken Glasses", "The few shards of perfectly clear glass in these frames could have only been made by magic.", "brokenglasses", 1)
+fakesword = Item([atkChunk(0, 2)], [dfnChunk(0, 1)], 10, 2, 1, "Fake Sword", "This is actually just an inflatable party favor", "fakesword", 1)
+hoodie = Item([], [dfnChunk(-1, 3, True), dfnChunk(-1, 1)], 60, 5, 1, "Hoodie", "It has a flannel pattern on the inside", "hoodie", 1)
+journal = Item([atkChunk(1, -1)], [dfnChunk(0, 1, True), dfnChunk(-1, 4)], 20, 4, 5, "Journal", "It's dusty and old", "journal", 1)
+keyboard = Item([atkChunk(-1, 2)], [dfnChunk(-3, 5)], 80, 1, 6, "Keyboard", "Learn to type right and you won't ruin your wrists. Also use Dvorak.", "keyboard", 1)
+lamp = Item([], [], 30, 2, 6, "Lamp", "Rub it hard enough and it'll be cleaner", "lamp", 1)
+no_thing = Item([], [], 1, -2, -1, "Nothing", "You stare off into the distance.... You realize that you can't just get loot from nowhere.", "no_thing", 1)
+#var reflectivevest = new item(0, 1, 1, 1, 1, "Reflective Vest", "reflectivevest","At least you won't get hit by a car");
+#var sharktooth = new item(2, 0, 2, 1, 2, "Shark Tooth", "sharktooth","Maybe you can give it to the tooth fairy and get some money.");
+#var steeltoedboots = new item(1, 5, -2, 1, 1, "Steel Boots", "steeltoedboots", "Your enemy might be able to kill you, but hey at least your toes will be fine.");
+#var styrofoamchestplate = new item(0, 1, -1, 2, 2, "White Chestplate", "styrofoamchestplate","It's hefty with beautiful detailing that shines in even the blackest cavern.  You wish it was made out of something other than styrofoam.");
+wandofwater = Item([atkChunk(3, 1, True, False, 1, 2), atkChunk(2, -1)], [], 20, -3, 3, "Wand of Water", "You'll never be thirsty again", "wandofwater", 1, True, 20, [30, 1])
+#var wings = new item(1, 1, -1, -1, 1, "Wings","wings","Now you can fly!  (No you can't)");
+wings = Item([], [dfnChunk(-5, 2, True, False, False)], 40, -2, 1, "Wings", "Now you can fly!  (No you can't)", "wings", 1)
+#var organs = new item(1, 1, 3, -5, 5, "Organs", "organs", "A wet gooey mass that drips on your hand.  You can hear an almost musical wheeze.");
+onepin = Item([atkChunk(5, 5, False)], [], 100, 2, 4, "One Pin", "The tip is dull from overuse.", "onepin", 1)
+nerfgun = Item([atkChunk(2, 10, False, False, 0, 1)], [], 60, 3, 3, "Nerf Gun", "Sometimes Styrofoam bullets can hurt.", "nerfgun", 1, True, 6, [750, 6])
 
 
 #--BOSS ITEMS--
@@ -407,6 +424,7 @@ shurikenbag = Item([atkChunk(35, 25, False, False, 1, 5, {"sweeping":5}), atkChu
 #COOSOME
 spoon = Item([atkChunk(50, 7, False, False, 2, 30), atkChunk(35, 6, False, False, 1, 1, {"returning":[2, 100]}), atkChunk(15, 3, True, True)], [dfnChunk(1, 1)], 100, -8, 10, "the Spoon", "It's just a spoon. But something feels powerful about it...", "spoon", -1, False, 30, [10, 1], {"mending":[500, 1], "bound":2})
 lapis = Item([atkChunk(5000, 5000, False, False, 3, False, {"sweeping":1000})], [dfnChunk(0, True, False, True, False, {"trueProtection":True, "thorns":atkChunk(5000, 5000, False, False, 3)})], 1000, 0, 0, "Lapis", "The gem of the gods. Or at least the god of 7.", "lapis", -1, False, False, [], {"bound":100, "mending":[50, 1000]})
+
 
 
 score = 0
@@ -444,7 +462,7 @@ class Player(object):
 		#set two attack chunks
 		#for i in 
 		global TI1
-		TI1 = DispObj([DispObj(smallfont.render("Health: "+str(self.hp), True, (0, 0, 0))), DispObj(smallfont.render("Base Dmg: "+str(self.dmg), True, (0, 0, 0)), (0, 17)), DispObj(smallfont.render("Base Dfn: "+str(self.dfn), True, (0, 0, 0)), (0, 34)), DispObj(smallfont.render("Score: "+str(score), True, (0, 0, 0)), (0, 51)), DispObj(smallfont.render("Level: "+str(self.lvl), True, (0, 0, 0)), (0, 68)), DispObj(smallfont.render("Room: "+str(turn), True, (0, 0, 0)), (0, 85))], (10, 126), False, (195, 120)) #inventory stats
+		TI1 = DispObj([DispObj(smallfont.render("Health: "+str(self.hp), True, (0, 0, 0))), DispObj(smallfont.render("Base Dmg: "+str(self.dmg), True, (0, 0, 0)), (0, 15)), DispObj(smallfont.render("Base Dfn: "+str(self.dfn), True, (0, 0, 0)), (0, 30)), DispObj(smallfont.render("Score: "+str(score), True, (0, 0, 0)), (0, 45)), DispObj(smallfont.render("Level: "+str(self.lvl), True, (0, 0, 0)), (0, 60)), DispObj(smallfont.render("Room: "+str(turn), True, (0, 0, 0)), (0, 75))], (10, 126), False, (195, 120)) #inventory stats
 		
 pla = Player()
 pla.refresh()
@@ -903,6 +921,7 @@ def getitem(item): #AAAAAAAAAAAAAAAHHHHHHHHHHHHHHHHHHHHH
 	TM2.refresh()
 	refreshItems(1)
 	
+
 	
 def equip(item):
 	global pla
@@ -927,11 +946,11 @@ def equip(item):
 	if success:
 		refreshItems(1)
 	
-def unequip(item, slot):
+def unequip(slot):
 	global pla
 	global invenItems
 	global nothing
-	if item != nothing:
+	if pla.equipped[slot] != nothing:
 		invenItems.append(pla.equipped[slot])
 		pla.equipped[slot] = nothing
 		refreshItems(1)
@@ -1132,7 +1151,6 @@ inveen = font.render("Inventory", True, (0, 0, 0))
 baack = font.render("Back", True, (0, 0, 0))
 
 
-
 running = True
 Screen = 1
 mouse_down = False
@@ -1140,19 +1158,39 @@ genRoom()
 
 #main loop
 while running:
+	lootable = True
 	for event in pygame.event.get(): #key input
 		if event.type == pygame.QUIT: 
 			running = False
-		elif event.type == pygame.MOUSEBUTTONDOWN:
-			mouse_down = True
-		elif event.type == pygame.MOUSEBUTTONUP:
-			mouse_down = False
-		elif event.type == pygame.KEYDOWN and debug:
+			
+		if event.type == pygame.MOUSEBUTTONDOWN:
+			if event.button == 1:
+				mouse_down = True
+			if event.button == 4 and netSize > 239: #Scrolling up
+				#netSize
+				scrollMod += 10 #ammount scrolled
+				if scrollMod > 0: #make sure you didn't scroll too far
+					scrollMod = 0
+				refreshItems(2) #update display with new coords
+			if event.button == 5 and netSize > 239: #Scrolling down
+				scrollMod -= 10
+				if scrollMod + netSize < 239: #make sure you didn't scroll too far
+					scrollMod = 0-(netSize - 239)
+				refreshItems(2) #make sure you didn't scroll too far
+			
+		if event.type == pygame.MOUSEBUTTONUP:
+			if event.button == 1:
+				mouse_down = False
+				
+		if event.type == pygame.KEYDOWN and debug:
 			if event.key == K_1:
-				prints("boop")
+				#for i in allitems:
+					#getitem(i)
+				pass
 				
 	mouse_pos = pygame.mouse.get_pos()
-
+	
+	
 	if Screen == 1: #main screen
 		screen.fill(Cbacking)
 		screen.blit(Smain, (0, 0))
@@ -1168,25 +1206,19 @@ while running:
 		
 		
 		if mouse_down:
+			mouse_down = False
 			if hitDetect((935, 174), (25, 25), mouse_pos): #north
-				mouse_down = False
 				move(1)
 			if hitDetect((960, 199), (25, 25), mouse_pos): #east
-				mouse_down = False
 				move(2)
 			if hitDetect((935, 224), (25, 25), mouse_pos): #south
-				mouse_down = False
 				move(3)
 			if hitDetect((910, 199), (25, 25), mouse_pos): #west
-				mouse_down = False
 				move(4)
 
 			if hitDetect((910, 10), (75, 24), mouse_pos): #invetory, button size: 75 x 24 px
 				Screen = 2
-				mouse_down = False
 			if hitDetect((910, 37), (75, 24), mouse_pos): #loot
-
-				mouse_down = False
 				RDloot()
 	
 	if Screen == 2: #inven screen
@@ -1198,32 +1230,46 @@ while running:
 			screen.blit(pla.equipped[0].div.mini, (10, 10))
 		else:
 			screen.blit(ac2Img, (10, 10))
-		if pla.equipped[0] != nothing: #dfn 2
-			screen.blit(pla.equipped[0].div.mini, (60, 10))
+		if pla.equipped[1] != nothing: #dfn 2
+			screen.blit(pla.equipped[1].div.mini, (60, 10))
 		else:
 			screen.blit(ac2Img, (60, 10))
 		if pla.equipped[2] != nothing: #atk 1
 			screen.blit(pla.equipped[2].div.mini, (10, 60))
 		else:
 			screen.blit(me2Img, (10, 60))
-		if pla.equipped[2] != nothing: #atk 2
-			screen.blit(pla.equipped[2].div.mini, (60, 60))
+		if pla.equipped[3] != nothing: #atk 2
+			screen.blit(pla.equipped[3].div.mini, (60, 60))
 		else:
 			screen.blit(me2Img, (60, 60))
 			
 		screen.blit(ItemsDisp.img, ItemsDisp.coords)
 			
-		
-		#screen.blit(lapis.div.norm.img, lapis.div.norm.coords)
-		
 		#buttons and stuff
 		screen.blit(TI1.img, TI1.coords)
 		pygame.draw.rect(screen, Cbacking, [10, 225 , 75, 24])
 		screen.blit(baack, (10, 225))
 		
 		if mouse_down:
+			mouse_down = False
 			if hitDetect((10, 225), (75, 24), mouse_pos):
 				Screen = 1
+				
+			for i in invenItems: #equipping
+				x = i.div.norm
+				if hitDetect((115, x.baseCoords[1]+scrollMod), (370, 54), mouse_pos): #size of items
+					equip(i)
+					break
+			
+			#unequipping
+			if hitDetect((10, 10), (50, 50), mouse_pos):
+				unequip(0)
+			if hitDetect((60, 10), (50, 50), mouse_pos):
+				unequip(1)
+			if hitDetect((10, 60), (50, 50), mouse_pos):
+				unequip(2)
+			if hitDetect((60, 60), (50, 50), mouse_pos):
+				unequip(3)
 	
 	if Screen == 3: #battle
 		screen.fill(Cbacking)
