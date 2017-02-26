@@ -181,6 +181,9 @@ def refreshItems(type):
 			i.div.norm.baseCoords = (0, netSize)
 			netSize += i.div.norm.size[1] #add size to total size
 			ItemsDisp.all.append(i.div.norm)
+		if netSize <= 239:
+			global scrollMod
+			scrollMod = 0
 		refreshItems(2)
 			
 	if type == 2: #update w/ scroll mod
@@ -278,7 +281,6 @@ roomBoss4 = Room(0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 3, "You find yourself in a roo
 		self.quant = 0
 		self.findable = 0
 
-zaroltrophy = item(0, 0, 0, 20, 50, "Zarol Trophy", "zaroltrophy", "Thinking back, Seriously. How the hell did you do that?")
 	'''
 #New items, with the better system
 #single chunk of armor calculation
@@ -416,7 +418,7 @@ herosword = Item([atkChunk(6, 2)], [dfnChunk(0, 2, False, True)], 200, 1, 10, "H
 #COOSOME
 fishingrod = Item([atkChunk(6, 10, True, False, 1, 1, {"destructive":5}), atkChunk(5, 0)], [dfnChunk(0, 3)], 150, 0, 10, "Fishing Rod", "Hook, Line, and Sink.", "fishingrod", -1, True, 1, [300, 1])
 pencil = Item([atkChunk(8, -5, True, False, 0, False, {"heavy":1})], [dfnChunk(-5, 10), dfnChunk(-1, 2, True, True)], 500, -5, 10, "the Pencil", "Quite oversized, you use it as a blunt weapon. But you feel there is more to it.", "pencil", 1, False, False, [], {"mending":[50, 1]})
-drawingpad = Item([atkChunk(2, 1, True, True, 1)], [dfnChunk(5, 2, True, True, False)], 100, 12, 10, "Drawing Pad", "Using this, you can stay positive. Because everything else is in here.", "drawingpad", -1, False, False, [], ["mending":[500, 10]])
+drawingpad = Item([atkChunk(2, 1, True, True, 1)], [dfnChunk(5, 2, True, True, False)], 100, 12, 10, "Drawing Pad", "Using this, you can stay positive. Because everything else is in here.", "drawingpad", -1, False, False, [], {"mending":[500, 10]})
 spoon = Item([atkChunk(50, 7, False, False, 2, 30), atkChunk(35, 6, False, False, 1, 1, {"returning":[2, 100]}), atkChunk(15, 3, True, True)], [dfnChunk(1, 1)], 100, -8, 10, "the Spoon", "It's just a spoon. But something feels powerful about it...", "spoon", -1, False, 30, [10, 1], {"mending":[500, 1], "bound":2})
 
 #ALPHA
@@ -436,6 +438,10 @@ shurikenbag = Item([atkChunk(35, 25, False, False, 1, 5, {"sweeping":5}), atkChu
 #card = item(2, 25, 25, 0, 20, "00000111", "card", "")
 #device = item(40, 0, 6, 0, 20, "Electrical device", "device", "You have no idea how it works, but it looks far beyond any tech you have seen.")
 
+#ZAROL
+#zaroltrophy = item(0, 0, 0, 20, 50, "Zarol Trophy", "zaroltrophy", "Thinking back, Seriously. How the hell did you do that?")
+#zarolflesh
+#zarolmist
 
 lapis = Item([atkChunk(5000, 5000, False, False, 3, False, {"sweeping":1000})], [dfnChunk(0, True, False, True, False, {"trueProtection":True, "thorns":atkChunk(5000, 5000, False, False, 3)})], 1000, 0, 0, "Lapis", "The gem of the gods. Or at least the god of 7.", "lapis", -1, False, False, [], {"bound":100, "mending":[50, 1000]})
 
@@ -483,8 +489,8 @@ pla.refresh()
 
 bosses = []
 class Enm(object):
-	#enemy base:       atk, de, name, pic, maxhp, ddev, agil, sane, message, cry, lvl, rundown, heal, interval, equip = [nothing]
-	#boss base:        hp, atk,   de,  name, img, maxhp, ddev, agil, heal, sane, loot, loot2, turn, message, cry, rundown, room, interval, equip = [nothing] #NEW INTERVALS NEED TO BE HALF ORIGONAL
+	#enemy base:	   atk, de, name, pic, maxhp, ddev, agil, sane, message, cry, lvl, rundown, heal, interval, equip = [nothing]
+	#boss base:		hp, atk,   de,  name, img, maxhp, ddev, agil, heal, sane, loot, loot2, turn, message, cry, rundown, room, interval, equip = [nothing] #NEW INTERVALS NEED TO BE HALF ORIGONAL
 	def __init__(self, hp, maxhp, atk, ddev, dfn, agil, heal, sane, name, img, message, cry, rundown, interval, equip = [nothing], Boss = False, room = None, turn = -1):
 		self.hp = hp #initial
 		self.maxhp = maxhp #max
@@ -500,8 +506,8 @@ class Enm(object):
 		self.message = message #added to roommessage when in room
 		self.cry = cry #start of battle message
 		self.rundown = rundown #list of messages displayed in battle, might be removed *le sad*
-		self.atkInt = math.ceil(interval)
-		self.atkIntBase = math.ceil(interval)
+		self.atkInt = interval #remember to math.ciel() for rebuild adventurer
+		self.atkIntBase = interval
 		self.equipped = equip
 		self.boss = Boss
 		if self.boss:
@@ -597,41 +603,40 @@ def prepbattle(enemy):
 	global enm
 	global pla
 	global battleprep
-    search = False
-    enm = enemy
+	search = False
+	enm = enemy
 	pla.defending = False
-    '''localrand = rand(100) #Traps
-    if (localrand == 1){
-        enm.minions.push(alltraps[rand(alltraps.length-1)]);
-    }'''
+	'''localrand = rand(100) #Traps
+	if (localrand == 1){
+		enm.minions.push(alltraps[rand(alltraps.length-1)]);
+	}'''
 	global Sbattle
 	global zarol
 	global lastinsanity
-    if enm.name == zarol.name:
+	if enm.name == zarol.name:
 		global Szarol
 		Sbattle = Szarol
 	elif enm.name == lastinsanity.name:
-        global Sinsane
+		global Sinsane
 		Sbattle = Sinsane
-    else:
-        global Smain
+	else:
+		global Smain
 		Sbattle = Smain
 		#VISUALS set enm img
-    
-    '''if (enm.name == zarol.name){
-        zarol = buildZarol();
-        enm = zarol
-    }'''
-    battleprep = 500
+	
+	'''if (enm.name == zarol.name){
+		zarol = buildZarol();
+		enm = zarol
+	}'''
+	battleprep = 500
 	#VISUALS Clear all battle message areas
-    pla.minionTree = getMinionTree(pla, 1)
-    enm.minionTree = getMinionTree(enm, 1)
-    for (i in enm.minionTree):
-        i.atkInt = rand(i.atkIntBase)
-    for (i in pla.minionTree):
-        i.atkInt = rand(i.atkIntBase)
-    return enm.message
-}
+	pla.minionTree = getMinionTree(pla, 1)
+	enm.minionTree = getMinionTree(enm, 1)
+	for i in enm.minionTree:
+		i.atkInt = rand(i.atkIntBase)
+	for i in pla.minionTree:
+		i.atkInt = rand(i.atkIntBase)
+	return enm.message
 
 #The meat of the game, Generates the room randomly
 def genRoom():
@@ -1158,18 +1163,23 @@ while running:
 		if event.type == pygame.MOUSEBUTTONDOWN:
 			if event.button == 1:
 				mouse_down = True
-			if event.button == 4 and netSize > 239: #Scrolling up
-				#netSize
-				scrollMod += 10 #ammount scrolled
-				if scrollMod > 0: #make sure you didn't scroll too far
+			if event.button == 4:
+				if netSize > 239: #Scrolling up
+					#netSize
+					scrollMod += 10 #ammount scrolled
+					if scrollMod > 0: #make sure you didn't scroll too far
+						scrollMod = 0
+					refreshItems(2) #update display with new coords
+				else:
 					scrollMod = 0
-				refreshItems(2) #update display with new coords
-			if event.button == 5 and netSize > 239: #Scrolling down
-				scrollMod -= 10
-				if scrollMod + netSize < 239: #make sure you didn't scroll too far
-					scrollMod = 0-(netSize - 239)
-				refreshItems(2) #make sure you didn't scroll too far
-			
+			if event.button == 5:
+				if netSize > 239: #Scrolling down
+					scrollMod -= 10
+					if scrollMod + netSize < 239: #make sure you didn't scroll too far
+						scrollMod = 0-(netSize - 239)
+					refreshItems(2) #make sure you didn't scroll too far
+				else:
+					scrollMod = 0
 		if event.type == pygame.MOUSEBUTTONUP:
 			if event.button == 1:
 				mouse_down = False
