@@ -969,7 +969,7 @@ function RDinit() {
     }
 
     for (i in bossitems) {bossitems[i].findable = 1;}
-    setInterval('enmFight()',10);
+    setInterval('enmFight()',10)
 }
 
 function testu(){

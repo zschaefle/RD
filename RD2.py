@@ -278,16 +278,7 @@ roomBoss4 = Room(0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 3, "You find yourself in a roo
 		self.quant = 0
 		self.findable = 0
 
-hatandboots = item(5, 50, 8, 0, 10, "Hat and Boots", "hatandboots", "Can't Bump your head anymore, and probably won't stub your toes.")
 zaroltrophy = item(0, 0, 0, 20, 50, "Zarol Trophy", "zaroltrophy", "Thinking back, Seriously. How the hell did you do that?")
-fishingrod = item(5, 4, 2, 0, 10, "Fishing Rod", "fishingrod", "Hook, Line, and Sink.")
-drawingpad = item(1, 3, 7, 12, 10, "Drawing Pad", "drawingpad", "Using this, you can stay positive. Because everything else is in here.")
-pencil = item(7, 2, -1, -5, 10, "The Pencil", "pencil", "Quite oversized, you use it as a blunt weapon. But you feel there is more to it.")
-jimsword = item(25, 5, -5, 0, 10, "Jim's Sword", "jimsword", "")
-jimarmor = item(0, 35, -20, 0, 10, "Enchanted Armor", "jimarmor", "Glimmering metallic armor, Material flowing smoothly within it to fill the gaps in its structure.")
-inactivecube = item(25, 7, 20, 0, 10, "Inactive Cube", "inactivecube", "")
-card = item(2, 25, 25, 0, 20, "00000111", "card", "")
-device = item(40, 0, 6, 0, 20, "Electrical device", "device", "You have no idea how it works, but it looks far beyond any tech you have seen.")
 	'''
 #New items, with the better system
 #single chunk of armor calculation
@@ -406,23 +397,46 @@ no_thing = Item([], [], 1, -2, -1, "Nothing", "You stare off into the distance..
 #var steeltoedboots = new item(1, 5, -2, 1, 1, "Steel Boots", "steeltoedboots", "Your enemy might be able to kill you, but hey at least your toes will be fine.");
 #var styrofoamchestplate = new item(0, 1, -1, 2, 2, "White Chestplate", "styrofoamchestplate","It's hefty with beautiful detailing that shines in even the blackest cavern.  You wish it was made out of something other than styrofoam.");
 wandofwater = Item([atkChunk(3, 1, True, False, 1, 2), atkChunk(2, -1)], [], 20, -3, 3, "Wand of Water", "You'll never be thirsty again", "wandofwater", 1, True, 20, [30, 1])
-#var wings = new item(1, 1, -1, -1, 1, "Wings","wings","Now you can fly!  (No you can't)");
 wings = Item([], [dfnChunk(-5, 2, True, False, False)], 40, -2, 1, "Wings", "Now you can fly!  (No you can't)", "wings", 1)
 #var organs = new item(1, 1, 3, -5, 5, "Organs", "organs", "A wet gooey mass that drips on your hand.  You can hear an almost musical wheeze.");
 onepin = Item([atkChunk(5, 5, False)], [], 100, 2, 4, "One Pin", "The tip is dull from overuse.", "onepin", 1)
 nerfgun = Item([atkChunk(2, 10, False, False, 0, 1)], [], 60, 3, 3, "Nerf Gun", "Sometimes Styrofoam bullets can hurt.", "nerfgun", 1, True, 6, [750, 6])
 
+#LEVEL 2
+
+#LEVEL 3
+higgs = Item([atkChunk(1, 1, False, True, 1)], [], 5, -15, 4, "Higgs Boson", "You have no idea how you found this. And you know you probably shouldn't have been able to.", "higgs", 3, True, False, [], {"mending":[1000, -1]})
+
 
 #--BOSS ITEMS--
+#HERO
 heroshield = Item([], [dfnChunk(-5, 6, False, False, False), dfnChunk(-2, 4, True)], 200, 1, 10, "Heroes Shield", "You feel a bit bad, killing someone with origins probably alike yours.", "heroshield", -1, False)
-herosword = Item([atkChunk(6, 2)], [dfnChunk(0, 2, False, True)], 100, 1, 10, "Heroes Sword", "A fitting weapon for a hero. But are <i>you<i> a hero?", "herosword", -1, False)
+herosword = Item([atkChunk(6, 2)], [dfnChunk(0, 2, False, True)], 200, 1, 10, "Heroes Sword", "A fitting weapon for a hero. But are <i>you<i> a hero?", "herosword", -1, False)
+
+#COOSOME
+fishingrod = Item([atkChunk(6, 10, True, False, 1, 1, {"destructive":5}), atkChunk(5, 0)], [dfnChunk(0, 3)], 150, 0, 10, "Fishing Rod", "Hook, Line, and Sink.", "fishingrod", -1, True, 1, [300, 1])
+pencil = Item([atkChunk(8, -5, True, False, 0, False, {"heavy":1})], [dfnChunk(-5, 10), dfnChunk(-1, 2, True, True)], 500, -5, 10, "the Pencil", "Quite oversized, you use it as a blunt weapon. But you feel there is more to it.", "pencil", 1, False, False, [], {"mending":[50, 1]})
+drawingpad = Item([atkChunk(2, 1, True, True, 1)], [dfnChunk(5, 2, True, True, False)], 100, 12, 10, "Drawing Pad", "Using this, you can stay positive. Because everything else is in here.", "drawingpad", -1, False, False, [], ["mending":[500, 10]])
+spoon = Item([atkChunk(50, 7, False, False, 2, 30), atkChunk(35, 6, False, False, 1, 1, {"returning":[2, 100]}), atkChunk(15, 3, True, True)], [dfnChunk(1, 1)], 100, -8, 10, "the Spoon", "It's just a spoon. But something feels powerful about it...", "spoon", -1, False, 30, [10, 1], {"mending":[500, 1], "bound":2})
+
 #ALPHA
 alphaxe = Item([atkChunk(20, -2, True, False, 0, False, {"sweeping":2, "heavy":1})], [dfnChunk(-2, -2, True, True), dfnChunk(-10, 12)], 400, 0, 10, "Alpha's Axe", "A large heavy axe, with surprisingly powerful hits.", "alphaxe", -1, False)
 sivgoggles = Item([atkChunk(4, 15, False, True, 1, False, {"sweeping":1})], [dfnChunk(10, 2, True), dfnChunk(25, 2, False, True, True, {"trueProtection":True})], 30, -15, 10, "Alpha's Glasses", "Gazing through them, You can see things. Where they are, and where they are going.", "sivgoggles", -1, False, False, [], {"bound":4, "mending":[3, 1]})
 hair = Item([atkChunk(1, 1, False, True, 0, False, {"destructive":30})], [], 10, -100, 10, "Alpha's Hair", "You stole this from a boss. Well, stole isn't the right word. More of Generated through Desire.", "hair", -1, False, False, [], {"bound":10})
 shurikenbag = Item([atkChunk(35, 25, False, False, 1, 5, {"sweeping":5}), atkChunk(15, 20, True, False, 0, 1, {"returning":[2, 80], "destructive":10})], [dfnChunk(5, 4, True)], 100, -35, 10, "Shuriken Pouch", "A small, blood filled pouch, when you reach your hand into it, you always pull out a shuriken.", "shurikenbag", -1, False, 10, [1, 1], {"bound":1, "mending":[5, 2]})
-#COOSOME
-spoon = Item([atkChunk(50, 7, False, False, 2, 30), atkChunk(35, 6, False, False, 1, 1, {"returning":[2, 100]}), atkChunk(15, 3, True, True)], [dfnChunk(1, 1)], 100, -8, 10, "the Spoon", "It's just a spoon. But something feels powerful about it...", "spoon", -1, False, 30, [10, 1], {"mending":[500, 1], "bound":2})
+
+#JIM GRIND
+#jimsword = item(25, 5, -5, 0, 10, "Jim's Sword", "jimsword", "")
+#jimarmor = item(0, 35, -20, 0, 10, "Enchanted Armor", "jimarmor", "Glimmering metallic armor, Material flowing smoothly within it to fill the gaps in its structure.")
+#hatandboots = item(5, 50, 8, 0, 10, "Hat and Boots", "hatandboots", "Can't Bump your head anymore, and probably won't stub your toes.")
+#communism
+
+#CUBE
+#inactivecube = item(25, 7, 20, 0, 10, "Inactive Cube", "inactivecube", "")
+#card = item(2, 25, 25, 0, 20, "00000111", "card", "")
+#device = item(40, 0, 6, 0, 20, "Electrical device", "device", "You have no idea how it works, but it looks far beyond any tech you have seen.")
+
+
 lapis = Item([atkChunk(5000, 5000, False, False, 3, False, {"sweeping":1000})], [dfnChunk(0, True, False, True, False, {"trueProtection":True, "thorns":atkChunk(5000, 5000, False, False, 3)})], 1000, 0, 0, "Lapis", "The gem of the gods. Or at least the god of 7.", "lapis", -1, False, False, [], {"bound":100, "mending":[50, 1000]})
 
 
@@ -467,78 +481,10 @@ class Player(object):
 pla = Player()
 pla.refresh()
 
-class Enemy(object):
-	def __init__(self, atk, de, name, pic, maxhp, ddev, agil, sane, message, cry, lvl, rundown, heal, interval, equip = [nothing]):
-		self.hp = maxhp
-		self.dmg = atk
-		self.atk = []
-		self.dfn = de
-		self.name = name
-		self.img = getImg(pic)
-		self.ddev = ddev
-		self.maxhp = maxhp
-		self.agil = agil
-		self.message = message
-		self.cry = cry
-		self.turn = lvl
-		self.heal = heal[2]
-		self.rundown = rundown
-		self.healchance = [heal[0], heal[1]]
-		self.boss = False
-		self.atkInt = interval
-		self.atkIntBase = interval
-		self.sane = sane
-		self.minions = []
-		self.minionTree = []
-		self.atkmod = 1
-		self.defmod = 1
-		self.agilmod = 1
-		self.defending = False
-		self.equipped = equip
-
-creepybaldguy = Enemy(5, 10, "Creepy Bald Guy", "creep", 18, 2, [1,100], -1, "You know you are being watched. Always... ", "you feel it staring through your eyes, Into your Soul.", 1, ["Even though it seems nearly dead, it continues its steady gaze deep into your eyes.", "it seems to have lost some hair in this fight. You blink, realizing it was already bald.", "it seems to be observing, only attacking to see how you react.", "it is sitting there, staring at you. Waiting and observing your every move."], [2,3,4], 200)
-
-bosses = []
-class Boss(object):
-	def __init__(self, hp, atk, de, name, img, maxhp, ddev, agil, heal, sane, loot, loot2, turn, message, cry, rundown, room, interval, equip = [nothing]):
-		self.hp = hp
-		self.rehp = hp
-		self.atk = atk
-		self.dfn = de
-		self.name = name
-		self.img = getImg(img)
-		self.ddev = ddev
-		self.maxhp = maxhp
-		self.agil = agil
-		self.message = message
-		self.cry = cry
-		self.lvl = turn
-		self.heal = heal[2]
-		self.rundown = rundown
-		self.healchance = [heal[0], heal[1]]
-		self.boss = True
-		self.atkInt = math.ceil(interval)
-		self.atkIntBase = math.ceil(interval)
-		self.turn = turn
-		self.loot = loot
-		self.loot2 = loot2
-		self.sane = sane
-		self.minions = []
-		self.room = room
-		self.minionTree = []
-		self.atkmod = 1
-		self.defmod = 1
-		self.agilmod = 1
-		self.defending = False
-		self.equipped = equip
-		
-		global bosses
-		bosses.append(self)
-
-adventurer = Boss(190, 20, 0, "Adventurer", "adventurer", 190, 5, [5,100], [100,50,30], -7, herosword, heroshield, 10, "You hear the footsteps of someone else.", "It is an Adventurer, Readying his stance for Battle!", ["He seems oddly unaware of the massive amounts of damage you have dealt him. Much like you are.", "", "", "", "He seems more confident of himself, more sure of his strides.",""],bossroom,100, [herosword, heroshield]);
-
 bosses = []
 class Enm(object):
+	#enemy base:       atk, de, name, pic, maxhp, ddev, agil, sane, message, cry, lvl, rundown, heal, interval, equip = [nothing]
+	#boss base:        hp, atk,   de,  name, img, maxhp, ddev, agil, heal, sane, loot, loot2, turn, message, cry, rundown, room, interval, equip = [nothing] #NEW INTERVALS NEED TO BE HALF ORIGONAL
 	def __init__(self, hp, maxhp, atk, ddev, dfn, agil, heal, sane, name, img, message, cry, rundown, interval, equip = [nothing], Boss = False, room = None, turn = -1):
 		self.hp = hp #initial
 		self.maxhp = maxhp #max
@@ -568,8 +514,11 @@ class Enm(object):
 		self.minions = []
 		self.minionTree = []
 
+creepybaldguy = Enm(18, 18, 5, 2, 10, [1, 100], [2,3,4], -1, "Creepy Bald Guy", "creep", "You know you are being watched. Always... ", "you feel it staring through your eyes, Into your Soul.", ["Even though it seems nearly dead, it continues its steady gaze deep into your eyes.", "it seems to have lost some hair in this fight. You blink, realizing it was already bald.", "it seems to be observing, only attacking to see how you react.", "it is sitting there, staring at you. Waiting and observing your every move."], 100)
 
-alpha = Enm(350, 500, 14, 6, 0, [68, 100], [5,4,10], -3, "Alpha", "alpha", "You hear sudden quick footsteps from behind you.", "you turn to see someone dashing at you, Swinging a large axe!", ["", "", "", "", "", ""], 120, [alphaxe, sivgoggles], True, roomBoss3, 20)
+#bosses
+adventurer = Enm(190, 190, 20, 5, 0, [5,100], [100,50,30], -7, "Adventurer", "adventurer""You hear the footsteps of someone else.", "It is an Adventurer, Readying his stance for Battle!", ["He seems oddly unaware of the massive amounts of damage you have dealt him. Much like you are.", "", "", "", "He seems more confident of himself, more sure of his strides.",""], 50, [herosword, heroshield], True, bossroom, 10)
+alpha = Enm(350, 500, 14, 6, 0, [68, 100], [5,4,10], -3, "Alpha", "alpha", "You hear sudden quick footsteps from behind you.", "you turn to see someone dashing at you, Swinging a large axe!", ["", "", "", "", "", ""], 60, [alphaxe, sivgoggles], True, roomBoss3, 20)
 
 
 #minions go here, not needed yet
@@ -633,7 +582,56 @@ healable = True
 noKillEpic = True
 roommessage = ""
 search = True
+enm = None
+battleprep = -1
 
+Smain = getImg("screens/screenmain")
+Sgrave = getImg("screens/gravestone")
+Scompass = getImg("screens/compass")
+Sinsane = getImg("screens/screenlastinsanity")
+Szarol = getImg("screens/screenzarol")
+Sbattle = Smain
+
+def prepbattle(enemy):
+	global search
+	global enm
+	global pla
+	global battleprep
+    search = False
+    enm = enemy
+	pla.defending = False
+    '''localrand = rand(100) #Traps
+    if (localrand == 1){
+        enm.minions.push(alltraps[rand(alltraps.length-1)]);
+    }'''
+	global Sbattle
+	global zarol
+	global lastinsanity
+    if enm.name == zarol.name:
+		global Szarol
+		Sbattle = Szarol
+	elif enm.name == lastinsanity.name:
+        global Sinsane
+		Sbattle = Sinsane
+    else:
+        global Smain
+		Sbattle = Smain
+		#VISUALS set enm img
+    
+    '''if (enm.name == zarol.name){
+        zarol = buildZarol();
+        enm = zarol
+    }'''
+    battleprep = 500
+	#VISUALS Clear all battle message areas
+    pla.minionTree = getMinionTree(pla, 1)
+    enm.minionTree = getMinionTree(enm, 1)
+    for (i in enm.minionTree):
+        i.atkInt = rand(i.atkIntBase)
+    for (i in pla.minionTree):
+        i.atkInt = rand(i.atkIntBase)
+    return enm.message
+}
 
 #The meat of the game, Generates the room randomly
 def genRoom():
@@ -863,10 +861,9 @@ def genRoom():
 	global TM1
 	TM1.all = wraptext(roommessage, 900, font, True)
 	TM1.refresh()
-	
-battleprep = -1
-lastmove = 1
 
+	
+lastmove = 1
 
 def move(direction):
 	global roommessage
@@ -1141,11 +1138,6 @@ def getMinionTree(entity, type):
 		
 
 #Getting visuals for screens
-Smain = getImg("screens/screenmain")
-Sgrave = getImg("screens/gravestone")
-Scompass = getImg("screens/compass")
-Sinsane = getImg("screens/screenlastinsanity")
-Szarol = getImg("screens/screenzarol")
 looot = font.render("Loot", True, (0, 0, 0))
 inveen = font.render("Inventory", True, (0, 0, 0))
 baack = font.render("Back", True, (0, 0, 0))
@@ -1273,6 +1265,9 @@ while running:
 	
 	if Screen == 3: #battle
 		screen.fill(Cbacking)
+		screen.blit(Sbattle, (0, 0))
+		if mouse_down:
+			Screen = 1
 
 		
 	if Screen == 4: #Grave, limbo 1
@@ -1299,7 +1294,7 @@ while running:
 				i.durability += 1 #and it only fixes a little bit
 				if i.durability > 0:
 					i.broken = False
-				
+		#also do ammo in here
 	
 	pygame.display.update()
 	clock.tick(50)
