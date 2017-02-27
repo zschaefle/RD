@@ -257,21 +257,47 @@ class ItemDisp(object):
 			localrand.size = (223, thissize)
 			localrand.refresh()
 			allchunks.append(localrand)
-			
-		#----
-			'''if i.etrn:
-				localrand.all.append(DipsObj(pasImg, (0, 0)))
-			elif i.proj != False:
-				localrand.all.append(DispObj(font.render("Mending", True, (0, 0, 0))))
-			
-			else:
-				localrand.all.append(DipsObj(melImg, (0, 0)))
-			
-			
-			localrand.refresh()'''
 		
 		for i in self.item.dfnChunks:
-			pass
+			localrand = DispObj([], (0, 0), False, (223, 200))
+			
+			astring = "Dfn: "
+			localrand.all.append(DispObj(actImg, (0, 0)))
+			if i.all:
+				localrand.all.append(DispObj(pasImg, (0, 0)))
+				astring += "+"
+			if i.dfn == True:
+				astring += "Full"
+			else:
+				astring += str(i.dfn)
+			if not i.piercable:
+				astring += " Impervious" #not piercable
+			localrand.all.append(DispObj(font.render(astring, True, (0, 0, 0)), (20, 0)))
+				
+			#agildesc, durable
+			astring = ""
+			if i.agil < 0:
+				astring = "Hindering"
+			if i.agil < -20:
+				astring = "Cumbersome"
+			if i.agil == 0:
+				astring = "Unobtrusive"
+			if i.agil > 0:
+				astring = "Smooth"
+			if i.agil > 20:
+				astring = "Nimble"
+				
+			if i.dur:
+				astring += " - Durable"
+			
+			localrand.all.append(DispObj(font.render(astring, True, (0, 0, 0)), (1, 19))) #the agil description
+			thissize = 37
+			
+			#enchants hereish
+			
+			localrand.size = (223, thissize)
+			localrand.refresh()
+			allchunks.append(localrand)
 		
 		bigsize = 0
 		for i in range(len(allchunks)): #update coords using allsize
