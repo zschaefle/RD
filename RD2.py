@@ -127,6 +127,7 @@ class ItemDisp(object):
 	def refresh(self):
 		global smallfont
 		global font
+		#NORMAL IMAGE, name and description with image
 		self.norm = DispObj([
 			DispObj(self.mini, (2, 2)), 
 			DispObj(font.render(self.item.Name, True, (0, 0, 0)), (54, 2)), 
@@ -145,7 +146,106 @@ class ItemDisp(object):
 			
 		self.norm.refresh()
 		#self.press.refresh()
-		#self.side.refresh()
+		
+		#SIDE IMAGE, image, description, and full chunk display
+		self.side = DispObj([
+			DispObj(self.mini, (0, 0)),
+			DispObj(wraptext(self.item.desc, 446, smallfont, True), (52, 0), False, (446, 50)), #for wraptext size, use fullsize-50-2
+		], (487, 10), False, (498, 239))
+		
+		allchunks, allsize, astring = [], 52, ""
+		if self.item.ench["mending"][0] > -1: #item has mending
+			astring += "-Mending "
+		if self.item.ench["bound"] > 0:
+			astring += "-Bound: "+str(self.item.ench["bound"])
+		if astring != "":
+			self.side.all.append(DispObj(font.render(astring, True, (0, 0, 0)), (2, 52)))
+			allsize += 16
+		
+		
+		proj = {"is":False, "dmg":[9999999, -99], "ammo":-99, "agil":0, "pierce":0, "enchs":{"destructive":0, "piercing":0, "heavy":0, "sweeping":0, "returning":[0, 0]}}
+		for i in self.item.atkChunks: #build the displays
+			if i.proj != False: #if projectile
+				proj["is"] = True
+				if proj["dmg"][0] > i.dmg:
+					proj["dmg"][0] = i.dmg
+				if proj["dmg"][1] < i.dmg:
+					proj["dmg"][1] = i.dmg
+				if proj["ammo"] < i.proj:
+					proj["ammo"] = i.proj
+				if proj["agil"] < i.agil:
+					proj["agil"] = i.agil
+				if proj["pierce"] < i.pierce:
+					proj["pierce"] = i.pierce
+				#proj["enchs"].update(i.ench) #VISUALS get largest enchant, not just update. that will delete
+				
+		if proj["is"]: #it has proj chunks
+			localrand = DispObj([], (0, 0), False, (223, 200))#unknown vertical size. enchants will modify
+			localrand.all.append(DispObj(prjImg, (0, 0)))
+			if proj["dmg"][0] == proj["dmg"][1]: #one damage
+				localrand.all.append(DispObj(font.render("Dmg: "+str(proj["dmg"][0]), True, (0, 0, 0)), (20, 0)))
+			else:
+				localrand.all.append(DispObj(font.render("Dmg Range: "+str(proj["dmg"][0])+"-"+str(proj["dmg"][1]), True, (0, 0, 0)), (20, 0)))
+			localrand.all.append(DispObj(font.render("Ammo Cost: "+str(proj["ammo"]), True, (0, 0, 0)), (112, 0)))
+			
+			#agildesc, piercing
+			astring = ""
+			if proj["agil"] < 0:
+				astring = "Somewhat"
+			if proj["agil"] < -50:
+				astring = "Not"
+			if proj["agil"] == 0:
+				astring = "Normally"
+			if proj["agil"] > 0:
+				astring = "Very"
+			if proj["agil"] > 50:
+				astring = "Incredibly"
+			astring += " accurate"
+			
+			if proj["pierce"] > 0:
+				if proj["pierce"] > 1:
+					astring += " - Highly piercing"
+				else:
+					astring += " - Piercing"
+			
+			localrand.all.append(DispObj(font.render(astring, True, (0, 0, 0)), (1, 19))) #the agil description
+			thissize = 37
+			
+			#enchants
+			
+			localrand.size = (223, thissize)
+			localrand.refresh()
+			allchunks.append(localrand)
+			
+		#----
+			'''if i.etrn:
+				localrand.all.append(DipsObj(pasImg, (0, 0)))
+			elif i.proj != False:
+				localrand.all.append(DispObj(font.render("Mending", True, (0, 0, 0))))
+			
+			else:
+				localrand.all.append(DipsObj(melImg, (0, 0)))
+			
+			
+			localrand.refresh()'''
+		
+		for i in self.item.dfnChunks:
+			pass
+		
+		bigsize = 0
+		for i in range(len(allchunks)): #update coords using allsize
+			if ((i+1) % 2 == 0):
+				allchunks[i].coords = (225, allsize)
+				if allchunks[i].size[1] > bigsize:
+					bigsize = allchunks[i].size[1]
+				allsize += bigsize #get largest size
+			else:
+				allchunks[i].coords = (0, allsize)
+				bigsize = allchunks[i].size[1]
+		
+		
+		self.side.all += allchunks
+		self.side.refresh()
 		
 	def __init__(self, item):
 		self.id = item.Name
@@ -417,7 +517,7 @@ herosword = Item([atkChunk(6, 2)], [dfnChunk(0, 2, False, True)], 200, 1, 10, "H
 
 #COOSOME
 fishingrod = Item([atkChunk(6, 10, True, False, 1, 1, {"destructive":5}), atkChunk(5, 0)], [dfnChunk(0, 3)], 150, 0, 10, "Fishing Rod", "Hook, Line, and Sink.", "fishingrod", -1, True, 1, [300, 1])
-pencil = Item([atkChunk(8, -5, True, False, 0, False, {"heavy":1})], [dfnChunk(-5, 10), dfnChunk(-1, 2, True, True)], 500, -5, 10, "the Pencil", "Quite oversized, you use it as a blunt weapon. But you feel there is more to it.", "pencil", 1, False, False, [], {"mending":[50, 1]})
+pencil = Item([atkChunk(8, -5, True, False, 0, False, {"heavy":1})], [dfnChunk(-5, 10), dfnChunk(-1, 2, True, True)], 500, -5, 10, "the Pencil", "Quite oversized, you use it as a blunt weapon. But you feel there is more to it.", "pencil", -1, False, False, [], {"mending":[50, 1]})
 drawingpad = Item([atkChunk(2, 1, True, True, 1)], [dfnChunk(5, 2, True, True, False)], 100, 12, 10, "Drawing Pad", "Using this, you can stay positive. Because everything else is in here.", "drawingpad", -1, False, False, [], {"mending":[500, 10]})
 spoon = Item([atkChunk(50, 7, False, False, 2, 30), atkChunk(35, 6, False, False, 1, 1, {"returning":[2, 100]}), atkChunk(15, 3, True, True)], [dfnChunk(1, 1)], 100, -8, 10, "the Spoon", "It's just a spoon. But something feels powerful about it...", "spoon", -1, False, 30, [10, 1], {"mending":[500, 1], "bound":2})
 
@@ -523,7 +623,7 @@ class Enm(object):
 creepybaldguy = Enm(18, 18, 5, 2, 10, [1, 100], [2,3,4], -1, "Creepy Bald Guy", "creep", "You know you are being watched. Always... ", "you feel it staring through your eyes, Into your Soul.", ["Even though it seems nearly dead, it continues its steady gaze deep into your eyes.", "it seems to have lost some hair in this fight. You blink, realizing it was already bald.", "it seems to be observing, only attacking to see how you react.", "it is sitting there, staring at you. Waiting and observing your every move."], 100)
 
 #bosses
-adventurer = Enm(190, 190, 20, 5, 0, [5,100], [100,50,30], -7, "Adventurer", "adventurer""You hear the footsteps of someone else.", "It is an Adventurer, Readying his stance for Battle!", ["He seems oddly unaware of the massive amounts of damage you have dealt him. Much like you are.", "", "", "", "He seems more confident of himself, more sure of his strides.",""], 50, [herosword, heroshield], True, bossroom, 10)
+adventurer = Enm(190, 190, 20, 5, 0, [5,100], [100,50,30], -7, "Adventurer", "adventurer", "You hear the footsteps of someone else.", "It is an Adventurer, Readying his stance for Battle!", ["He seems oddly unaware of the massive amounts of damage you have dealt him. Much like you are.", "", "", "", "He seems more confident of himself, more sure of his strides.",""], 50, [herosword, heroshield], True, bossroom, 10)
 alpha = Enm(350, 500, 14, 6, 0, [68, 100], [5,4,10], -3, "Alpha", "alpha", "You hear sudden quick footsteps from behind you.", "you turn to see someone dashing at you, Swinging a large axe!", ["", "", "", "", "", ""], 60, [alphaxe, sivgoggles], True, roomBoss3, 20)
 
 
@@ -670,6 +770,7 @@ def genRoom():
 	if (score >= 800 and pla.lvl == 5):
 		pla.lvl = 6
 		roommessage += "The hairs rise on the back of your neck. You have reached your top potential, and know it is only downhill from here."
+	pla.refresh()
 	
 	search = True
 	if (turn == 1):
@@ -1163,23 +1264,27 @@ while running:
 		if event.type == pygame.MOUSEBUTTONDOWN:
 			if event.button == 1:
 				mouse_down = True
-			if event.button == 4:
-				if netSize > 239: #Scrolling up
-					#netSize
-					scrollMod += 10 #ammount scrolled
-					if scrollMod > 0: #make sure you didn't scroll too far
+			if event.button == 4 and Screen == 2:
+				if hitDetect((115, 10), (370, 239), mouse_pos): #scrolling on the items list
+					if netSize > 239: #Scrolling up
+						#netSize
+						scrollMod += 10 #ammount scrolled
+						if scrollMod > 0: #make sure you didn't scroll too far
+							scrollMod = 0
+						refreshItems(2) #update display with new coords
+					else:
 						scrollMod = 0
-					refreshItems(2) #update display with new coords
-				else:
-					scrollMod = 0
-			if event.button == 5:
-				if netSize > 239: #Scrolling down
-					scrollMod -= 10
-					if scrollMod + netSize < 239: #make sure you didn't scroll too far
-						scrollMod = 0-(netSize - 239)
-					refreshItems(2) #make sure you didn't scroll too far
-				else:
-					scrollMod = 0
+				
+			if event.button == 5 and Screen == 2:
+				if hitDetect((115, 10), (370, 239), mouse_pos): #scrolling on the items list
+					if netSize > 239: #Scrolling down
+						scrollMod -= 10
+						if scrollMod + netSize < 239: #make sure you didn't scroll too far
+							scrollMod = 0-(netSize - 239)
+						refreshItems(2) #make sure you didn't scroll too far
+					else:
+						scrollMod = 0
+						
 		if event.type == pygame.MOUSEBUTTONUP:
 			if event.button == 1:
 				mouse_down = False
@@ -1252,26 +1357,39 @@ while running:
 		pygame.draw.rect(screen, Cbacking, [10, 225 , 75, 24])
 		screen.blit(baack, (10, 225))
 		
-		if mouse_down:
-			mouse_down = False
-			if hitDetect((10, 225), (75, 24), mouse_pos):
-				Screen = 1
 				
-			for i in invenItems: #equipping
-				x = i.div.norm
-				if hitDetect((115, x.baseCoords[1]+scrollMod), (370, 54), mouse_pos): #size of items
+		for i in invenItems: #equipping & alt display
+			x = i.div.norm
+			if hitDetect((115, x.baseCoords[1]+scrollMod), (370, 54), mouse_pos): #size of items
+				screen.blit(i.div.side.img, (487, 10)) #the side img
+				if mouse_down:
+					mouse_down = False
 					equip(i)
 					break
 			
+	
 			#unequipping
-			if hitDetect((10, 10), (50, 50), mouse_pos):
+		if hitDetect((10, 10), (50, 50), mouse_pos):
+			screen.blit(pla.equipped[0].div.side.img, (487, 10)) #the side img
+			if mouse_down:
 				unequip(0)
-			if hitDetect((60, 10), (50, 50), mouse_pos):
+		if hitDetect((60, 10), (50, 50), mouse_pos):
+			screen.blit(pla.equipped[1].div.side.img, (487, 10)) #the side img
+			if mouse_down:
 				unequip(1)
-			if hitDetect((10, 60), (50, 50), mouse_pos):
+		if hitDetect((10, 60), (50, 50), mouse_pos):
+			screen.blit(pla.equipped[2].div.side.img, (487, 10)) #the side img
+			if mouse_down:
 				unequip(2)
-			if hitDetect((60, 60), (50, 50), mouse_pos):
+		if hitDetect((60, 60), (50, 50), mouse_pos):
+			screen.blit(pla.equipped[3].div.side.img, (487, 10)) #the side img
+			if mouse_down:
 				unequip(3)
+				
+		
+		if mouse_down:
+			if hitDetect((10, 225), (75, 24), mouse_pos):
+				Screen = 1
 	
 	if Screen == 3: #battle
 		screen.fill(Cbacking)
