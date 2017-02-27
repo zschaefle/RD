@@ -179,6 +179,47 @@ class ItemDisp(object):
 					proj["pierce"] = i.pierce
 				#proj["enchs"].update(i.ench) #VISUALS get largest enchant, not just update. that will delete
 				
+			else:
+				localrand = DispObj([], (0, 0), False, (223, 200))
+				
+				if i.etrn:
+					localrand.all.append(DispObj(pasImg, (0, 0)))
+					localrand.all.append(DispObj(font.render("Dmg: +"+str(i.dmg), True, (0, 0, 0)), (20, 0)))
+				else:
+					localrand.all.append(DispObj(font.render("Dmg: "+str(i.dmg), True, (0, 0, 0)), (20, 0)))
+					if not i.dfn:
+						localrand.all.append(DispObj((dfnImg), (0, 0)))
+					localrand.all.append(DispObj((melImg), (0, 0)))
+				
+				#agildesc, piercing
+				astring = ""
+				if i.agil < 0:
+					astring = "Hindering"
+				if i.agil < -20:
+					astring = "Cumbersome"
+				if i.agil == 0:
+					astring = "Unobtrusive"
+				if i.agil > 0:
+					astring = "Balanced"
+				if i.agil > 20:
+					astring = "Nimble"
+				
+				if i.pierce > 0:
+					if i.pierce > 1:
+						astring += " - Highly piercing"
+					else:
+						astring += " - Piercing"
+				
+				localrand.all.append(DispObj(font.render(astring, True, (0, 0, 0)), (1, 19))) #the agil description
+				thissize = 37
+				
+				#enchants hereish
+				
+				localrand.size = (223, thissize)
+				localrand.refresh()
+				allchunks.append(localrand)
+			
+			
 		if proj["is"]: #it has proj chunks
 			localrand = DispObj([], (0, 0), False, (223, 200))#unknown vertical size. enchants will modify
 			localrand.all.append(DispObj(prjImg, (0, 0)))
@@ -186,7 +227,7 @@ class ItemDisp(object):
 				localrand.all.append(DispObj(font.render("Dmg: "+str(proj["dmg"][0]), True, (0, 0, 0)), (20, 0)))
 			else:
 				localrand.all.append(DispObj(font.render("Dmg Range: "+str(proj["dmg"][0])+"-"+str(proj["dmg"][1]), True, (0, 0, 0)), (20, 0)))
-			localrand.all.append(DispObj(font.render("Ammo Cost: "+str(proj["ammo"]), True, (0, 0, 0)), (112, 0)))
+			localrand.all.append(DispObj(font.render("Cost: "+str(proj["ammo"]), True, (0, 0, 0)), (155, 0)))
 			
 			#agildesc, piercing
 			astring = ""
@@ -204,7 +245,7 @@ class ItemDisp(object):
 			
 			if proj["pierce"] > 0:
 				if proj["pierce"] > 1:
-					astring += " - Highly piercing"
+					astring += " - Very piercing"
 				else:
 					astring += " - Piercing"
 			
@@ -1015,7 +1056,7 @@ def move(direction):
 def getitem(item): #AAAAAAAAAAAAAAAHHHHHHHHHHHHHHHHHHHHH
 	
 	global invenItems
-	invenItems.append(Item(item.atkChunks, item.dfnChunks, item.durability, item.sane, item.score, item.Name, item.desc, item.img, item.destructable, item.ammo, item.regenammo, item.ench)) #need to change to a special item, probably a custom object
+	invenItems.insert(0, Item(item.atkChunks, item.dfnChunks, item.durability, item.sane, item.score, item.Name, item.desc, item.img, item.destructable, item.ammo, item.regenammo, item.ench)) #need to change to a special item, probably a custom object
 	
 	global score
 	global TM2
@@ -1054,7 +1095,7 @@ def unequip(slot):
 	global invenItems
 	global nothing
 	if pla.equipped[slot] != nothing:
-		invenItems.append(pla.equipped[slot])
+		invenItems.insert(0, pla.equipped[slot])
 		pla.equipped[slot] = nothing
 		refreshItems(1)
 
@@ -1253,6 +1294,10 @@ running = True
 Screen = 1
 mouse_down = False
 genRoom()
+
+getitem(shurikenbag)
+getitem(spoon)
+getitem(sivgoggles)
 
 #main loop
 while running:
