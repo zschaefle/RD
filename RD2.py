@@ -8,6 +8,8 @@ import math
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
+LGREY = (153, 153, 153)
+GREY = (100, 100, 100)
 RED = (255, 0, 0)
 Cbacking = (170,170,170)
 
@@ -124,74 +126,158 @@ pasImg = getImg("special/passive")
 prjImg = getImg("special/projectile")
 
 class ItemDisp(object):
-	def refresh(self):
+	def refresh(self, type):
 		global smallfont
 		global font
 		#NORMAL IMAGE, name and description with image
-		self.norm = DispObj([
-			DispObj(self.mini, (2, 2)), 
-			DispObj(font.render(self.item.Name, True, (0, 0, 0)), (54, 2)), 
-			DispObj(wraptext(self.item.desc, 314, smallfont, True), (54, 18), False, (314, 200))
-		], (0, 0), False, (370, 54)) #inven, name + desc + images
-		
-		if self.item.act:
-			global actImg
-			self.norm.all.append(DispObj(actImg, (350, 2)))
-		if self.item.dfn:
-			global dfnImg
-			self.norm.all.append(DispObj(dfnImg, (350, 2)))
-		if self.item.mel or self.item.prj:
-			global melImg
-			self.norm.all.append(DispObj(melImg, (350, 2)))
+		if type == 1:
+			self.norm = DispObj([
+				DispObj(self.mini, (2, 2)), 
+				DispObj(font.render(self.item.Name, True, (0, 0, 0)), (54, 2)), 
+				DispObj(wraptext(self.item.desc, 314, smallfont, True), (54, 18), False, (314, 200))
+			], (0, 0), False, (370, 54)) #inven, name + desc + images
 			
-		self.norm.refresh()
-		#self.press.refresh()
-		
-		#SIDE IMAGE, image, description, and full chunk display
-		self.side = DispObj([
-			DispObj(self.mini, (0, 0)),
-			DispObj(wraptext(self.item.desc, 446, smallfont, True), (52, 0), False, (446, 50)), #for wraptext size, use fullsize-50-2
-		], (487, 10), False, (498, 239))
-		
-		allchunks, allsize, astring = [], 52, ""
-		if self.item.ench["mending"][0] > -1: #item has mending
-			astring += "-Mending "
-		if self.item.ench["bound"] > 0:
-			astring += "-Bound: "+str(self.item.ench["bound"])
-		if astring != "":
-			self.side.all.append(DispObj(font.render(astring, True, (0, 0, 0)), (2, 52)))
-			allsize += 16
-		
-		
-		proj = {"is":False, "dmg":[9999999, -99], "ammo":-99, "agil":0, "pierce":0, "enchs":{"destructive":0, "piercing":0, "heavy":0, "sweeping":0, "returning":[0, 0]}}
-		for i in self.item.atkChunks: #build the displays
-			if i.proj != False: #if projectile
-				proj["is"] = True
-				if proj["dmg"][0] > i.dmg:
-					proj["dmg"][0] = i.dmg
-				if proj["dmg"][1] < i.dmg:
-					proj["dmg"][1] = i.dmg
-				if proj["ammo"] < i.proj:
-					proj["ammo"] = i.proj
-				if proj["agil"] < i.agil:
-					proj["agil"] = i.agil
-				if proj["pierce"] < i.pierce:
-					proj["pierce"] = i.pierce
-				#proj["enchs"].update(i.ench) #VISUALS get largest enchant, not just update. that will delete
+			if self.item.act:
+				global actImg
+				self.norm.all.append(DispObj(actImg, (350, 2)))
+			if self.item.dfn:
+				global dfnImg
+				self.norm.all.append(DispObj(dfnImg, (350, 2)))
+			if self.item.mel or self.item.prj:
+				global melImg
+				self.norm.all.append(DispObj(melImg, (350, 2)))
 				
-			else:
-				localrand = DispObj([], (0, 0), False, (223, 200))
-				
-				if i.etrn:
-					localrand.all.append(DispObj(pasImg, (0, 0)))
-					localrand.all.append(DispObj(font.render("Dmg: +"+str(i.dmg), True, (0, 0, 0)), (20, 0)))
+			self.norm.refresh()
+			#self.press.refresh()
+			
+			#SIDE IMAGE, image, description, and full chunk display
+			self.side = DispObj([
+				DispObj(self.mini, (0, 0)),
+				DispObj(wraptext(self.item.desc, 446, smallfont, True), (52, 0), False, (446, 50)), #for wraptext size, use fullsize-50-2
+			], (487, 10), False, (498, 239))
+			
+			allchunks, allsize, astring = [], 52, ""
+			if self.item.ench["mending"][0] > -1: #item has mending
+				astring += "-Mending "
+			if self.item.ench["bound"] > 0:
+				astring += "-Bound: "+str(self.item.ench["bound"])
+			if astring != "":
+				self.side.all.append(DispObj(font.render(astring, True, (0, 0, 0)), (2, 52)))
+				allsize += 16
+			
+			
+			proj = {"is":False, "dmg":[9999999, -99], "ammo":-99, "agil":0, "pierce":0, "enchs":{"destructive":0, "piercing":0, "heavy":0, "sweeping":0, "returning":[0, 0]}}
+			for i in self.item.atkChunks: #build the displays
+				if i.proj != False: #if projectile
+					proj["is"] = True
+					if proj["dmg"][0] > i.dmg:
+						proj["dmg"][0] = i.dmg
+					if proj["dmg"][1] < i.dmg:
+						proj["dmg"][1] = i.dmg
+					if proj["ammo"] < i.proj:
+						proj["ammo"] = i.proj
+					if proj["agil"] < i.agil:
+						proj["agil"] = i.agil
+					if proj["pierce"] < i.pierce:
+						proj["pierce"] = i.pierce
+					#proj["enchs"].update(i.ench) #VISUALS get largest enchant, not just update. that will delete
+					
 				else:
-					localrand.all.append(DispObj(font.render("Dmg: "+str(i.dmg), True, (0, 0, 0)), (20, 0)))
-					if not i.dfn:
-						localrand.all.append(DispObj((dfnImg), (0, 0)))
-					localrand.all.append(DispObj((melImg), (0, 0)))
+					localrand = DispObj([], (0, 0), False, (223, 200))
+					
+					if i.etrn:
+						localrand.all.append(DispObj(pasImg, (0, 0)))
+						localrand.all.append(DispObj(font.render("Dmg: +"+str(i.dmg), True, (0, 0, 0)), (20, 0)))
+					else:
+						localrand.all.append(DispObj(font.render("Dmg: "+str(i.dmg), True, (0, 0, 0)), (20, 0)))
+						if not i.dfn:
+							localrand.all.append(DispObj((dfnImg), (0, 0)))
+						localrand.all.append(DispObj((melImg), (0, 0)))
+					
+					#agildesc, piercing
+					astring = ""
+					if i.agil < 0:
+						astring = "Hindering"
+					if i.agil < -20:
+						astring = "Cumbersome"
+					if i.agil == 0:
+						astring = "Unobtrusive"
+					if i.agil > 0:
+						astring = "Balanced"
+					if i.agil > 20:
+						astring = "Nimble"
+					
+					if i.pierce > 0:
+						if i.pierce > 1:
+							astring += " - Highly piercing"
+						else:
+							astring += " - Piercing"
+					
+					localrand.all.append(DispObj(font.render(astring, True, (0, 0, 0)), (1, 19))) #the agil description
+					thissize = 37
+					
+					#enchants hereish
+					
+					localrand.size = (223, thissize)
+					localrand.refresh()
+					allchunks.append(localrand)
+				
+				
+			if proj["is"]: #it has proj chunks
+				localrand = DispObj([], (0, 0), False, (223, 200))#unknown vertical size. enchants will modify
+				localrand.all.append(DispObj(prjImg, (0, 0)))
+				if proj["dmg"][0] == proj["dmg"][1]: #one damage
+					localrand.all.append(DispObj(font.render("Dmg: "+str(proj["dmg"][0]), True, (0, 0, 0)), (20, 0)))
+				else:
+					localrand.all.append(DispObj(font.render("Dmg Range: "+str(proj["dmg"][0])+"-"+str(proj["dmg"][1]), True, (0, 0, 0)), (20, 0)))
+				localrand.all.append(DispObj(font.render("Cost: "+str(proj["ammo"]), True, (0, 0, 0)), (155, 0)))
 				
 				#agildesc, piercing
+				astring = ""
+				if proj["agil"] < 0:
+					astring = "Somewhat"
+				if proj["agil"] < -50:
+					astring = "Not"
+				if proj["agil"] == 0:
+					astring = "Normally"
+				if proj["agil"] > 0:
+					astring = "Very"
+				if proj["agil"] > 50:
+					astring = "Incredibly"
+				astring += " accurate"
+				
+				if proj["pierce"] > 0:
+					if proj["pierce"] > 1:
+						astring += " - Very piercing"
+					else:
+						astring += " - Piercing"
+				
+				localrand.all.append(DispObj(font.render(astring, True, (0, 0, 0)), (1, 19))) #the agil description
+				thissize = 37
+				
+				#enchants
+				
+				localrand.size = (223, thissize)
+				localrand.refresh()
+				allchunks.append(localrand)
+			
+			for i in self.item.dfnChunks:
+				localrand = DispObj([], (0, 0), False, (223, 200))
+				
+				astring = "Dfn: "
+				localrand.all.append(DispObj(actImg, (0, 0)))
+				if i.all:
+					localrand.all.append(DispObj(pasImg, (0, 0)))
+					astring += "+"
+				if i.dfn == True:
+					astring += "Full"
+				else:
+					astring += str(i.dfn)
+				if not i.piercable:
+					astring += " Impervious" #not piercable
+				localrand.all.append(DispObj(font.render(astring, True, (0, 0, 0)), (20, 0)))
+					
+				#agildesc, durable
 				astring = ""
 				if i.agil < 0:
 					astring = "Hindering"
@@ -200,15 +286,12 @@ class ItemDisp(object):
 				if i.agil == 0:
 					astring = "Unobtrusive"
 				if i.agil > 0:
-					astring = "Balanced"
-				if i.agil > 20:
 					astring = "Nimble"
-				
-				if i.pierce > 0:
-					if i.pierce > 1:
-						astring += " - Highly piercing"
-					else:
-						astring += " - Piercing"
+				if i.agil > 20:
+					astring = "Agile"
+					
+				if i.dur:
+					astring += " - Durable"
 				
 				localrand.all.append(DispObj(font.render(astring, True, (0, 0, 0)), (1, 19))) #the agil description
 				thissize = 37
@@ -219,110 +302,33 @@ class ItemDisp(object):
 				localrand.refresh()
 				allchunks.append(localrand)
 			
-			
-		if proj["is"]: #it has proj chunks
-			localrand = DispObj([], (0, 0), False, (223, 200))#unknown vertical size. enchants will modify
-			localrand.all.append(DispObj(prjImg, (0, 0)))
-			if proj["dmg"][0] == proj["dmg"][1]: #one damage
-				localrand.all.append(DispObj(font.render("Dmg: "+str(proj["dmg"][0]), True, (0, 0, 0)), (20, 0)))
-			else:
-				localrand.all.append(DispObj(font.render("Dmg Range: "+str(proj["dmg"][0])+"-"+str(proj["dmg"][1]), True, (0, 0, 0)), (20, 0)))
-			localrand.all.append(DispObj(font.render("Cost: "+str(proj["ammo"]), True, (0, 0, 0)), (155, 0)))
-			
-			#agildesc, piercing
-			astring = ""
-			if proj["agil"] < 0:
-				astring = "Somewhat"
-			if proj["agil"] < -50:
-				astring = "Not"
-			if proj["agil"] == 0:
-				astring = "Normally"
-			if proj["agil"] > 0:
-				astring = "Very"
-			if proj["agil"] > 50:
-				astring = "Incredibly"
-			astring += " accurate"
-			
-			if proj["pierce"] > 0:
-				if proj["pierce"] > 1:
-					astring += " - Very piercing"
+			bigsize = 0
+			for i in range(len(allchunks)): #update coords using allsize
+				if ((i+1) % 2 == 0):
+					allchunks[i].coords = (225, allsize)
+					if allchunks[i].size[1] > bigsize:
+						bigsize = allchunks[i].size[1]
+					allsize += bigsize #get largest size
 				else:
-					astring += " - Piercing"
-			
-			localrand.all.append(DispObj(font.render(astring, True, (0, 0, 0)), (1, 19))) #the agil description
-			thissize = 37
-			
-			#enchants
-			
-			localrand.size = (223, thissize)
-			localrand.refresh()
-			allchunks.append(localrand)
-		
-		for i in self.item.dfnChunks:
-			localrand = DispObj([], (0, 0), False, (223, 200))
-			
-			astring = "Dfn: "
-			localrand.all.append(DispObj(actImg, (0, 0)))
-			if i.all:
-				localrand.all.append(DispObj(pasImg, (0, 0)))
-				astring += "+"
-			if i.dfn == True:
-				astring += "Full"
-			else:
-				astring += str(i.dfn)
-			if not i.piercable:
-				astring += " Impervious" #not piercable
-			localrand.all.append(DispObj(font.render(astring, True, (0, 0, 0)), (20, 0)))
-				
-			#agildesc, durable
-			astring = ""
-			if i.agil < 0:
-				astring = "Hindering"
-			if i.agil < -20:
-				astring = "Cumbersome"
-			if i.agil == 0:
-				astring = "Unobtrusive"
-			if i.agil > 0:
-				astring = "Smooth"
-			if i.agil > 20:
-				astring = "Nimble"
-				
-			if i.dur:
-				astring += " - Durable"
-			
-			localrand.all.append(DispObj(font.render(astring, True, (0, 0, 0)), (1, 19))) #the agil description
-			thissize = 37
-			
-			#enchants hereish
-			
-			localrand.size = (223, thissize)
-			localrand.refresh()
-			allchunks.append(localrand)
-		
-		bigsize = 0
-		for i in range(len(allchunks)): #update coords using allsize
-			if ((i+1) % 2 == 0):
-				allchunks[i].coords = (225, allsize)
-				if allchunks[i].size[1] > bigsize:
+					allchunks[i].coords = (0, allsize)
 					bigsize = allchunks[i].size[1]
-				allsize += bigsize #get largest size
-			else:
-				allchunks[i].coords = (0, allsize)
-				bigsize = allchunks[i].size[1]
-		
-		
-		self.side.all += allchunks
-		self.side.refresh()
-		
+			
+			
+			self.side.all += allchunks
+			self.side.refresh()
+			
+		if type == 2:
+			pass
 	def __init__(self, item):
 		self.id = item.Name
 		self.item = item
 		#different displays
 		self.mini = pygame.transform.scale(item.img, (50, 50)) #just the item, resized
+		self.fight = DispObj(self.mini, (10, 199))
 		self.norm =  self.mini #for use in inven, with name + desc
 		self.press = self.mini #for inven, when clicked on.
 		self.side = self.mini #for inven, large display
-		self.refresh()
+		self.refresh(1)
 #pygame.transform.scale()
 
 #all text objects initialized
@@ -517,9 +523,9 @@ class Item(object):
 			
 		self.lvl = lvl
 		if self.lvl == -1:
-			self.findable = 0
+			self.findable = False
 		else:
-			self.findable = 1
+			self.findable = True
 		
 		self.act = False #active defence
 		self.dfn = False #passive defence
@@ -659,7 +665,7 @@ class Enm(object):
 	#enemy base:	   atk, de, name, pic, maxhp, ddev, agil, sane, message, cry, lvl, rundown, heal, interval, equip = [nothing]
 	#boss base:		hp, atk,   de,  name, img, maxhp, ddev, agil, heal, sane, loot, loot2, turn, message, cry, rundown, room, interval, equip = [nothing] #NEW INTERVALS NEED TO BE HALF ORIGONAL
 	def __init__(self, hp, maxhp, atk, ddev, dfn, agil, heal, sane, name, img, message, cry, rundown, interval, equip = [nothing], Boss = False, room = None, turn = -1):
-		self.hp = hp #initial
+		self.hp = float(hp) #initial
 		self.maxhp = maxhp #max
 		self.atk = atk #damage += atk (if melee)
 		self.ddev = ddev #damage +- ddev
@@ -669,7 +675,12 @@ class Enm(object):
 		self.healchance = [heal[0], heal[1]] #kys
 		self.sane = sane #Added to sanity when killed
 		self.name = name
-		self.img = getImg("entities/"+img) #blitable image
+		self.img = getImg("entities/"+img)
+		if self.name not in ["Zarol"]:
+			self.img = pygame.transform.scale(self.img, (129, 129)) #Resize if not full screen boss
+			self.mega = False
+		else:
+			self.mega = True
 		self.message = message #added to roommessage when in room
 		self.cry = cry #start of battle message
 		self.rundown = rundown #list of messages displayed in battle, might be removed *le sad*
@@ -688,6 +699,7 @@ class Enm(object):
 		self.minionTree = []
 
 creepybaldguy = Enm(18, 18, 5, 2, 10, [1, 100], [2,3,4], -1, "Creepy Bald Guy", "creep", "You know you are being watched. Always... ", "you feel it staring through your eyes, Into your Soul.", ["Even though it seems nearly dead, it continues its steady gaze deep into your eyes.", "it seems to have lost some hair in this fight. You blink, realizing it was already bald.", "it seems to be observing, only attacking to see how you react.", "it is sitting there, staring at you. Waiting and observing your every move."], 100)
+enm = creepybaldguy
 
 #bosses
 adventurer = Enm(190, 190, 20, 5, 0, [5,100], [100,50,30], -7, "Adventurer", "adventurer", "You hear the footsteps of someone else.", "It is an Adventurer, Readying his stance for Battle!", ["He seems oddly unaware of the massive amounts of damage you have dealt him. Much like you are.", "", "", "", "He seems more confident of himself, more sure of his strides.",""], 50, [herosword, heroshield], True, bossroom, 10)
@@ -710,7 +722,7 @@ def gentables():
 	
 	lootitems = []
 	for i in allitems:
-		if i.findable == 1 and pla.lvl >= i.lvl:
+		if i.findable and pla.lvl >= i.lvl:
 			lootitems.append(i)
 				
 
@@ -742,7 +754,7 @@ def gentables():
 		for i in rooms:
 			if (i.sanity <= 0 and pla.trueSane < 0) or (i.sanity >= 0 and pla.trueSane > 0):
 				ablerooms.append(i)
-
+				
 equippeditems = [nothing, nothing]
 runs = 1
 room = room3
@@ -755,7 +767,6 @@ healable = True
 noKillEpic = True
 roommessage = ""
 search = True
-enm = None
 battleprep = -1
 
 Smain = getImg("screens/screenmain")
@@ -1129,7 +1140,6 @@ def RDloot():
 	global lootable
 	global lootitems
 	if lootable:
-		gentables()
 		itemget = lootitems[random.randint(0, len(lootitems)-1)]
 		'''if (itemget == rock)
 			Unlock(heatrock);
@@ -1314,7 +1324,8 @@ def getMinionTree(entity, type):
 looot = font.render("Loot", True, (0, 0, 0))
 inveen = font.render("Inventory", True, (0, 0, 0))
 baack = font.render("Back", True, (0, 0, 0))
-
+Fdfn = DispObj(ac2Img, (130, 199))
+Fheal = DispObj(ac2Img, (190, 199))
 
 running = True
 Screen = 1
@@ -1379,6 +1390,7 @@ while running:
 		pygame.draw.rect(screen, Cbacking, [910, 10 , 75, 24])
 		screen.blit(inveen, (910, 10))
 		pygame.draw.rect(screen, Cbacking, [910, 37 , 75, 24])
+		pygame.draw.rect(screen, Cbacking, [910, 64 , 75, 24])
 		screen.blit(looot, (910, 37))
 		screen.blit(Scompass, (910, 174))
 		
@@ -1398,6 +1410,8 @@ while running:
 				Screen = 2
 			if hitDetect((910, 37), (75, 24), mouse_pos): #loot
 				RDloot()
+			if hitDetect((910, 64), (75, 24), mouse_pos): #fight
+				Screen = 3
 	
 	if Screen == 2: #inven screen
 		screen.fill(Cbacking)
@@ -1465,8 +1479,35 @@ while running:
 	if Screen == 3: #battle
 		screen.fill(Cbacking)
 		screen.blit(Sbattle, (0, 0))
+		if enm.mega:
+			screen.blit(enm.img, (0, 0))
+		else:
+			screen.blit(enm.img, (856, 10))
+			
+		#stats
+		pygame.draw.rect(screen, LGREY, (10, 10, 820, 9)) #backing
+		if enm.defending:
+			pygame.draw.rect(screen, GREY, (10, 10, 820, 9)) #backing
+		pygame.draw.rect(screen, RED, (11, 11, (enm.hp/enm.maxhp)*818, 3))#enm hp
+		#pygame.draw.rect(screen, GREY, (10, 10, 820, 9))#enm armor durability
+		
+		pygame.draw.rect(screen, LGREY, (589, 240, 400, 9)) #backing
+		if pla.defending:
+			pygame.draw.rect(screen, GREY, (589, 240, 400, 9)) #backing
+			
+		pygame.draw.rect(screen, RED, (589, 241, (pla.hp/pla.maxhp)*400, 3))#you hp
+		#you armor
+		
+		#your items, make modular positions w/ dispobj
+		screen.blit(pla.equipped[2].div.fight.img, pla.equipped[2].div.fight.coords)
+		screen.blit(pla.equipped[3].div.fight.img, (70, 199))
+		screen.blit(Fdfn.img, Fdfn.coords)
+		screen.blit(Fheal.img, Fheal.coords)
+		
+		
 		if mouse_down:
 			Screen = 1
+			mouse_down = False
 
 		
 	if Screen == 4: #Grave, limbo 1
