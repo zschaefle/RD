@@ -192,7 +192,7 @@ class ItemDisp(object):
 			
 			proj = {"is":False, "dmg":[9999999, -99], "ammo":-99, "agil":0, "pierce":0, "enchs":{"destructive":0, "piercing":0, "heavy":0, "sweeping":0, "returning":[0, 0]}}
 			for i in self.item.atkChunks: #build offence displays
-				if i.proj != False: #if projectile
+				if i.proj != None: #if projectile
 					proj["is"] = True
 					if proj["dmg"][0] > i.dmg:
 						proj["dmg"][0] = i.dmg
@@ -324,7 +324,7 @@ class ItemDisp(object):
 					astring += "+"
 				else:
 					localrand.all.append(DispObj(actImg, (0, 0)))
-				if i.dfn == True:
+				if i.dfn == None:
 					astring += "Full"
 				else:
 					astring += str(i.dfn)
@@ -389,7 +389,7 @@ class ItemDisp(object):
 			self.side.refresh()
 			
 			self.fight = DispObj([DispObj(pygame.Surface((52, 52), pygame.SRCALPHA, 32).convert_alpha())], (10, 199), False, (52, 52))
-			if self.item.ammo == False:
+			if self.item.ammo == None:
 				self.fight.all.append(DispObj(self.mini, (1, 0)))
 			else:
 				self.fight.all.append(DispObj(self.mini))
@@ -397,7 +397,7 @@ class ItemDisp(object):
 		#FIGHT display
 		if type == 2:
 			#global pla
-			if self.item.ammo != False:
+			if self.item.ammo != None:
 				pygame.draw.rect(self.fight.all[0].img, LGREY, (50, 0, 2, 52))
 				pygame.draw.rect(self.fight.all[0].img, BLUE, (50, 52, 2, (self.item.ammo/self.item.maxammo)*(-52)))#ammo
 				pygame.draw.rect(self.fight.all[0].img, LGREY, (0, 50, 50, 2))
@@ -554,7 +554,7 @@ roomBoss4 = Room(0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 3, "You find yourself in a roo
 #New items, with the better system
 #single chunk of armor calculation
 class dfnChunk(object):
-	def __init__(self, agil, protection = True, passive = False, durable = False, piercable = True, enchs = {}):
+	def __init__(self, agil, protection = None, passive = False, durable = False, piercable = True, enchs = {}):
 		#added to agil when active
 		self.agil = agil
 		#protection - True tanks all incoming damage into durability damage, number is max damage tanked
@@ -572,7 +572,7 @@ class dfnChunk(object):
 
 #single chunk of damage calculation. when putting into list, be sure to put in order: [projectile chunks, melee chunk, eternal chunks]. any other order will make some unused by attack()
 class atkChunk(object):
-	def __init__(self, dmg, agil, defend = True, eternal = False, piercing = 0, proj = False, enchs = {}):
+	def __init__(self, dmg, agil, defend = True, eternal = False, piercing = 0, proj = None, enchs = {}):
 		self.dmg = dmg
 		#added to agil when damaging w/ chunk
 		self.agil = agil
@@ -591,7 +591,7 @@ class atkChunk(object):
 allitems = []
 class Item(object):
 	#old: 				offence, defence, agility, sanity, score, name, divname, desc
-	def __init__(self, offence, defence, durability, sanity, score, name, desc, img, lvl, destructable = True, ammo = False, regenammo = [], enchs = {}):
+	def __init__(self, offence, defence, durability, sanity, score, name, desc, img, lvl, destructable = True, ammo = None, regenammo = [], enchs = {}):
 		self.atkChunks = offence
 		self.dfnChunks = defence
 		self.durability = durability
@@ -606,7 +606,7 @@ class Item(object):
 		except:
 			self.img = getImg("items/"+img)
 		self.destructable = destructable #if true, this item is removed when durability reaches 0.
-		if ammo != False:
+		if ammo != None:
 			ammo = float(ammo)
 		self.ammo = ammo
 		self.maxammo = ammo
@@ -638,7 +638,7 @@ class Item(object):
 		self.prj = False #has projectiles
 		
 		for i in self.atkChunks: #also use to build self.side
-			if i.proj != False:
+			if i.proj != None:
 				self.prj = True
 			else:
 				if i.etrn:
@@ -654,7 +654,6 @@ class Item(object):
 		self.div = ItemDisp(self)
 		global allitems
 		allitems.append(self)
-
 
 				
 nothing = Item([], [], 1, 0, 0, "", "", "no_thing", -1, False)
@@ -684,7 +683,7 @@ nerfgun = Item([atkChunk(2, 10, False, False, 0, 1)], [], 60, 3, 3, "Nerf Gun", 
 #LEVEL 2
 
 #LEVEL 3
-higgs = Item([atkChunk(1, 1, False, True, 1)], [], 5, -15, 4, "Higgs Boson", "You have no idea how you found this. And you know you probably shouldn't have been able to.", "higgs", 3, True, False, [], {"mending":[1000, -1]})
+higgs = Item([atkChunk(1, 1, False, True, 1)], [], 5, -15, 4, "Higgs Boson", "You have no idea how you found this. And you know you probably shouldn't have been able to.", "higgs", 3, True, None, [], {"mending":[1000, -1]})
 
 
 #--BOSS ITEMS--
@@ -694,21 +693,21 @@ herosword = Item([atkChunk(6, 2)], [dfnChunk(0, 2, False, True)], 200, 1, 10, "H
 
 #COOSOME
 fishingrod = Item([atkChunk(6, 10, True, False, 1, 1, {"destructive":5}), atkChunk(5, 0)], [dfnChunk(0, 3)], 150, 0, 10, "Fishing Rod", "Hook, Line, and Sink.", "fishingrod", -1, True, 1, [300, 1])
-pencil = Item([atkChunk(8, -5, True, False, 0, False, {"heavy":1})], [dfnChunk(-5, 10), dfnChunk(-1, 2, True, True)], 500, -5, 10, "the Pencil", "Quite oversized, you use it as a blunt weapon. But you feel there is more to it.", "pencil", -1, False, False, [], {"mending":[50, 1]})
-drawingpad = Item([atkChunk(2, 1, True, True, 1)], [dfnChunk(5, 2, True, True, False)], 100, 12, 10, "Drawing Pad", "Using this, you can stay positive. Because everything else is in here.", "drawingpad", -1, False, False, [], {"mending":[500, 10]})
+pencil = Item([atkChunk(8, -5, True, False, 0, None, {"heavy":1})], [dfnChunk(-5, 10), dfnChunk(-1, 2, True, True)], 300, -5, 10, "the Pencil", "Quite oversized, you use it as a blunt weapon. But you feel there is more to it.", "pencil", -1, False, None, [], {"mending":[50, 1]})
+drawingpad = Item([atkChunk(2, 1, True, True, 1)], [dfnChunk(5, 2, True, True, False)], 50, 12, 10, "Drawing Pad", "Using this, you can stay positive. Because everything else is in here.", "drawingpad", -1, False, None, [], {"mending":[500, 10]})
 spoon = Item([atkChunk(50, 7, False, False, 2, 30), atkChunk(35, 6, False, False, 1, 1, {"returning":[2, 100]}), atkChunk(15, 3, True, True)], [dfnChunk(1, 1)], 100, -8, 10, "the Spoon", "It's just a spoon. But something feels powerful about it...", "spoon", -1, False, 30, [10, 1], {"mending":[500, 1], "bound":2})
 
 #ALPHA
-alphaxe = Item([atkChunk(20, -2, True, False, 0, False, {"sweeping":2, "heavy":1})], [dfnChunk(-2, -2, True, True), dfnChunk(-10, 12)], 400, 0, 10, "Alpha's Axe", "A large heavy axe, with surprisingly powerful hits.", "alphaxe", -1, False)
-sivgoggles = Item([atkChunk(4, 15, False, True, 1, False, {"sweeping":1})], [dfnChunk(10, 2, True), dfnChunk(25, 2, False, True, True, {"trueProtection":True})], 30, -15, 10, "Alpha's Glasses", "Gazing through them, You can see things. Where they are, and where they are going.", "sivgoggles", -1, False, False, [], {"bound":4, "mending":[3, 1]})
-hair = Item([atkChunk(1, 1, False, True, 0, False, {"destructive":30})], [], 10, -100, 10, "Alpha's Hair", "You stole this from a boss. Well, stole isn't the right word. More of Generated through Desire.", "hair", -1, False, False, [], {"bound":10})
+alphaxe = Item([atkChunk(20, -2, True, False, 0, None, {"sweeping":2, "heavy":1})], [dfnChunk(-2, -2, True, True), dfnChunk(-10, 12)], 250, 0, 10, "Alpha's Axe", "A large heavy axe, with surprisingly powerful hits.", "alphaxe", -1, False)
+sivgoggles = Item([atkChunk(4, 15, False, True, 1, None, {"sweeping":1})], [dfnChunk(10, 2, True), dfnChunk(25, 2, False, True, True, {"trueProtection":True})], 30, -15, 10, "Alpha's Glasses", "Gazing through them, You can see things. Where they are, and where they are going.", "sivgoggles", -1, False, None, [], {"bound":4, "mending":[3, 1]})
+hair = Item([atkChunk(1, 1, False, True, 0, None, {"destructive":30})], [], 10, -100, 10, "Alpha's Hair", "You stole this from a boss. Well, stole isn't the right word. More of Generated through Desire.", "hair", -1, False, None, [], {"bound":10})
 shurikenbag = Item([atkChunk(35, 25, False, False, 1, 5, {"sweeping":5}), atkChunk(15, 20, True, False, 0, 1, {"returning":[2, 80], "destructive":10})], [dfnChunk(5, 4, True)], 100, -35, 10, "Shuriken Pouch", "A small, blood filled pouch, when you reach your hand into it, you always pull out a shuriken.", "shurikenbag", -1, False, 10, [1, 1], {"bound":1, "mending":[5, 2]})
 
 #JIM GRIND
 #jimsword = item(25, 5, -5, 0, 10, "Jim's Sword", "jimsword", "")
-#jimarmor = item(0, 35, -20, 0, 10, "Enchanted Armor", "jimarmor", "Glimmering metallic armor, Material flowing smoothly within it to fill the gaps in its structure.")
+jimarmor = Item([], [dfnChunk(-10, 5, False, True), dfnChunk(-20), dfnChunk(-5, 8, True, True, None, {"layered":[75, 3]}), dfnChunk(-5, 25, True, False, None, {"trueProtection":True, "thorns":atkChunk(5, 0, False)})], 500, -2, 10, "Enchanted Armor", "Glimmering metallic armor, Material flowing smoothly within it to fill the gaps in its structure.", "jimarmor", -1, False, None, [], {"mending":[5, 4]})
 #hatandboots = item(5, 50, 8, 0, 10, "Hat and Boots", "hatandboots", "Can't Bump your head anymore, and probably won't stub your toes.")
-#communism
+communism = Item([atkChunk(80, 100, True, False, 2, 1, {"heavy":2}), atkChunk(5, -10)], [], 100, 4, 10, "Crossbow", "An intricate, heavy crossbow with an ingraved name: 'Communism mk. II'", "communism", -1, True, 1, [500, 1])
 
 #CUBE
 #inactivecube = item(25, 7, 20, 0, 10, "Inactive Cube", "inactivecube", "")
@@ -720,7 +719,7 @@ shurikenbag = Item([atkChunk(35, 25, False, False, 1, 5, {"sweeping":5}), atkChu
 #zarolflesh
 #zarolmist
 
-lapis = Item([atkChunk(5000, 5000, False, False, 3, False, {"sweeping":1000})], [dfnChunk(0, True, False, True, False, {"trueProtection":True, "thorns":atkChunk(5000, 5000, False, False, 3)})], 1000, 0, 0, "Lapis", "The gem of the gods. Or at least the god of 7.", "lapis", -1, False, False, [], {"bound":100, "mending":[50, 1000]})
+lapis = Item([atkChunk(5000, 5000, False, False, 3, None, {"sweeping":1000})], [dfnChunk(0, True, False, True, False, {"trueProtection":True, "thorns":atkChunk(5000, 5000, False, False, 3)})], 1000, 0, 0, "Lapis", "The gem of the gods. Or at least the god of 7.", "lapis", -1, False, None, [], {"bound":100, "mending":[50, 1000]})
 
 
 
@@ -1303,7 +1302,7 @@ def Damage(source, weapon, atk, target):
 			if ((x.ench["trueProtection"] or atk.pierce < 2) and not (atk.pierce == 1 and x.piercable == True)) and ((target.defending and not x.all) or x.all) and i.durability > 0: #if you actually count the defence
 				#print "Armored! defence:"
 				#Damage reduction
-				if x.dfn == True: #all damage goes to armor
+				if x.dfn == None: #all damage goes to armor
 					tanked = dmg
 				else: #some damage goes to armor
 					tanked = x.dfn
@@ -1329,7 +1328,7 @@ def Damage(source, weapon, atk, target):
 						#	dmg = prevdmg
 				
 				if x.ench["thorns"] != False: #if it has thorns
-					if (x.ench["thorns"].proj != False) or (atk.proj == False): #if thorns applies #NEED AN EXCEPTION TO PREVENT THORNS LOOPING. THAT WOULD BE VERY BAD
+					if (x.ench["thorns"].proj != None) or (atk.proj == None): #if thorns applies #NEED AN EXCEPTION TO PREVENT THORNS LOOPING. THAT WOULD BE VERY BAD
 						Damage(target, i, x.ench["thorns"], source)
 				if x.ench["reflecting"] != 0:
 					Damage (source, i, atkChunk(dmg*x.ench["reflecting"], atk.agil-10, False, False, atk.pierce-1), source) #NEED AN EXCEPTION TO PREVENT THORNS LOOPING
@@ -1375,7 +1374,7 @@ def attack(source, weapon, target, enchValues = [1, None, None]):
 			atk = atkChunk(source.dmg, source.agil[0]) #give a base value in case weapon has no valid atkChunks
 			#Make the atkChunk to use in this attack
 			for i in weapon.atkChunks:
-				if i.proj == False:
+				if i.proj == None:
 					atk = atkChunk(source.dmg + i.dmg, source.agil[0] + i.agil, i.dfn, i.etrn, i.pierce, i.proj, i.ench)
 					
 					break
@@ -1395,7 +1394,7 @@ def attack(source, weapon, target, enchValues = [1, None, None]):
 			if atk.ench["sweeping"] > 0:
 				enchValues[0] = 1+atk.ench["sweeping"]
 			
-			if atk.proj != False and atk.ench["returning"][0] != 0:
+			if atk.proj != None and atk.ench["returning"][0] != 0:
 				if atk.ench["returning"][0] > random.randint(0, 100):
 					weapon.ammo += atk.ench["returning"][1]
 			
@@ -1441,6 +1440,9 @@ genRoom()
 getitem(shurikenbag)
 getitem(spoon)
 getitem(sivgoggles)
+getitem(jimarmor)
+getitem(communism)
+
 
 #main loop
 while running:
@@ -1649,7 +1651,7 @@ while running:
 	
 	for i in pla.equipped:
 		#also do ammo in here
-		if i.regenTick != -1 and not i.broken:
+		if i.regenTick != -1 and not i.broken and i.ammo < i.maxammo: #don't let them preload! that's weird!
 			i.regenTick += 1
 			if i.regenTick >= i.regenammo[0]:
 				i.regenTick = 0
