@@ -7,10 +7,11 @@ import math
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
+BLUE = (0, 0, 220)
 GREEN = (0, 255, 0)
+RED = (255, 0, 0)
 LGREY = (153, 153, 153)
 GREY = (100, 100, 100)
-RED = (255, 0, 0)
 Cbacking = (170,170,170)
 
 pygame.init()
@@ -55,7 +56,30 @@ def rand(num):
 def cbrt(num):
 	return num ** (1.0/3.0)
 	
-
+def addEnch(type, en1, en2): #DO THORNS GOOD
+	if type == 1: #defensive
+		en3 = {"reflecting":0, "thorns":False, "destructive":0, "trueProtection":False, "layered":[0, 0]}
+		en3["reflecting"] = en1["reflecting"]+en2["reflecting"]
+		en3["destructive"] = en1["destructive"]+en2["destructive"]
+		if en1["trueProtection"] or en2["trueProtection"]:
+			en3["trueProtection"] = True
+		en3["layered"][0] = max(en1["layered"][0], en2["layered"][0])
+		en3["layered"][1] = max(en1["layered"][1], en2["layered"][1])
+		en3 = en1["thorns"]
+			
+		return en3
+		
+	if type == 2: #offensive
+		en3 = {"destructive":0, "piercing":0, "heavy":0, "sweeping":0, "returning":[0, 0]}
+		en3["destructive"] = en1["destructive"]+en2["destructive"]
+		en3["piercing"] = en1["piercing"]+en2["piercing"]
+		en3["heavy"] = en1["heavy"]+en2["heavy"]
+		en3["sweeping"] = en1["sweeping"]+en2["sweeping"]
+		en3["returning"][0] = max(en1["returning"][0], en2["returning"][0])
+		en3["returning"][1] = max(en1["returning"][1], en2["returning"][1])
+		
+		return en3
+		
 class DispObj(object):
 	def refresh(self):
 		if not self.simple:
@@ -152,7 +176,7 @@ class ItemDisp(object):
 			
 			#SIDE IMAGE, image, description, and full chunk display
 			self.side = DispObj([
-				DispObj(self.mini, (0, 0)),
+				DispObj(self.mini),
 				DispObj(wraptext(self.item.desc, 446, smallfont, True), (52, 0), False, (446, 50)), #for wraptext size, use fullsize-50-2
 			], (487, 10), False, (498, 239))
 			
@@ -167,7 +191,7 @@ class ItemDisp(object):
 			
 			
 			proj = {"is":False, "dmg":[9999999, -99], "ammo":-99, "agil":0, "pierce":0, "enchs":{"destructive":0, "piercing":0, "heavy":0, "sweeping":0, "returning":[0, 0]}}
-			for i in self.item.atkChunks: #build the displays
+			for i in self.item.atkChunks: #build offence displays
 				if i.proj != False: #if projectile
 					proj["is"] = True
 					if proj["dmg"][0] > i.dmg:
@@ -180,9 +204,9 @@ class ItemDisp(object):
 						proj["agil"] = i.agil
 					if proj["pierce"] < i.pierce:
 						proj["pierce"] = i.pierce
-					#proj["enchs"].update(i.ench) #VISUALS get largest enchant, not just update. that will delete
+					proj["enchs"] = addEnch(2, proj["enchs"], i.ench)
 					
-				else:
+				else:#normal melee
 					localrand = DispObj([], (0, 0), False, (223, 200))
 					
 					if i.etrn:
@@ -209,7 +233,7 @@ class ItemDisp(object):
 					
 					if i.pierce > 0:
 						if i.pierce > 1:
-							astring += " - Highly piercing"
+							astring += " - Piercing+"
 						else:
 							astring += " - Piercing"
 					
@@ -217,6 +241,21 @@ class ItemDisp(object):
 					thissize = 37
 					
 					#enchants hereish
+					if i.ench["destructive"] > 0:
+						localrand.all.append(DispObj(font.render("Destructive "+str(i.ench["destructive"]), True, (0, 0, 100)), (1, thissize)))
+						thissize += 16
+					if i.ench["piercing"] != 0:
+						localrand.all.append(DispObj(font.render("Piercing +"+str(i.ench["piercing"]), True, (0, 0, 100)), (1, thissize)))
+						thissize += 16
+					if i.ench["heavy"] > 0:
+						localrand.all.append(DispObj(font.render("Heavy "+str(i.ench["heavy"]), True, (0, 0, 100)), (1, thissize)))
+						thissize += 16
+					if i.ench["sweeping"] > 0:
+						localrand.all.append(DispObj(font.render("Sweeping "+str(i.ench["sweeping"]), True, (0, 0, 100)), (1, thissize)))
+						thissize += 16
+					if i.ench["returning"][0] > 0:
+						localrand.all.append(DispObj(font.render("Returning "+str(i.ench["returning"][0])+" ("+str(i.ench["returning"][1])+"% chance)", True, (0, 0, 100)), (1, thissize)))
+						thissize += 16
 					
 					localrand.size = (223, thissize)
 					localrand.refresh()
@@ -248,27 +287,43 @@ class ItemDisp(object):
 				
 				if proj["pierce"] > 0:
 					if proj["pierce"] > 1:
-						astring += " - Very piercing"
+						astring += " - Piercing+"
 					else:
 						astring += " - Piercing"
 				
 				localrand.all.append(DispObj(font.render(astring, True, (0, 0, 0)), (1, 19))) #the agil description
 				thissize = 37
 				
-				#enchants
+				#enchants {"destructive":0, "piercing":0, "heavy":0, "sweeping":0, "returning":[0, 0]}
+				if i.ench["destructive"] > 0:
+					localrand.all.append(DispObj(font.render("Destructive "+str(i.ench["destructive"]), True, (0, 0, 100)), (1, thissize)))
+					thissize += 16
+				if i.ench["piercing"] != 0:
+					localrand.all.append(DispObj(font.render("Piercing +"+str(i.ench["piercing"]), True, (0, 0, 100)), (1, thissize)))
+					thissize += 16
+				if i.ench["heavy"] > 0:
+					localrand.all.append(DispObj(font.render("Heavy "+str(i.ench["heavy"]), True, (0, 0, 100)), (1, thissize)))
+					thissize += 16
+				if i.ench["sweeping"] > 0:
+					localrand.all.append(DispObj(font.render("Sweeping "+str(i.ench["sweeping"]), True, (0, 0, 100)), (1, thissize)))
+					thissize += 16
+				if i.ench["returning"][0] > 0:
+					localrand.all.append(DispObj(font.render("Returning "+str(i.ench["returning"][0])+" ("+str(i.ench["returning"][1])+"% chance)", True, (0, 0, 100)), (1, thissize)))
+					thissize += 16
 				
 				localrand.size = (223, thissize)
 				localrand.refresh()
-				allchunks.append(localrand)
+				allchunks.insert(0, localrand)
 			
-			for i in self.item.dfnChunks:
+			for i in self.item.dfnChunks: #dfn chunks
 				localrand = DispObj([], (0, 0), False, (223, 200))
 				
 				astring = "Dfn: "
-				localrand.all.append(DispObj(actImg, (0, 0)))
 				if i.all:
-					localrand.all.append(DispObj(pasImg, (0, 0)))
+					localrand.all.append(DispObj(dfnImg, (0, 0)))
 					astring += "+"
+				else:
+					localrand.all.append(DispObj(actImg, (0, 0)))
 				if i.dfn == True:
 					astring += "Full"
 				else:
@@ -296,7 +351,23 @@ class ItemDisp(object):
 				localrand.all.append(DispObj(font.render(astring, True, (0, 0, 0)), (1, 19))) #the agil description
 				thissize = 37
 				
-				#enchants hereish
+				#enchants
+				if i.ench["reflecting"] > 0:
+					localrand.all.append(DispObj(font.render("Reflecting "+str(i.ench["reflecting"]), True, (0, 0, 100)), (1, thissize)))
+					thissize += 16
+				if i.ench["thorns"] != False:
+					localrand.all.append(DispObj(font.render("Thorns +"+str(i.ench["thorns"].dmg), True, (0, 0, 100)), (1, thissize)))
+					thissize += 16
+				if i.ench["destructive"] != 0:
+					localrand.all.append(DispObj(font.render("Destructive "+str(i.ench["destructive"]), True, (0, 0, 100)), (1, thissize)))
+					thissize += 16
+				if i.ench["trueProtection"] > 0:
+					localrand.all.append(DispObj(font.render("True Protection", True, (0, 0, 100)), (1, thissize)))
+					thissize += 16
+				if i.ench["layered"][1] > 0:
+					localrand.all.append(DispObj(font.render("Layered "+str(i.ench["layered"][1])+" ("+str(i.ench["layered"][0])+"% chance)", True, (0, 0, 100)), (1, thissize)))
+					thissize += 16
+					
 				
 				localrand.size = (223, thissize)
 				localrand.refresh()
@@ -317,8 +388,34 @@ class ItemDisp(object):
 			self.side.all += allchunks
 			self.side.refresh()
 			
+			self.fight = DispObj([DispObj(pygame.Surface((52, 52), pygame.SRCALPHA, 32).convert_alpha())], (10, 199), False, (52, 52))
+			if self.item.ammo == False:
+				self.fight.all.append(DispObj(self.mini, (1, 0)))
+			else:
+				self.fight.all.append(DispObj(self.mini))
+			
+		#FIGHT display
 		if type == 2:
-			pass
+			#global pla
+			if self.item.ammo != False:
+				pygame.draw.rect(self.fight.all[0].img, LGREY, (50, 0, 2, 52))
+				pygame.draw.rect(self.fight.all[0].img, BLUE, (50, 52, 2, (self.item.ammo/self.item.maxammo)*(-52)))#ammo
+				pygame.draw.rect(self.fight.all[0].img, LGREY, (0, 50, 50, 2))
+				pygame.draw.rect(self.fight.all[0].img, GREEN, (0, 50, (self.item.durability/self.item.maxdur)*50, 2))#dura
+			else:
+				pygame.draw.rect(self.fight.all[0].img, LGREY, (0, 50, 52, 2))
+				pygame.draw.rect(self.fight.all[0].img, GREEN, (0, 50, (self.item.durability/self.item.maxdur)*52, 2))#dura
+			self.fight.refresh()
+			
+		if type == 3:
+			global pla #don't know how to properly make modular
+			global nothing
+			if (self.item == pla.equipped[2]) or (pla.equipped[2] == nothing and pla.equipped[3] == self.item):
+				self.fight.coords = (10, 199)
+			else:
+				self.fight.coords = (70, 199)
+
+
 	def __init__(self, item):
 		self.id = item.Name
 		self.item = item
@@ -343,8 +440,9 @@ invenItems = []
 ItemsDisp = DispObj([], (115, 10), False, (370, 239)) #I, uh, no idea what to do
 scrollMod = 0
 netSize = 0
-def refreshItems(type):
+def refreshItems(type): #used for displaying of all items
 	global ItemsDisp
+	global scrollMod
 	if type == 1: #run when adding a new item to invenItems
 		ItemsDisp.all = []
 		global invenItems
@@ -355,12 +453,10 @@ def refreshItems(type):
 			netSize += i.div.norm.size[1] #add size to total size
 			ItemsDisp.all.append(i.div.norm)
 		if netSize <= 239:
-			global scrollMod
 			scrollMod = 0
 		refreshItems(2)
 			
 	if type == 2: #update w/ scroll mod
-		global scrollMod
 		for i in ItemsDisp.all:
 			i.coords = (i.coords[0], i.baseCoords[1]+scrollMod)
 	
@@ -510,8 +606,12 @@ class Item(object):
 		except:
 			self.img = getImg("items/"+img)
 		self.destructable = destructable #if true, this item is removed when durability reaches 0.
+		if ammo != False:
+			ammo = float(ammo)
 		self.ammo = ammo
 		self.maxammo = ammo
+		if regenammo == []:
+			regenammo = [0, 0]
 		self.regenammo = regenammo
 		#Regen: ticks before regen, ammount regenerated; Bound is times the item will NOT be destroyed by thing that remove all items. ie: Zarol, Monoliths
 		self.ench = {"mending":[-1, 0], "bound":0}
@@ -520,6 +620,10 @@ class Item(object):
 			self.mendTick = 0
 		else:
 			self.mendTick = -1
+		if self.regenammo[0] != 0:
+			self.regenTick = 0
+		else:
+			self.regenTick = -1
 			
 		self.lvl = lvl
 		if self.lvl == -1:
@@ -627,7 +731,6 @@ class Player(object):
 		self.name = "player"
 		self.hp = 100
 		self.dmg = 8
-		self.atk = []
 		self.basedef = 0
 		self.dfn = 0
 		self.passdfn = []
@@ -1091,12 +1194,10 @@ def move(direction):
 			prints("move failed.")
 	
 def getitem(item): #AAAAAAAAAAAAAAAHHHHHHHHHHHHHHHHHHHHH
-	
 	global invenItems
-	invenItems.insert(0, Item(item.atkChunks, item.dfnChunks, item.durability, item.sane, item.score, item.Name, item.desc, item.img, item.destructable, item.ammo, item.regenammo, item.ench)) #need to change to a special item, probably a custom object
-	
 	global score
 	global TM2
+	invenItems.insert(0, Item(item.atkChunks, item.dfnChunks, item.durability, item.sane, item.score, item.Name, item.desc, item.img, item.lvl, item.destructable, item.ammo, item.regenammo, item.ench)) #need to change to a special item, probably a custom object
 	score += item.score
 	TM2.all = wraptext("You found "+item.Name + ".<br/>you place the newfound loot in your backpack.", 900, font, True)
 	TM2.refresh()
@@ -1126,6 +1227,8 @@ def equip(item):
 			success = True
 	if success:
 		refreshItems(1)
+		for i in pla.equipped:
+			i.div.refresh(3)
 	
 def unequip(slot):
 	global pla
@@ -1135,6 +1238,9 @@ def unequip(slot):
 		invenItems.insert(0, pla.equipped[slot])
 		pla.equipped[slot] = nothing
 		refreshItems(1)
+	
+		pla.equipped[2].div.refresh(2)
+		pla.equipped[3].div.refresh(2)
 
 def RDloot():
 	global lootable
@@ -1266,11 +1372,11 @@ def attack(source, weapon, target, enchValues = [1, None, None]):
 				attacking = False
 
 		if (attacking):
-			atk = atkChunk(source.atk, source.agil[0]) #give a base value in case weapon has no valid atkChunks
+			atk = atkChunk(source.dmg, source.agil[0]) #give a base value in case weapon has no valid atkChunks
 			#Make the atkChunk to use in this attack
 			for i in weapon.atkChunks:
 				if i.proj == False:
-					atk = atkChunk(source.atk + i.dmg, source.agil[0] + i.agil, i.dfn, i.etrn, i.pierce, i.proj, i.ench)
+					atk = atkChunk(source.dmg + i.dmg, source.agil[0] + i.agil, i.dfn, i.etrn, i.pierce, i.proj, i.ench)
 					
 					break
 				else:
@@ -1289,9 +1395,9 @@ def attack(source, weapon, target, enchValues = [1, None, None]):
 			if atk.ench["sweeping"] > 0:
 				enchValues[0] = 1+atk.ench["sweeping"]
 			
-			if atk.proj != False and i.ench["returning"][0] != 0:
-				if i.ench["returning"][0] > random.randint(0, 100):
-					weapon.ammo += i.ench["returning"][1]
+			if atk.proj != False and atk.ench["returning"][0] != 0:
+				if atk.ench["returning"][0] > random.randint(0, 100):
+					weapon.ammo += atk.ench["returning"][1]
 			
 			#add agil mod of used chunk
 			newagil = [((target.agil[0]*(source.agil[1]+atk.agil))-(((source.agil[0]+atk.agil)*target.agil[1])/2)), (target.agil[1]*(source.agil[1]+atk.agil))]
@@ -1346,6 +1452,8 @@ while running:
 		if event.type == pygame.MOUSEBUTTONDOWN:
 			if event.button == 1:
 				mouse_down = True
+			if event.button == 3:
+				Screen = 1
 			if event.button == 4 and Screen == 2:
 				if hitDetect((115, 10), (370, 239), mouse_pos): #scrolling on the items list
 					if netSize > 239: #Scrolling up
@@ -1500,13 +1608,17 @@ while running:
 		
 		#your items, make modular positions w/ dispobj
 		screen.blit(pla.equipped[2].div.fight.img, pla.equipped[2].div.fight.coords)
-		screen.blit(pla.equipped[3].div.fight.img, (70, 199))
+		screen.blit(pla.equipped[3].div.fight.img, pla.equipped[3].div.fight.coords)
 		screen.blit(Fdfn.img, Fdfn.coords)
 		screen.blit(Fheal.img, Fheal.coords)
 		
-		
 		if mouse_down:
-			Screen = 1
+			if hitDetect(pla.equipped[2].div.fight.coords, pla.equipped[2].div.fight.size, mouse_pos):
+				attack(pla, pla.equipped[2], enm)
+				pla.equipped[2].div.refresh(2)
+			if hitDetect(pla.equipped[3].div.fight.coords, pla.equipped[3].div.fight.size, mouse_pos):
+				attack(pla, pla.equipped[3], enm)
+				pla.equipped[3].div.refresh(2)
 			mouse_down = False
 
 		
@@ -1520,9 +1632,9 @@ while running:
 	
 	#little stuff all the time
 	for i in invenItems:
-		if i.mendTick != -1:
+		if i.mendTick != -1: #mending
 			i.mendTick += 1
-			if i.mendTick >= i.ench["mending"][0] and not i.broken: #mending
+			if i.mendTick >= i.ench["mending"][0] and not i.broken:
 				i.mendTick = 0
 				i.durability += i.ench["mending"][1]
 				if i.durability > i.maxdur:
@@ -1534,7 +1646,19 @@ while running:
 				i.durability += 1 #and it only fixes a little bit
 				if i.durability > 0:
 					i.broken = False
+	
+	for i in pla.equipped:
 		#also do ammo in here
+		if i.regenTick != -1 and not i.broken:
+			i.regenTick += 1
+			if i.regenTick >= i.regenammo[0]:
+				i.regenTick = 0
+				i.ammo += i.regenammo[1]
+				if i.ammo > i.maxammo:
+					i.ammo = i.maxammo
+		if Screen == 3:
+			i.div.refresh(2)
+			
 	
 	pygame.display.update()
 	clock.tick(50)
