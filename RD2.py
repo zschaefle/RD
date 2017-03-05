@@ -24,6 +24,30 @@ screen = pygame.display.set_mode(size)
 clock = pygame.time.Clock()
 debug = True
 
+invenItems = []
+scrollMod = 0
+netSize = 0
+score = 0
+turn = 0
+finalsanity = 0
+ablerooms = []
+lootitems = []
+runs = 1
+room = None
+lootable = False
+chestmessages = ["There is a small chest about the size of your fist lurking in the corner. ", "A golden chest sits with elegant details and pure beauty.", "There\'s a lumpy sack over there", "You hear the wheeze of a chest.  \"Open me\" it calls, with the music of its collapsing wood.", "In a rotting monster carcass, you glimpse something... interesting.", "There\'s a lump in the ground. Like a squirrel buried a tasty rock and then ran off and died.", "Something calls your attention. It sucks you in. You imagine riches.", "You smell something.  It smells like goods.", "You glimpse a confection of wood and nails, almost big enough to hold something.", "There is a small door that seems to have something sticking out, perhaps something useful."]
+runmessages = ["Run", "Dodge", "Sprint", "Jump", "Duck", "Roll", "Slide", "Feint", "Fake", "Switch", "Distract", "Twist", "Lurch", "Insult", "Shout"]
+#unlockmessages = ["You hear the sound of something unlocking from far away.", "You feel the dongeon blink, and you have a moment of deja vu.", "A feeling of release washes over you, the feeling of access.", "You feel something click, almost like a realization."]
+score = 0
+healable = True
+noKillEpic = True
+roommessage = ""
+search = True
+battleprep = -1
+inbattle = False
+#reAdventurer stuff
+plaTime = 0
+
 #two sets of coord pairs
 def hitdetect(p1, p2, p3, p4 = None):
 	if p4 == None:
@@ -44,6 +68,14 @@ def getImg(name):
 	except pygame.error:
 		print "--File not found. Substituting"
 		return pygame.image.load("Assets/img/wip.png")
+		
+actImg = getImg("special/active")
+ac2Img = pygame.transform.scale(actImg, (50, 50)) #probably make special img
+dfnImg = getImg("special/defensive")
+melImg = getImg("special/melee")
+me2Img = pygame.transform.scale(melImg, (50, 50)) #probably make special img
+pasImg = getImg("special/passive")
+prjImg = getImg("special/projectile")
 		
 def prints(stuff):
 	global debug
@@ -97,7 +129,6 @@ class DispObj(object):
 		self.size = size
 		self.refresh()
 	
-	
 #takes single string, max width, font used, and color of text. returns list of dispObj
 def wraptext(text, fullline, Font, render = False, color = (0,0,17)):  #need way to force indent in string
 	Denting = True
@@ -141,13 +172,10 @@ def wraptext(text, fullline, Font, render = False, color = (0,0,17)):  #need way
 		outtext = text
 	return outtext
 	
-actImg = getImg("special/active")
-ac2Img = pygame.transform.scale(actImg, (50, 50)) #probably make special img
-dfnImg = getImg("special/defensive")
-melImg = getImg("special/melee")
-me2Img = pygame.transform.scale(melImg, (50, 50)) #probably make special img
-pasImg = getImg("special/passive")
-prjImg = getImg("special/projectile")
+TM1 = DispObj(wraptext("", 900, font, True), (10, 10), False, (900, 120)) #main room desc
+TM2 = DispObj(wraptext("", 900, font, True), (10, 130), False, (900, 119)) #room responses
+ItemsDisp = DispObj([], (115, 10), False, (370, 239)) #Inventory items display
+TI1 = None
 
 class ItemDisp(object):
 	def refresh(self, type):
@@ -428,18 +456,6 @@ class ItemDisp(object):
 		self.refresh(1)
 #pygame.transform.scale()
 
-#all text objects initialized
-TM1 = DispObj(wraptext("", 900, font, True), (10, 10), False, (900, 120)) #main room desc
-TM2 = DispObj(wraptext("", 900, font, True), (10, 130), False, (900, 119)) #room responses
-#TB1
-#TB2
-#TB3
-TI1 = None
-
-invenItems = []
-ItemsDisp = DispObj([], (115, 10), False, (370, 239)) #I, uh, no idea what to do
-scrollMod = 0
-netSize = 0
 def refreshItems(type): #used for displaying of all items
 	global ItemsDisp
 	global scrollMod
@@ -537,20 +553,7 @@ roomBoss3 = Room(1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 2, "Suddenly you are in a fore
 roomBoss4 = Room(0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 3, "You find yourself in a room, walls covered in mechanical and mystical constructs alike. Trees are visible through the sparsely placed windows.", "You find a button hidden on the ", "ern wall, pressing it against your better judgement.", "You become distracted by the intricacies of this room.", False)
 #plant, manmade, water, dark, animal, light, items, north, east, south, west, sane, message, exitA, exitB, exitFail, normal = True
 
-'''class item(object): #bland old items.
-	def __init__(self, offence, defence, agility, sanity, score, name, divname, desc):
-		self.atk = offence
-		self.dfn = defence
-		self.agil = agility
-		self.score = score
-		self.sane = sanity
-		self.Name = name
-		self.div = getImg("items/"+divname)
-		self.desc = desc
-		self.quant = 0
-		self.findable = 0
 
-	'''
 #New items, with the better system
 #single chunk of armor calculation
 class dfnChunk(object):
@@ -591,7 +594,7 @@ class atkChunk(object):
 allitems = []
 class Item(object):
 	#old: 				offence, defence, agility, sanity, score, name, divname, desc
-	def __init__(self, offence, defence, durability, sanity, score, name, desc, img, lvl, destructable = True, ammo = None, regenammo = [], enchs = {}):
+	def __init__(self, offence, defence, durability, sanity, score, name, desc, img, lvl, destructable = True, ammo = None, regenammo = [], enchs = {}, toappend = True):
 		self.atkChunks = offence
 		self.dfnChunks = defence
 		self.durability = durability
@@ -652,10 +655,11 @@ class Item(object):
 				self.act = True
 		
 		self.div = ItemDisp(self)
-		global allitems
-		allitems.append(self)
+		if toappend:
+			global allitems
+			allitems.append(self)
 
-				
+
 nothing = Item([], [], 1, 0, 0, "", "", "no_thing", -1, False)
 allitems.remove(nothing)
 acorncap = Item([], [dfnChunk(1, 1, True)], 15, 4, 9, "Acorn Cap", "If you were really tiny, like, smaller than a squirrel, this would be the perfect armor. You place it over your heart  You call it a kiss", "acorncap", 1)
@@ -705,6 +709,7 @@ shurikenbag = Item([atkChunk(35, 25, False, False, 1, 5, {"sweeping":5}), atkChu
 
 #JIM GRIND
 #jimsword = item(25, 5, -5, 0, 10, "Jim's Sword", "jimsword", "")
+jimsword = Item([atkChunk(25, 20, True, False, 0, None, {"heavy":3})], [dfnChunk(-20, None), dfnChunk(-20, 4, True)], 500, 0, 10, "Jim's Sword", "An incredibly heavy weapon, you can barely pick it up off the ground; you also wonder how that man could toss it around.", "jimsword", -1)
 jimarmor = Item([], [dfnChunk(-10, 5, False, True), dfnChunk(-20), dfnChunk(-5, 8, True, True, None, {"layered":[75, 3]}), dfnChunk(-5, 25, True, False, None, {"trueProtection":True, "thorns":atkChunk(5, 0, False)})], 500, -2, 10, "Enchanted Armor", "Glimmering metallic armor, Material flowing smoothly within it to fill the gaps in its structure.", "jimarmor", -1, False, None, [], {"mending":[5, 4]})
 #hatandboots = item(5, 50, 8, 0, 10, "Hat and Boots", "hatandboots", "Can't Bump your head anymore, and probably won't stub your toes.")
 communism = Item([atkChunk(80, 100, True, False, 2, 1, {"heavy":2}), atkChunk(5, -10)], [], 100, 4, 10, "Crossbow", "An intricate, heavy crossbow with an ingraved name: 'Communism mk. II'", "communism", -1, True, 1, [500, 1])
@@ -715,26 +720,22 @@ communism = Item([atkChunk(80, 100, True, False, 2, 1, {"heavy":2}), atkChunk(5,
 #device = item(40, 0, 6, 0, 20, "Electrical device", "device", "You have no idea how it works, but it looks far beyond any tech you have seen.")
 
 #ZAROL
-#zaroltrophy = item(0, 0, 0, 20, 50, "Zarol Trophy", "zaroltrophy", "Thinking back, Seriously. How the hell did you do that?")
-#zarolflesh
-#zarolmist
+zaroltrophy = Item([], [], 1, 0, 30, "Zarol Trophy", "Thinking back, Seriously. How the hell did you do that?", "zaroltrophy", -1, True, None, [], {"bound":2})
+zarolflesh = Item([], [dfnChunk(2, 15, True, True, False, {"destructive":5}), dfnChunk(-2, 2, False, True, False, {"layered":[60, 10], "thorns":atkChunk(5, 0, False, False, 0, None, {"destructive":1})})], 1000, -10, 10, "Zarol's Flesh", "A mysterious substance, unlike any of which you have ever seen before.", "zflesh", -1, True, None, [], {"mending":[5, -2]})
+zarolmist = Item([atkChunk(25, 20, False, False, 2, 10, {"destructive":30, "sweeping":5}), atkChunk(10, 0, True, True, 1, None, {"destructive":20})], [], 20, -10, 10, "Zarol Mist", "How you can possess this eludes your mind.", "zmist", -1, False, 10, [20, 1], {"mending":[15, 1]})
 
 lapis = Item([atkChunk(5000, 5000, False, False, 3, None, {"sweeping":1000})], [dfnChunk(0, True, False, True, False, {"trueProtection":True, "thorns":atkChunk(5000, 5000, False, False, 3)})], 1000, 0, 0, "Lapis", "The gem of the gods. Or at least the god of 7.", "lapis", -1, False, None, [], {"bound":100, "mending":[50, 1000]})
 
 
-
-score = 0
-turn = 0
 class Player(object):
 	def __init__(self):
 		self.name = "player"
 		self.hp = 100
 		self.dmg = 8
-		self.basedef = 0
 		self.dfn = 0
 		self.passdfn = []
-		self.ddev = 10
-		self.healval = 1
+		self.ddev = 6
+		self.heal = 1
 		self.maxhp = 100
 		self.hdev = 3
 		self.baseagil = [18, 100]
@@ -761,24 +762,25 @@ class Player(object):
 		
 pla = Player()
 pla.refresh()
-
+actions = [["atk1", 1]]
 bosses = []
 class Enm(object):
 	#enemy base:	   atk, de, name, pic, maxhp, ddev, agil, sane, message, cry, lvl, rundown, heal, interval, equip = [nothing]
 	#boss base:		hp, atk,   de,  name, img, maxhp, ddev, agil, heal, sane, loot, loot2, turn, message, cry, rundown, room, interval, equip = [nothing] #NEW INTERVALS NEED TO BE HALF ORIGONAL
-	def __init__(self, hp, maxhp, atk, ddev, dfn, agil, heal, sane, name, img, message, cry, rundown, interval, equip = [nothing], Boss = False, room = None, turn = -1):
+	def __init__(self, hp, maxhp, atk, ddev, dfn, agil, heal, sane, name, img, message, cry, rundown, interval, actions = [], equip = [nothing], Boss = False, room = None, turn = -1):
 		self.hp = float(hp) #initial
 		self.maxhp = maxhp #max
-		self.atk = atk #damage += atk (if melee)
+		self.hptop = hp #
+		self.dmg = atk #damage += atk (if melee)
 		self.ddev = ddev #damage +- ddev
 		self.dfn = dfn #damage -= dfn
+		self.baseagil = agil
 		self.agil = agil #touple, #/# chance to dodge
-		self.heal = heal[2]
-		self.healchance = [heal[0], heal[1]] #kys
+		self.heal = heal
 		self.sane = sane #Added to sanity when killed
 		self.name = name
 		self.img = getImg("entities/"+img)
-		if self.name not in ["Zarol"]:
+		if self.name not in ["Zarol", "Last Remnants of Sanity", "Last Remnants of Insanity"]:
 			self.img = pygame.transform.scale(self.img, (129, 129)) #Resize if not full screen boss
 			self.mega = False
 		else:
@@ -796,23 +798,87 @@ class Enm(object):
 			global bosses
 			bosses.append(self)
 		
+		self.actions = actions
+		self.totalact = 0
+		for i in self.actions:
+			self.totalact += i[1]
+		
 		self.defending = False
 		self.minions = []
 		self.minionTree = []
 
-creepybaldguy = Enm(18, 18, 5, 2, 10, [1, 100], [2,3,4], -1, "Creepy Bald Guy", "creep", "You know you are being watched. Always... ", "you feel it staring through your eyes, Into your Soul.", ["Even though it seems nearly dead, it continues its steady gaze deep into your eyes.", "it seems to have lost some hair in this fight. You blink, realizing it was already bald.", "it seems to be observing, only attacking to see how you react.", "it is sitting there, staring at you. Waiting and observing your every move."], 100)
+creepybaldguy = Enm(18, 18, 5, 2, 10, [1, 100], 4, -1, "Creepy Bald Guy", "creep", "You know you are being watched. Always... ", "you feel it staring through your eyes, Into your Soul.", ["Even though it seems nearly dead, it continues its steady gaze deep into your eyes.", "it seems to have lost some hair in this fight. You blink, realizing it was already bald.", "it seems to be observing, only attacking to see how you react.", "it is sitting there, staring at you. Waiting and observing your every move."], 100, [["atk1", 3], ["heal", 1]])
 enm = creepybaldguy
 
 #bosses
-adventurer = Enm(190, 190, 20, 5, 0, [5,100], [100,50,30], -7, "Adventurer", "adventurer", "You hear the footsteps of someone else.", "It is an Adventurer, Readying his stance for Battle!", ["He seems oddly unaware of the massive amounts of damage you have dealt him. Much like you are.", "", "", "", "He seems more confident of himself, more sure of his strides.",""], 50, [herosword, heroshield], True, bossroom, 10)
-alpha = Enm(350, 500, 14, 6, 0, [68, 100], [5,4,10], -3, "Alpha", "alpha", "You hear sudden quick footsteps from behind you.", "you turn to see someone dashing at you, Swinging a large axe!", ["", "", "", "", "", ""], 60, [alphaxe, sivgoggles], True, roomBoss3, 20)
+adventurer = Enm(190, 190, 20, 5, 0, [5,100], 30, -7, "Adventurer", "adventurer", "You hear the footsteps of someone else.", "It is an Adventurer, Readying his stance for Battle!", ["He seems oddly unaware of the massive amounts of damage you have dealt him. Much like you are.", "", "", "", "He seems more confident of himself, more sure of his strides.", ""], 50, [["atk1", 4], ["heal", 1]], [herosword, heroshield], True, bossroom, 10)
 
+#coo33 = Enm(125, 170, 5, 75, 10, [3,16], 8, -2, "coo33", "coosome", "You hear something behind you.", "\'Here,  Fishy..   Fishy...\'", ["It's bloodied eyes dart across you, searching for ways to finish you off quickly.", "It looks angry, but seems to have survived worse.", "It is smiling, although panting. It seems as though it's malnourishedness is taking effect.", "He seems unfazed, a low growl and a chuckle murmured from within.", "It takes a deep breath, the type one might take after a good nights sleep.", "It seems to be toying with you, darting through the room."], 26, actions, [fishingrod, pencil], True, roomBoss2, 15)
+#coosome = Enm(140, 150, 25, 2, 14, [1,7], 20, -1, "Coosome", "coosome", "You hear something behind you.", "\'Here,  Fishy..   Fishy...\'", ["It's bloodied eyes dart across you, searching for ways to finish you off quickly.", "It looks angry, but seems to have survived worse.", "It is smiling, although panting. It seems as though it's malnourishedness is taking effect.", "He seems unfazed, a low growl and a chuckle murmured from within.", "It takes a deep breath, the type one might take after a good nights sleep.", "It seems to be toying with you, darting through the room."], 34, actions, [fishingrod, pencil], True, roomBoss2, 15)
+#colton = Enm(120, 140, 10, 8, 10, [5,16], 12, -1, "Colton", "coosome", "You hear something behind you.", "\'Here,  Fishy..   Fishy...\'", ["It's bloodied eyes dart across you, searching for ways to finish you off quickly.", "It looks angry, but seems to have survived worse.", "It is smiling, although panting. It seems as though it's malnourishedness is taking effect.", "He seems unfazed, a low growl and a chuckle murmured from within.", "It takes a deep breath, the type one might take after a good nights sleep.", "It seems to be toying with you, darting through the room."], 41, actions, [drawingpad, pencil], True, roomBoss2, 15)
 
+alpha = Enm(350, 500, 14, 6, 0, [68, 100], [5,4,10], -3, "Alpha", "alpha", "You hear sudden quick footsteps from behind you.", "you turn to see someone dashing at you, Swinging a large axe!", ["", "", "", "", "", ""], 60, [["atk1", 4], ["heal", 1]], [alphaxe, sivgoggles], True, roomBoss3, 20)
+#jimgrind = Enm(200, 200, 35, 2, 35, [1,44], 12, -2, "Jim Grind", "jimgrind", "Someone is in the room with you. You turn just fast enough to see him. He knows he has been spotted.", "A stern look on his face; A deadly look in his eyes.", ["", "You can see small gaps in his defence now, chinks in his armor.", "His breathing is heavy, and his swings are slower, yet just as powerful.", "He stands with a confident air about him, holding his sword firmly.", "His armor is beginning to glow, even the largest chinks in his armor closing as the armor reshapes into its original form.", "He seems unaware of your blows, simply tanking all damage you may deal to him."], 130, actions, [jimsword, jimarmor], True, roomBoss4, 25)
+#strangecube = Enm(250, 350, 1, 2, -5, [10,100], 75, -3, "Strange Cube", "cube", "A strange cube is sitting on the ground in front or you.", "Sudden arcs of electricity jump across its surface as it rises into the air.", ["Although grounded, it still musters up powerful shocks upon you.", "It appears to have physical damage, and is barely able to keep itself aloft.", "It is wavering now, seeming to have less energy within it, focusing on attacks.", "It floats evenly in front of you, electricity visibly through internal circuits.", "electricity is visible streaking across its surface, arcing to nearby surfaces.", "It's magnetic fields are powerful, you can feel them pulling on your magnetic accessories."], 37, actions, [inactivecube, device], True, bossroom, 30)
+
+#epicalpha = Enm(450, 450, 50, 12, 10, [5,6], 20, -6, "Alpha 949", "alpha", "You find yourself in a familiar looking room. Looking around, you realize you have some unfinished business. You hear sudden quick footsteps from behind you.", "you turn to see a familiar figure dashing towards you, Swinging a large axe!", ["", "", "", "", "", ""], 45, actions, [sivgoggles, shurikenbag], True, roomBoss3, -100)
+#epicjim = Enm(320, 360, 45, 2, 150, [0,1], 35, -2, "Jim Grind", "jimgrind", "You find yourself in a familiar looking room. Looking around, you realize you have some unfinished business. Someone is in the room with you. You turn to face him. You both know who won last time. ", "A stern look on his face; A deadly look in his eyes.", ["", "You can see small gaps in his defence now, chinks in his armor.", "His breathing is heavy, and his swings are slower, yet just as powerful.", "He stands with a confident air about him, holding his sword firmly.", "His armor is beginning to glow, even the largest chinks in his armor closing as the armor reshapes into its original form.", "He seems unaware of your blows, simply tanking all damage you may deal to him."], 95, actions, [jimarmor, hatandboots], True, roomBoss4, -100)
+#epiccoo = Enm(400, 400, 40, 100, 15, [19,64], 22, -4, "The Coosome", "coosome", "You find yourself in a familiar looking room. Looking around, you realize you have some unfinished business. You hear a familiar chilling voice behind you.", "\'Here,  Fishy..   Fishy...\'", ["It's bloodied eyes dart across you, searching for ways to finish you off quickly.", "It looks angry, but seems to have survived worse.", "It is smiling, although panting. It seems as though it's malnourishedness is taking effect.", "He seems unfazed, a low growl and a chuckle murmured from within.", "It takes a deep breath, the type one might take after a good nights sleep.", "It seems to be toying with you, darting through the room."], 25, actions, [pencil, spoon], True, roomBoss2, -100)
+
+lastsanity = Enm(500, 500, 18, 5, 16, [2,7], 100, -100, "Last Remnants of Sanity", "lastsanity", "You feel parts of your mind fighting back, with nonsense of '<i>Something is wrong</i>.'", "You realize you need to silence these nagging voices.", ["<i>You are destroying yourself...</i>", "<i>Do you even know the names of the people you killed?</i>", "<i></i>", "<i>Something is seriously wrong with you,</i>"], 60, actions, [], True, bossroom, -100)
+lastinsanity = Enm(1000, 1000, 15, 90, 10, [1,64], 3, 100, "Last Remnants of Insanity", "lastinsanity", "You feel parts of your mind begin to come together.......", "You have come to a realization: the only way to obtain your goal is to wipe insanity from your mind.", ["but.. What is this place?", "How do you not return to what was already there?", "", ""], 25, actions, [], True, bossroom, -100)
+#creepiestbaldest = Enm(400, 500, 40, 1, 5, [5,6], 20, -20, "The Knowing Eye", "creepiestbaldest", "You see one blink. And with its eyes, another one is opening.", "You feel its knowing gaze, that it has nothing more to learn.", ["", "", "", "", "", ""], 55, [["atk1", ]], [map, shinedisk], True, room34, 52)
+
+zarol = None
+def buildZarol():
+	global zarol
+	global score
+	global runs
+	global bossroom
+	global zarolflesh
+	global zarolmist
+	global zaroltrophy
+	zarol = Enm(500+score, 10000+score*2, 5, 80, 18+runs*5, [5, 100], 1000+score, -10, "Zarol", "zarol", "You stand in the final room, reveling in your victory.  From just over your left shoulder, you hear heavy breathing.", "Your head slowly swivels, back poker straight, to look into three wide red eyes.", ["Everything you can see is unrecognizable, even the boss that has now dispersed to the point of surrounding you.", "It is infuriated by your damage, darkness billowing from its wounds, disintegrating all it touches.", "You seem to have gotten its attention, but it's cold glare assures you this is not a good.", "It seems almost to be ignoring you, focusing solely on destruction.", "You feel an aura of confidence, coming from it as it methodically destroys all that surrounds it.", "You feel a burst of energy from it, enveloping you with searing pain."], 75, actions, [zaroltrophy, zaroltrophy], True, bossroom, 50)
+buildZarol()
 #minions go here, not needed yet
 
-finalsanity = 0
-ablerooms = []
-lootitems = []
+
+def Heal(entity):
+	global pla
+	global inbattle
+	global healable
+	if (entity == pla and pla.hp > 0):
+		if inbattle:
+			heal = pla.heal + random.randint(-pla.hdev, pla.hdev)
+			if (entity.hp + entity.heal > entity.maxhp):
+				heal = entity.maxhp - entity.hp
+			else:
+				heal = entity.heal
+			entity.hp = entity.hp+heal
+			prints(" you heal "+str(heal)+" hp!") #VISUALS
+			if pla.hp > pla.maxhp:
+				pla.hp = pla.maxhp
+				
+		if healable and not inbattle:
+			heal = pla.heal*10 + random.randint(-pla.hdev, 3*pla.hdev)
+			if (entity.hp + entity.heal > entity.maxhp):
+				heal = entity.maxhp - entity.hp
+			else:
+				heal = entity.heal
+			entity.hp = entity.hp+heal
+			pla.sane += 0.2
+			prints(" you heal "+str(heal)+" hp!") #VISUALS
+			if (pla.hp > pla.maxhp):
+				pla.hp = pla.maxhp
+			healable = False
+	else:
+		if (entity.hp + entity.heal > entity.maxhp):
+			heal = entity.maxhp - entity.hp
+		else:
+			heal = entity.heal
+		entity.hp = entity.hp+heal
+		#printc(entity, entity.name + " heals <strong>"+ heal+ "</strong> hp") #VISUALS
+
 #based on player level, changes aspects of game such as tiers of items, and rooms.
 def gentables():
 	global lootitems
@@ -851,25 +917,12 @@ def gentables():
 	if pla.trueSane != 0:
 		lootitems = []
 		for i in allitems:
-			if (i.sane <= 0 and pla.trueSane < 0) or (i.sane >= 0 and pla.trueSane > 0):
+			if ((i.sane <= 0 and pla.trueSane < 0) or (i.sane >= 0 and pla.trueSane > 0)) and i.findable:
 				lootitems.append(i)
 		for i in rooms:
-			if (i.sanity <= 0 and pla.trueSane < 0) or (i.sanity >= 0 and pla.trueSane > 0):
+			if ((i.sanity <= 0 and pla.trueSane < 0) or (i.sanity >= 0 and pla.trueSane > 0)) and i.findable:
 				ablerooms.append(i)
 				
-equippeditems = [nothing, nothing]
-runs = 1
-room = room3
-lootable = False
-chestmessages = ["There is a small chest about the size of your fist lurking in the corner. ", "A golden chest sits with elegant details and pure beauty.", "There\'s a lumpy sack over there", "You hear the wheeze of a chest.  \"Open me\" it calls, with the music of its collapsing wood.", "In a rotting monster carcass, you glimpse something... interesting.", "There\'s a lump in the ground. Like a squirrel buried a tasty rock and then ran off and died.", "Something calls your attention. It sucks you in. You imagine riches.", "You smell something.  It smells like goods.", "You glimpse a confection of wood and nails, almost big enough to hold something.", "There is a small door that seems to have something sticking out, perhaps something useful."]
-runmessages = ["Run", "Dodge", "Sprint", "Jump", "Duck", "Roll", "Slide", "Feint", "Fake", "Switch", "Distract", "Twist", "Lurch", "Insult", "Shout"]
-#unlockmessages = ["You hear the sound of something unlocking from far away.", "You feel the dongeon blink, and you have a moment of deja vu.", "A feeling of release washes over you, the feeling of access.", "You feel something click, almost like a realization."]
-score = 0
-healable = True
-noKillEpic = True
-roommessage = ""
-search = True
-battleprep = -1
 
 Smain = getImg("screens/screenmain")
 Sgrave = getImg("screens/gravestone")
@@ -883,6 +936,9 @@ def prepbattle(enemy):
 	global enm
 	global pla
 	global battleprep
+	global Sbattle
+	global zarol
+	global lastinsanity
 	search = False
 	enm = enemy
 	pla.defending = False
@@ -890,9 +946,6 @@ def prepbattle(enemy):
 	if (localrand == 1){
 		enm.minions.push(alltraps[rand(alltraps.length-1)]);
 	}'''
-	global Sbattle
-	global zarol
-	global lastinsanity
 	if enm.name == zarol.name:
 		global Szarol
 		Sbattle = Szarol
@@ -902,13 +955,12 @@ def prepbattle(enemy):
 	else:
 		global Smain
 		Sbattle = Smain
-		#VISUALS set enm img
 	
 	'''if (enm.name == zarol.name){
 		zarol = buildZarol();
 		enm = zarol
 	}'''
-	battleprep = 500
+	battleprep = 250
 	#VISUALS Clear all battle message areas
 	pla.minionTree = getMinionTree(pla, 1)
 	enm.minionTree = getMinionTree(enm, 1)
@@ -1036,8 +1088,8 @@ def genRoom():
 		room.items = 0;
 	}'''
 	pla.sane += room.sanity
-	pla.sane += (equippeditems[0].sane)/5
-	pla.sane += (equippeditems[1].sane)/5
+	for i in pla.equipped:
+		pla.sane += (i.sane)/5
 	for i in pla.minions:
 		pla.sane += (pla.minions[i].sane / 5)
 	
@@ -1155,6 +1207,7 @@ def move(direction):
 	global roommessage
 	global battleprep
 	global room
+	global TM2
 	roommessage = ""
 	if (battleprep == -1):
 		success = False
@@ -1181,13 +1234,11 @@ def move(direction):
 			
 		if success:
 			#roommessage VISUALS figure out how to get a new line in here
-			global TM2
 			TM2.img = font.render("", True, (0, 0, 0))
 			genRoom()
 			global lastmove
 			lastmove = direction
 		else:
-			global TM2
 			TM2.all = wraptext(room.exitFail, 900, font, True)
 			TM2.refresh()
 			prints("move failed.")
@@ -1196,13 +1247,12 @@ def getitem(item): #AAAAAAAAAAAAAAAHHHHHHHHHHHHHHHHHHHHH
 	global invenItems
 	global score
 	global TM2
-	invenItems.insert(0, Item(item.atkChunks, item.dfnChunks, item.durability, item.sane, item.score, item.Name, item.desc, item.img, item.lvl, item.destructable, item.ammo, item.regenammo, item.ench)) #need to change to a special item, probably a custom object
+	invenItems.insert(0, Item(item.atkChunks, item.dfnChunks, item.durability, item.sane, item.score, item.Name, item.desc, item.img, item.lvl, item.destructable, item.ammo, item.regenammo, item.ench, False)) #need to change to a special item, probably a custom object
 	score += item.score
+	prints("Found: "+item.Name)
 	TM2.all = wraptext("You found "+item.Name + ".<br/>you place the newfound loot in your backpack.", 900, font, True)
 	TM2.refresh()
 	refreshItems(1)
-	
-
 	
 def equip(item):
 	global pla
@@ -1244,6 +1294,7 @@ def unequip(slot):
 def RDloot():
 	global lootable
 	global lootitems
+	global TM2
 	if lootable:
 		itemget = lootitems[random.randint(0, len(lootitems)-1)]
 		'''if (itemget == rock)
@@ -1253,7 +1304,6 @@ def RDloot():
 		getitem(itemget)
 		lootable = False
 	else:
-		global TM2
 		TM2.all = wraptext("There is nothing to loot here.", 900, font, True)
 		TM2.refresh()
 	
@@ -1273,15 +1323,10 @@ def removeitem(item): #must take valid item
 
 #refresh an entity's stats. probably unneeded at this point
 def Refresh(ent):
-	#ent.atk = []
-	
-	#Rebuild entity's defence chunks
-	
-	#ent.dfn, ent.passdfn = []
 	agilmod = 0
 	for i in ent.equipped:
 		for x in i.dfnChunks:
-			if x.passive or ent.defending:
+			if x.all or ent.defending:
 				agilmod += x.agil
 	
 	ent.agil[0] = ent.baseagil[0] + agilmod
@@ -1289,10 +1334,11 @@ def Refresh(ent):
 #does not include: minions, dodging, calculation of boosting items
 def Damage(source, weapon, atk, target):
 	enchValues = [0, 0] #local values needed for enchantments: layered, heavy
-	initdmg = atk.dmg + source.dmg + random.randint(0, source.ddev * 2)- source.ddev
+	initdmg = atk.dmg + source.dmg + random.randint(-source.ddev, source.ddev)
 	prevdmg = initdmg
 	dmg = initdmg #differentiated for enchants
-	print initdmg
+	prints("------")
+	prints("Initial damage: "+source.name+str(initdmg)+target.name)
 	for k in range(len(target.equipped)): #loop through equipped items, counts because enchantments can do stuff
 		i = target.equipped[k]
 		enchValues[0] = 0 #reset for layered
@@ -1300,7 +1346,7 @@ def Damage(source, weapon, atk, target):
 			x = i.dfnChunks[j]
 			tanked = 0
 			if ((x.ench["trueProtection"] or atk.pierce < 2) and not (atk.pierce == 1 and x.piercable == True)) and ((target.defending and not x.all) or x.all) and i.durability > 0: #if you actually count the defence
-				#print "Armored! defence:"
+				prints("Armored! defence:")
 				#Damage reduction
 				if x.dfn == None: #all damage goes to armor
 					tanked = dmg
@@ -1308,7 +1354,7 @@ def Damage(source, weapon, atk, target):
 					tanked = x.dfn
 				
 				#Damage calculation
-				#print tanked
+				prints(tanked)
 				dmg -= tanked
 				if target.defending:
 					if dmg < 0:
@@ -1317,7 +1363,7 @@ def Damage(source, weapon, atk, target):
 					if dmg < 1:
 						dmg = 1
 				
-				#print "newdmg:", dmg
+				prints("newdmg:"+ str(dmg))
 				#Durability reduction
 				weapon.durability -= x.ench["destructive"]
 				if not x.dur: #if durability is taken into account
@@ -1330,8 +1376,10 @@ def Damage(source, weapon, atk, target):
 				if x.ench["thorns"] != False: #if it has thorns
 					if (x.ench["thorns"].proj != None) or (atk.proj == None): #if thorns applies #NEED AN EXCEPTION TO PREVENT THORNS LOOPING. THAT WOULD BE VERY BAD
 						Damage(target, i, x.ench["thorns"], source)
+						print(target.name+" has POKED")
 				if x.ench["reflecting"] != 0:
 					Damage (source, i, atkChunk(dmg*x.ench["reflecting"], atk.agil-10, False, False, atk.pierce-1), source) #NEED AN EXCEPTION TO PREVENT THORNS LOOPING
+					prints(target.name+" has REFLECTED")
 			if enchValues[0] < x.ench["layered"][1]: #test layered max
 				if (random.randint(0, 100) < x.ench["layered"][0]):
 					j -= 1
@@ -1344,6 +1392,8 @@ def Damage(source, weapon, atk, target):
 	dmg -= target.dfn
 	message = source.name+" deals <strong>"+str(dmg)+"<strong> damage to "+ target.name
 	target.hp -= dmg
+	prints(target.name+": "+str(target.hp))
+	prints("==============")
 	return message
 	#check(target)
 
@@ -1389,7 +1439,10 @@ def attack(source, weapon, target, enchValues = [1, None, None]):
 					if x.etrn:
 						atk.dmg += x.dmg
 						atk.agil += x.agil
-						#Add the enchants together, use the higher value
+						atk.ench = addEnch(2, atk.ench, x.ench)
+			if atk.dfn:
+				source.defending = False
+				Refresh(source)
 			
 			if atk.ench["sweeping"] > 0:
 				enchValues[0] = 1+atk.ench["sweeping"]
@@ -1407,22 +1460,104 @@ def attack(source, weapon, target, enchValues = [1, None, None]):
 			else:
 				messages.append(Damage(source, weapon, atk, target))
 			attacking = False
+			for c in messages:
+				prints(c)
 			return messages, enchValues
 
-
+def Do(entity):
+	global enm
+	global pla
+	enmdo, count = rand(entity.totalact), 0 #Doing stuff
+	for i in entity.actions:
+		if enmdo > count and enmdo <= count+i[1]: #if it's what you are doing
+			if i[0] == "heal":
+				Heal(entity)
+			if i[0] == "defend":
+				entity.defending = True
+			if "atk" in i[0]:
+				if entity in pla.minionTree:
+					if i[0] == "atk1":
+						attack(entity, entity.equipped[0], enm)
+					if i[0] == "atk2":
+						attack(entity, entity.equipped[1], enm)
+					if i[0] == "atk3":
+						attack(entity, entity.equipped[2], enm)
+					if i[0] == "atk4":
+						attack(entity, entity.equipped[3], enm)
+				
+				else:
+					if i[0] == "atk1":
+						attack(enm, enm.equipped[0], pla)
+					if i[0] == "atk2":
+						attack(enm, enm.equipped[1], pla)
+					if i[0] == "atk3":
+						attack(enm, enm.equipped[2], pla)
+					if i[0] == "atk4":
+						attack(enm, enm.equipped[3], pla)
+			
+			break
+		count += i[1]
+	Refresh(entity)
 #MINIONS
 def getMinionTree(entity, type):
+	minionTree = []
 	if type == 2:
-		if (len(entity.minions) > 0):
-			for i in range(len(entity.minions)):
-				minionTree.append(entity.minions[i])
-				if (len(entity.minions[i].minions) > 0):
-					minionTree += getMinionTree(entity.minions[i], 2)
-			return minionTree
+		for i in entity.minions:
+			minionTree.append(i)
+			if len(entity.minions[i].minions) > 0:
+				minionTree += getMinionTree(i, 2)
+		return minionTree
 	if type == 1:
 		minionTree = []
 		minionTree += getMinionTree(entity, 2)
 		return minionTree
+		
+def op(type):
+	global pla
+	if type == "allitems":
+		global allitems
+		for i in allitems:
+			getitem(i)
+	if type == "loot":
+		global lootable
+		lootable = True
+		RDloot()
+	if type == "revive":
+		global enm
+		pla.hp = pla.maxhp
+		prints("Revived")
+		enm.hp = 0
+		plaFight(1)
+	if type == "insane":
+		pla.trueSane = -1
+		pla.baseatk = 16
+		pla.ddev = 12
+		pla.maxhp = 110
+		pla.baseagil = [8, 100]
+		pla.dfn = -5
+	if type == "sane":
+		pla.trueSane = 1
+		pla.maxhp = 110
+		pla.dfn = 5
+		pla.heal = 2
+		pla.ddev = 3
+		pla.baseagil = [20, 100]
+	if type == "normal":
+		pla.trueSane = 0
+		pla.maxhp = 100
+		pla.baseatk = 8
+		pla.ddev = 6
+		pla.baseagil = [18, 100]
+		pla.dfn = 0
+		pla.heal = 1
+		
+	'''if type == "minions":
+		for (var i = 0; i < 3; i++){
+			getMinion(pla, miniminion);
+		}
+		for i in pla.minions:
+			for (var i = 0; i < 3; i++){
+				getMinion(pla.minions[i], miniminion)'''
 		
 
 #Getting visuals for screens
@@ -1430,7 +1565,7 @@ looot = font.render("Loot", True, (0, 0, 0))
 inveen = font.render("Inventory", True, (0, 0, 0))
 baack = font.render("Back", True, (0, 0, 0))
 Fdfn = DispObj(ac2Img, (130, 199))
-Fheal = DispObj(ac2Img, (190, 199))
+Fheal = DispObj(getImg("special/heal"), (190, 199))
 
 running = True
 Screen = 1
@@ -1442,7 +1577,7 @@ getitem(spoon)
 getitem(sivgoggles)
 getitem(jimarmor)
 getitem(communism)
-
+prepbattle(creepybaldguy)
 
 #main loop
 while running:
@@ -1483,9 +1618,7 @@ while running:
 				
 		if event.type == pygame.KEYDOWN and debug:
 			if event.key == K_1:
-				#for i in allitems:
-					#getitem(i)
-				pass
+				op("allitems")
 				
 	mouse_pos = pygame.mouse.get_pos()
 	
@@ -1598,14 +1731,14 @@ while running:
 		pygame.draw.rect(screen, LGREY, (10, 10, 820, 9)) #backing
 		if enm.defending:
 			pygame.draw.rect(screen, GREY, (10, 10, 820, 9)) #backing
-		pygame.draw.rect(screen, RED, (11, 11, (enm.hp/enm.maxhp)*818, 3))#enm hp
-		#pygame.draw.rect(screen, GREY, (10, 10, 820, 9))#enm armor durability
+		pygame.draw.rect(screen, RED, (11, 11, (float(enm.hp)/enm.maxhp)*818, 3))#enm hp
+		#pygame.draw.rect(screen, GREY, (11, 15, 820, 3))#enm armor durability
 		
 		pygame.draw.rect(screen, LGREY, (589, 240, 400, 9)) #backing
 		if pla.defending:
 			pygame.draw.rect(screen, GREY, (589, 240, 400, 9)) #backing
 			
-		pygame.draw.rect(screen, RED, (589, 241, (pla.hp/pla.maxhp)*400, 3))#you hp
+		pygame.draw.rect(screen, RED, (589, 241, (float(pla.hp)/pla.maxhp)*400, 3))#you hp
 		#you armor
 		
 		#your items, make modular positions w/ dispobj
@@ -1621,6 +1754,13 @@ while running:
 			if hitDetect(pla.equipped[3].div.fight.coords, pla.equipped[3].div.fight.size, mouse_pos):
 				attack(pla, pla.equipped[3], enm)
 				pla.equipped[3].div.refresh(2)
+			if hitDetect(Fdfn.coords, (52, 52), mouse_pos):
+				pla.defending = True
+				prints("DEFENDING")
+				Refresh(pla)
+			if hitDetect(Fheal.coords, (52, 52), mouse_pos):
+				Heal(pla)
+				prints("HEALED")
 			mouse_down = False
 
 		
@@ -1650,6 +1790,20 @@ while running:
 					i.broken = False
 	
 	for i in pla.equipped:
+		if i.mendTick != -1: #mending
+			i.mendTick += 1
+			if i.mendTick >= i.ench["mending"][0] and not i.broken:
+				i.mendTick = 0
+				i.durability += i.ench["mending"][1]
+				if i.durability > i.maxdur:
+					i.durability = i.maxdur
+				if i.durability <= 0 and i.destructable:
+					removeitem(i)
+			elif i.mendTick >= (i.ench["mending"][0]+100)*2 and i.broken and i.ench["mending"][1] > 0: #take long time to repair from broken. and don't keep breaking it
+				i.mendTick = 0
+				i.durability += 1 #and it only fixes a little bit
+				if i.durability > 0:
+					i.broken = False
 		#also do ammo in here
 		if i.regenTick != -1 and not i.broken and i.ammo < i.maxammo: #don't let them preload! that's weird!
 			i.regenTick += 1
@@ -1661,6 +1815,103 @@ while running:
 		if Screen == 3:
 			i.div.refresh(2)
 			
+	
+	if (battleprep > 0):
+		battleprep -= 1
+	if (battleprep == 0):
+		inbattle = True
+		battleprep = -1
+		if (enm.boss == False):
+			enm.hp = enm.maxhp
+		#customise fight screen to enemy
+		#printc(enm, enm.cry); #VISUALS
+		Screen = 3
+		
+	if inbattle: #BATTLING
+		enm.atkInt -= 1
+		if (enm.atkInt == 0):
+			enm.atkInt = enm.atkIntBase
+			
+			if (enm.boss):
+				hpratio = 100*(enm.hp/enm.hptop)
+			else:
+				hpratio = 100*(enm.hp/enm.maxhp)
+			
+			#Print enemy description based on health
+			'''if (hpratio < 20):
+				prints(enm.rundown[0])
+			if (hpratio >= 20 && hpratio < 50){
+				prints(enm.rundown[1]);
+			}
+			if (hpratio >= 50 && hpratio < 85){
+				prints(enm.rundown[2]);
+			}
+			if (hpratio >= 85 && hpratio <= 100){
+				printc(enm.rundown[3]);
+			}
+			if (enm.boss){
+				if (hpratio > 100 && hpratio < 200){
+					printc(enm.rundown[4]);
+				}
+				if (hpratio >= 200){
+					printc(enm.rundown[5]);
+				}
+			}''' #VISUALS
+			
+			Do(enm)
+			
+			'''if (enmdo > enm.healchance[1]){enmdo = "heal"} else {enmdo = "atk";}
+			
+			if (enmdo == "heal"){
+				heal(enm);
+			}
+			
+			var message = "";
+			var dmg = 0;
+			if (enmdo == "atk" && enm.hp > 0){
+				attack(enm, pla)'''
+
+		'''for (i in pla.minionTree){
+			var minion = pla.minionTree[i];
+			minion.atkInt -= 1;
+			if (minion.atkInt <= 0){
+				minion.atkInt = minion.atkIntBase;
+				var enmdo = rand(minion.healchance[0]);
+				if (enmdo > minion.healchance[1]){enmdo = "heal"} else {enmdo = "atk";}
+				
+				if (enmdo == "heal"){
+					heal(minion);
+				}
+				
+				var message = "";
+				var dmg = 0;
+				if (enmdo == "atk" && minion.hp > 0){
+					attack(minion, enm);
+				}
+			}
+		}
+		for (i in enm.minionTree){
+			var minion = enm.minionTree[i];
+			minion.atkInt -= 1;
+			if (minion.atkInt <= 0){
+				minion.atkInt = minion.atkIntBase;
+				var enmdo = rand(minion.healchance[0]);
+				if (enmdo > minion.healchance[1]){enmdo = "heal"} else {enmdo = "atk";}
+				
+				if (enmdo == "heal"){
+					heal(minion);
+				}
+				
+				var message = "";
+				var dmg = 0;
+				if (enmdo == "atk" && minion.hp > 0){
+					attack(minion, pla);
+				}
+			}
+		}'''
+
+		if (enm.name == "Adventurer" or enm.name == "Yourself"):
+			plaTime += 1
 	
 	pygame.display.update()
 	clock.tick(50)

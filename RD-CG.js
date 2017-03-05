@@ -10,7 +10,7 @@ https://drive.google.com/open?id=1S_5sqfRwNeyYip_296_XltTGRayP3fW6amOfEyVC5hM
 var debuginfo = false;
 
 function rand(num){
-    return (Math.ceil(Math.random() * num));
+	return (Math.ceil(Math.random() * num));
 }
 
 
@@ -22,48 +22,48 @@ var sanity = "Quite sane. But that's what they all say.";
 var bossesbeat = 0;
 var runnum = 1;
 function player(){
-    this.name = "player";
-    this.hp = 100;
-    this.baseatk = 8;
-    this.atk = 8;
-    this.basedef = 0;
-    this.def = 0
-    this.ddev = 10;
-    this.healval = 1;
-    this.maxhp = 100;  
-    this.hdev = 3;
-    this.baseagil = [18, 100];
-    this.agil = [15, 100];
-    this.lvl = 1;
-    this.sane = 8;
-    this.trueSane = 0;
-    this.minions = [];
-    this.id = 0;
-    this.minionTree = [];
-    this.atkmod = 1;
-    this.defmod = 1;
-    this.agilmod = 1;
+	this.name = "player";
+	this.hp = 100;
+	this.baseatk = 8;
+	this.atk = 8;
+	this.basedef = 0;
+	this.def = 0
+	this.ddev = 10;
+	this.healval = 1;
+	this.maxhp = 100;  
+	this.hdev = 3;
+	this.baseagil = [18, 100];
+	this.agil = [15, 100];
+	this.lvl = 1;
+	this.sane = 8;
+	this.trueSane = 0;
+	this.minions = [];
+	this.id = 0;
+	this.minionTree = [];
+	this.atkmod = 1;
+	this.defmod = 1;
+	this.agilmod = 1;
 	this.defending = false;
 }
 var pla = new player();
 function Room(plant, manmade, water, dark, animal, light, items, north, east, south, west, sane, message, exitA, exitB, exitFail){
-    this.plant = plant;
-    this.manmade = manmade;
-    this.water = water;
-    this.dark = dark;
-    this.animal = animal;
-    this.light = light;
-    this.items = items;
-    this.north = north;
-    this.east = east;
-    this.south = south;
-    this.west = west;
-    this.message = message;
-    this.exitA = exitA;
-    this.exitB = exitB;
-    this.exitFail = exitFail;
-    this.sanity = sane;
-    
+	this.plant = plant;
+	this.manmade = manmade;
+	this.water = water;
+	this.dark = dark;
+	this.animal = animal;
+	this.light = light;
+	this.items = items;
+	this.north = north;
+	this.east = east;
+	this.south = south;
+	this.west = west;
+	this.message = message;
+	this.exitA = exitA;
+	this.exitB = exitB;
+	this.exitFail = exitFail;
+	this.sanity = sane;
+	
 }
 
 //room = new Room();
@@ -124,30 +124,30 @@ var rooms = [room1, room2, room3, room4, room5, room6, room7, room8, room9, room
 //ddev: [n, d] where the chance of dodging is n/d
 //var enem = new Enemy(atk, def, name, pic, maxhp, ddev, [n, d], sane, message, cry, lvl, [<20%, <50%, <85%, <=100%, <200%, >200%], [endheal, switchheal, heal], interval);
 function Enemy(atk, de, name, pic, maxhp, ddev, agil, sane, message, cry, lvl, rundown, heal, interval){
-    
-        this.hp = maxhp;
-        this.atk = parseInt(atk);
-        this.def = parseInt(de);
-        this.name = name.toString();
-        this.div = pic.toString();
-        this.ddev = parseInt(ddev);
-        this.maxhp = parseInt(maxhp);
-        this.agil = agil;
-        this.message = message.toString();
-        this.cry = cry.toString();
-        this.turn = lvl;
-        this.heal = heal[2];
-        this.rundown = rundown;
-        this.healchance = [heal[0], heal[1]];
-        this.boss = false;
-        this.atkInt = interval;
-        this.atkIntBase = interval;
-        this.sane = sane;
-        this.minions = [];
-        this.minionTree = [];
-        this.atkmod = 1;
-        this.defmod = 1;
-        this.agilmod = 1;
+	
+		this.hp = maxhp;
+		this.atk = parseInt(atk);
+		this.def = parseInt(de);
+		this.name = name.toString();
+		this.div = pic.toString();
+		this.ddev = parseInt(ddev);
+		this.maxhp = parseInt(maxhp);
+		this.agil = agil;
+		this.message = message.toString();
+		this.cry = cry.toString();
+		this.turn = lvl;
+		this.heal = heal[2];
+		this.rundown = rundown;
+		this.healchance = [heal[0], heal[1]];
+		this.boss = false;
+		this.atkInt = interval;
+		this.atkIntBase = interval;
+		this.sane = sane;
+		this.minions = [];
+		this.minionTree = [];
+		this.atkmod = 1;
+		this.defmod = 1;
+		this.agilmod = 1;
 		this.defending = false;
 }
 var nullenm = new Enemy(0, 0, "", "", 0, 0, [1,100], 0, "", "", 0, ["<20%", "<50%", "<85%", "<=100%", "<200%", ">=200%"], [2, 3, 4], 1000);
@@ -173,16 +173,16 @@ var rockgolum = new Enemy(10, 35, "Rock Golum", "rockgolum", 200, 20, [1,100], 0
 
 //Items. All of the items.
 function item(offence, defence, agility, sanity, score, name, divname, desc){
-        this.atk = offence;
-        this.def = defence;
-        this.agil = agility;
-        this.score = score;
-        this.sane = sanity;
-        this.Name = name;
-        this.div = divname;
-        this.desc = desc;
-        this.quant = 0;
-        this.findable = 0;
+		this.atk = offence;
+		this.def = defence;
+		this.agil = agility;
+		this.score = score;
+		this.sane = sanity;
+		this.Name = name;
+		this.div = divname;
+		this.desc = desc;
+		this.quant = 0;
+		this.findable = 0;
 }
 //If an item has a score of over 5, it is considered a reference, and Coosome shall act swiftly to Counter-reference toward the same topic.
 
@@ -304,41 +304,41 @@ var allitems = [lapis, rod, core, trueinsanity, truesanity, inactivecube, spoon,
 
 
 function Boss(hp, atk, de, name, divname, maxhp, ddev, agil, heal, sane, loot, loot2, turn, message, cry, rundown, room, interval){
-        this.hp = hp;
-        this.rehp = hp;
-        this.atk = parseInt(atk);
-        this.def = parseInt(de);
-        this.name = name.toString();
-        this.div = divname;
-        this.ddev = parseInt(ddev);
-        this.maxhp = parseInt(maxhp);
-        this.agil = agil;
-        this.message = message.toString();
-        this.cry = cry;
-        this.lvl = turn;
-        this.heal = heal[2];
-        this.rundown = rundown;
-        this.healchance = [heal[0], heal[1]];
-        this.boss = true;
-        this.atkInt = Math.ceil(interval);
-        this.atkIntBase = Math.ceil(interval);
-        this.turn = turn;
-        this.loot = loot;
-        this.loot2 = loot2;
-        this.boss = 1;
-        this.sane = sane;
-        this.minions = [];
-        this.room = room;
-        this.minionTree = [];
-        this.atkmod = 1;
-        this.defmod = 1;
-        this.agilmod = 1;
+		this.hp = hp;
+		this.rehp = hp;
+		this.atk = parseInt(atk);
+		this.def = parseInt(de);
+		this.name = name.toString();
+		this.div = divname;
+		this.ddev = parseInt(ddev);
+		this.maxhp = parseInt(maxhp);
+		this.agil = agil;
+		this.message = message.toString();
+		this.cry = cry;
+		this.lvl = turn;
+		this.heal = heal[2];
+		this.rundown = rundown;
+		this.healchance = [heal[0], heal[1]];
+		this.boss = true;
+		this.atkInt = Math.ceil(interval);
+		this.atkIntBase = Math.ceil(interval);
+		this.turn = turn;
+		this.loot = loot;
+		this.loot2 = loot2;
+		this.boss = 1;
+		this.sane = sane;
+		this.minions = [];
+		this.room = room;
+		this.minionTree = [];
+		this.atkmod = 1;
+		this.defmod = 1;
+		this.agilmod = 1;
 		this.defending = false;
 }
 
 function buildZarol(){
-    var zarol = new Boss(500 + score, 25, 18+(runs*5), "Zarol", "zarol", 10000 + score * 2, 100, [1,15], [70,69,1000+score], -10, zaroltrophy, zaroltrophy, 50, "You stand in the final room, reveling in your victory.  From just over your left shoulder, you hear heavy breathing.", "Your head slowly swivels, back poker straight, to look into three wide red eyes.",["Everything you can see is unrecognizable, even the boss that has now dispersed to the point of surrounding you.","It is infuriated by your damage, darkness billowing from its wounds, disintegrating all it touches.","You seem to have gotten its attention, but it's cold glare assures you this is not a good.","It seems almost to be ignoring you, focusing solely on destruction.", "You feel an aura of confidence, coming from it as it methodically destroys all that surrounds it.", "You feel a burst of energy from it, enveloping you with searing pain."], bossroom, 150);
-    return zarol
+	var zarol = new Boss(500 + score, 25, 18+(runs*5), "Zarol", "zarol", 10000 + score * 2, 100, [1,15], [70,69,1000+score], -10, zaroltrophy, zaroltrophy, 50, "You stand in the final room, reveling in your victory.  From just over your left shoulder, you hear heavy breathing.", "Your head slowly swivels, back poker straight, to look into three wide red eyes.",["Everything you can see is unrecognizable, even the boss that has now dispersed to the point of surrounding you.","It is infuriated by your damage, darkness billowing from its wounds, disintegrating all it touches.","You seem to have gotten its attention, but it's cold glare assures you this is not a good.","It seems almost to be ignoring you, focusing solely on destruction.", "You feel an aura of confidence, coming from it as it methodically destroys all that surrounds it.", "You feel a burst of energy from it, enveloping you with searing pain."], bossroom, 150);
+	return zarol
 }
 zarol = buildZarol();
 var adventurer = new Boss(190, 20, 0, "Adventurer", "adventurer", 190, 5, [5,100], [100,50,30], -7, herosword, heroshield, 10, "You hear the footsteps of someone else.", "It is an Adventurer, Readying his stance for Battle!", ["He seems oddly unaware of the massive amounts of damage you have dealt him. Much like you are.", "", "", "", "He seems more confident of himself, more sure of his strides.",""],bossroom,100);
@@ -369,43 +369,43 @@ var bosses = [adventurer, thecoosome, alpha, jimgrind, strangecube, epiccoo, epi
 
 
 function Minion(hp, maxhp, atk, ddev, de, agil, heal, sane, lvl, name, pic, message, desc, interval, distract){
-        this.hp = hp;
-        this.maxhp = maxhp;
-        this.atk = parseInt(atk);
-        this.ddev = parseInt(ddev);
-        this.def = parseInt(de);
-        this.agil = agil;
-        this.heal = heal[2];
-        this.healchance = [heal[0], heal[1]];
-        this.sane = sane;
-        this.lvl = lvl;
-        this.name = name;
-        this.div = pic
-        this.message = message;
-        this.desc = desc;
-        this.atkInt = interval;
-        this.atkIntBase = interval;
-        this.dist = distract;
-        this.boss = false;
-        this.minions = [];
-        this.id = 0;
-        this.minionTree = [];
-        if (agil[0]/agil[1] > .7){this.descagil = "very"}
-        if (agil[0]/agil[1] <= .7){this.descagil = "quite"}
-        if (agil[0]/agil[1] <= .4){this.descagil = "a bit"}
-        if (agil[0]/agil[1] <= .15){this.descagil = "not"}
-        if (distract <= 100){this.descdist = "very"}
-        if (distract <= 70){this.descdist = "quite"}
-        if (distract <= 40){this.descdist = "a bit"}
-        if (distract <= 15){this.descdist = "not"}
-        this.atkmod = 1;
-        this.defmod = 1;
-        this.agilmod = 1;
+		this.hp = hp;
+		this.maxhp = maxhp;
+		this.atk = parseInt(atk);
+		this.ddev = parseInt(ddev);
+		this.def = parseInt(de);
+		this.agil = agil;
+		this.heal = heal[2];
+		this.healchance = [heal[0], heal[1]];
+		this.sane = sane;
+		this.lvl = lvl;
+		this.name = name;
+		this.div = pic
+		this.message = message;
+		this.desc = desc;
+		this.atkInt = interval;
+		this.atkIntBase = interval;
+		this.dist = distract;
+		this.boss = false;
+		this.minions = [];
+		this.id = 0;
+		this.minionTree = [];
+		if (agil[0]/agil[1] > .7){this.descagil = "very"}
+		if (agil[0]/agil[1] <= .7){this.descagil = "quite"}
+		if (agil[0]/agil[1] <= .4){this.descagil = "a bit"}
+		if (agil[0]/agil[1] <= .15){this.descagil = "not"}
+		if (distract <= 100){this.descdist = "very"}
+		if (distract <= 70){this.descdist = "quite"}
+		if (distract <= 40){this.descdist = "a bit"}
+		if (distract <= 15){this.descdist = "not"}
+		this.atkmod = 1;
+		this.defmod = 1;
+		this.agilmod = 1;
 		this.defending = false;
 }
 //takes enemy or boss, new name and divname, and distract chance, returns minion
 function toMinion(minion, newname, distract){
-    return new Minion(minion.hp, minion.maxhp, minion.atk, minion.ddev, minion.def, minion.agil, [minion.healchance[0], minion.healchance[1], minion.heal], minion.sane, minion.turn, newname, minion.div, minion.message, minion.cry, minion.atkIntBase, distract);
+	return new Minion(minion.hp, minion.maxhp, minion.atk, minion.ddev, minion.def, minion.agil, [minion.healchance[0], minion.healchance[1], minion.heal], minion.sane, minion.turn, newname, minion.div, minion.message, minion.cry, minion.atkIntBase, distract);
 }
 var coompanion = toMinion(coo33, "Coompanion", 100);
 var trapfall = new Minion(100, 100, 80, 10, 10, [5, 1], [1, 2, 0], -1, 7, "Ceiling trap", "trapfall", "traap heeere", "it's a tarp!", 1000, 0);
@@ -430,8 +430,8 @@ var creshield = new Minion(100, 100, 1, 1, 20, [0,1], [100, 50, 25], 1, 7, "Cres
 var cresword = new Minion(100, 100, 25, 5, 0, [0,1], [100, 50, 25], 1, 7, "Cressent Shield", "cresword", "", "",75, 100);
 
 for (var i = 0; i < 3; i++){
-    getMinion(unacceptable, creshield);
-    getMinion(unacceptable, cresword);
+	getMinion(unacceptable, creshield);
+	getMinion(unacceptable, cresword);
 }
 
 for (var i = 0; i < 30; i++){getMinion(superminion, miniminion);}
@@ -458,17 +458,17 @@ minions = [coompanion, cube, shield, sheild, nyancat, balorb, strikorb, tankorb,
 
 var alltraps = [trapfall, trapfire, trapdart, trapsword, creepybaldguy];
 function getMinion(source, minion){
-    //if source is player, make div of minion with id=minion.div+minion.id.   new div is only hp
-    source.minions.push(new Minion(minion.hp, minion.maxhp, minion.atk, minion.ddev, minion.def, minion.agil, [minion.healchance[0], minion.healchance[1], minion.heal], minion.sane, minion.lvl, minion.name, minion.div, minion.message, minion.desc, minion.atkIntBase, minion.dist));
-    if (source == pla){
-        pla.minions[pla.minions.length-1].id = pla.id;
-        pla.id += 1;
-        screen = document.getElementById(minion.div+"hp");
-        screen.innerHTML += '<div class="invis hpbar" style="width:361px;" id="'+pla.minions[pla.minions.length-1].div+pla.minions[pla.minions.length-1].id+'"><div class="invis" style="width:100%;height:100%;background-color:#f00"></div></div>';
-    }
-    getMinionTree(source, 1);
-    source.minionTree = minionTree;
-    prints("Gave "+source.name+" "+minion.name);
+	//if source is player, make div of minion with id=minion.div+minion.id.   new div is only hp
+	source.minions.push(new Minion(minion.hp, minion.maxhp, minion.atk, minion.ddev, minion.def, minion.agil, [minion.healchance[0], minion.healchance[1], minion.heal], minion.sane, minion.lvl, minion.name, minion.div, minion.message, minion.desc, minion.atkIntBase, minion.dist));
+	if (source == pla){
+		pla.minions[pla.minions.length-1].id = pla.id;
+		pla.id += 1;
+		screen = document.getElementById(minion.div+"hp");
+		screen.innerHTML += '<div class="invis hpbar" style="width:361px;" id="'+pla.minions[pla.minions.length-1].div+pla.minions[pla.minions.length-1].id+'"><div class="invis" style="width:100%;height:100%;background-color:#f00"></div></div>';
+	}
+	getMinionTree(source, 1);
+	source.minionTree = minionTree;
+	prints("Gave "+source.name+" "+minion.name);
 }
 
 
@@ -477,80 +477,80 @@ var ablerooms = [];
 var finalsanity = 0;
 //based on player level, changes aspects of game such as tiers of items, and rooms.
 function gentables(){
-    
+	
 
-    //loot tables
-    lootitems = [];
-    //add sanity levels and agility to calculation
-    //&& item.sane >= sanity-2 && item.sane <= sanity+2 ?
-    for (i in allitems){
-        item = allitems[i];
-        if (item.findable == 0){ 
-            if (pla.lvl == 1 && (item.atk + item.def + (item.agil / 3) + (item.sane / 3)) <= 5) {lootitems.push(item);}
-            if (pla.lvl == 2 && (item.atk + item.def + (item.agil / 2) + (item.sane / 2)) <= 10) {lootitems.push(item);}
-            if (pla.lvl == 3 && (item.atk + item.def + item.agil + item.sane) <= 15) {lootitems.push(item);}
-            if (pla.lvl >= 4) {lootitems.push(item);}
-        }
-    }
+	//loot tables
+	lootitems = [];
+	//add sanity levels and agility to calculation
+	//&& item.sane >= sanity-2 && item.sane <= sanity+2 ?
+	for (i in allitems){
+		item = allitems[i];
+		if (item.findable == 0){ 
+			if (pla.lvl == 1 && (item.atk + item.def + (item.agil / 3) + (item.sane / 3)) <= 5) {lootitems.push(item);}
+			if (pla.lvl == 2 && (item.atk + item.def + (item.agil / 2) + (item.sane / 2)) <= 10) {lootitems.push(item);}
+			if (pla.lvl == 3 && (item.atk + item.def + item.agil + item.sane) <= 15) {lootitems.push(item);}
+			if (pla.lvl >= 4) {lootitems.push(item);}
+		}
+	}
 
-    
-    //Math.floor(Math.cbrt(sanity)+-2);
-    //
-    ablerooms = [];
-    for (i in rooms){
-        var localrand = rooms[i];
-        if (sanity < 2){
-            if (localrand.sanity >= Math.floor(Math.cbrt(sanity) - pla.lvl) && localrand.sanity <= Math.floor(Math.cbrt(sanity) + (pla.lvl * 1.5))){
-            ablerooms.push(rooms[i]);
-            } 
-        }
-        else if (sanity >= 2){
-            if (localrand.sanity <= Math.floor(Math.cbrt(sanity) + pla.lvl) && localrand.sanity >= Math.floor(Math.cbrt(sanity) - (pla.lvl * 1.5))){
-            ablerooms.push(rooms[i]);
-            } 
-        }
-        /*if (localrand.sanity >= Math.floor(Math.cbrt(sanity)-2) && localrand.sanity <= Math.floor(Math.cbrt(sanity)+2)){
-            //console.log(localrand);
-            ablerooms.push(rooms[i]);
-        } */
-    
-    }
-    
-    if (ablerooms.length == 0 && pla.trueSane == 0){
-        prints("Ablerooms empty. Sanity: "+ sanity + " pla.sane: " + pla.sane);
-        if (sanity < 0){
-            ablerooms = [room19];
-            finalsanity = -1;
-        }
-        if (sanity > 0){
-            ablerooms = [room23];
-            finalsanity = 1;
-        }
-    } 
-    
-    //when reached true sanities
-    if (pla.trueSane != 0){
-        var item;
-        lootitems = [];
-        for (i in allitems){
-            item = allitems[i];
-            if (item.sane <= 0 && pla.trueSane < 0){
-                lootitems.push(item);
-            }
-            if (item.sane >= 0 && pla.trueSane > 0){
-                lootitems.push(item);
-            }
-        }
-        for (i in rooms){
-            item = rooms[i];
-            if (item.sanity <= 0 && pla.trueSane < 0){
-                ablerooms.push(item);
-            }
-            if (item.sanity >= 0 && pla.trueSane > 0){
-                ablerooms.push(item);
-            }
-        }
-    }
+	
+	//Math.floor(Math.cbrt(sanity)+-2);
+	//
+	ablerooms = [];
+	for (i in rooms){
+		var localrand = rooms[i];
+		if (sanity < 2){
+			if (localrand.sanity >= Math.floor(Math.cbrt(sanity) - pla.lvl) && localrand.sanity <= Math.floor(Math.cbrt(sanity) + (pla.lvl * 1.5))){
+			ablerooms.push(rooms[i]);
+			} 
+		}
+		else if (sanity >= 2){
+			if (localrand.sanity <= Math.floor(Math.cbrt(sanity) + pla.lvl) && localrand.sanity >= Math.floor(Math.cbrt(sanity) - (pla.lvl * 1.5))){
+			ablerooms.push(rooms[i]);
+			} 
+		}
+		/*if (localrand.sanity >= Math.floor(Math.cbrt(sanity)-2) && localrand.sanity <= Math.floor(Math.cbrt(sanity)+2)){
+			//console.log(localrand);
+			ablerooms.push(rooms[i]);
+		} */
+	
+	}
+	
+	if (ablerooms.length == 0 && pla.trueSane == 0){
+		prints("Ablerooms empty. Sanity: "+ sanity + " pla.sane: " + pla.sane);
+		if (sanity < 0){
+			ablerooms = [room19];
+			finalsanity = -1;
+		}
+		if (sanity > 0){
+			ablerooms = [room23];
+			finalsanity = 1;
+		}
+	} 
+	
+	//when reached true sanities
+	if (pla.trueSane != 0){
+		var item;
+		lootitems = [];
+		for (i in allitems){
+			item = allitems[i];
+			if (item.sane <= 0 && pla.trueSane < 0){
+				lootitems.push(item);
+			}
+			if (item.sane >= 0 && pla.trueSane > 0){
+				lootitems.push(item);
+			}
+		}
+		for (i in rooms){
+			item = rooms[i];
+			if (item.sanity <= 0 && pla.trueSane < 0){
+				ablerooms.push(item);
+			}
+			if (item.sanity >= 0 && pla.trueSane > 0){
+				ablerooms.push(item);
+			}
+		}
+	}
 }
 
 var lootitems = [];
@@ -558,11 +558,11 @@ var equippeditems = [nothing, nothing];
 var runs = 1;
 
 function Unlock(item){
-    if (item.findable == 1){
-        item.findable = 0;
-        roommessage += unlockmessages[rand(unlockmessages.length-1)];
-        prints("unlocked " + item.Name);
-    }
+	if (item.findable == 1){
+		item.findable = 0;
+		roommessage += unlockmessages[rand(unlockmessages.length-1)];
+		prints("unlocked " + item.Name);
+	}
 }
 
 //Room related variables
@@ -583,548 +583,548 @@ var roommessage = "";
 var lockedroom = false;
 var lockedroomz = false;
 function genRoom() {
-    prints("Generating room.");
-    RDrefresh();
-    gentables();
-    turn ++;
-    healable = true;
-    //console.log(ablerooms);
-    //leveling up
-    if (score >= 30 && pla.lvl == 1){
-        pla.lvl = 2;
-        roommessage += "You can sence something.. Change, or Alter, in the dongeons around you..";
-    }
-    if (score >= 75 && pla.lvl == 2){
-        pla.lvl = 3;
-        roommessage += "You hear the calls of things, Unknown Creatures, from close by..";
-    }
-    if (score >= 220 && pla.lvl == 3){
-        pla.lvl = 4;
-        roommessage += "You feel attention has shifted to you, knowing this is not a good thing.";
-    }
-    if (score >= 400 && pla.lvl == 4){
-        pla.lvl = 5;
-        roommessage += "You can feel the Anger, the Hatred in the dongeon, Radiating from the surfaces, Aimed at you...";
-    }
-    if (score >= 800 && pla.lvl == 5){
-        pla.lvl = 6;
-        roommessage += "The hairs rise on the back of your neck. You have reached your top potential, but know it is only downhill from here.";
-    }
-    
-    var search = true;
-    if (turn == 1){
-        search = false;
-    }
-    for (i in bosses){
-        var localrand = bosses[i];
-        if (localrand.turn == turn){
-            
-            search = false;
-            room = localrand.room
-        }
-    }
+	prints("Generating room.");
+	RDrefresh();
+	gentables();
+	turn ++;
+	healable = true;
+	//console.log(ablerooms);
+	//leveling up
+	if (score >= 30 && pla.lvl == 1){
+		pla.lvl = 2;
+		roommessage += "You can sence something.. Change, or Alter, in the dongeons around you..";
+	}
+	if (score >= 75 && pla.lvl == 2){
+		pla.lvl = 3;
+		roommessage += "You hear the calls of things, Unknown Creatures, from close by..";
+	}
+	if (score >= 220 && pla.lvl == 3){
+		pla.lvl = 4;
+		roommessage += "You feel attention has shifted to you, knowing this is not a good thing.";
+	}
+	if (score >= 400 && pla.lvl == 4){
+		pla.lvl = 5;
+		roommessage += "You can feel the Anger, the Hatred in the dongeon, Radiating from the surfaces, Aimed at you...";
+	}
+	if (score >= 800 && pla.lvl == 5){
+		pla.lvl = 6;
+		roommessage += "The hairs rise on the back of your neck. You have reached your top potential, but know it is only downhill from here.";
+	}
+	
+	var search = true;
+	if (turn == 1){
+		search = false;
+	}
+	for (i in bosses){
+		var localrand = bosses[i];
+		if (localrand.turn == turn){
+			
+			search = false;
+			room = localrand.room
+		}
+	}
  
 
-    if (search || turn == 1){
-         room = ablerooms[rand(ablerooms.length)-1];
-    }
+	if (search || turn == 1){
+		 room = ablerooms[rand(ablerooms.length)-1];
+	}
 
 
 
-    roommessage += room.message;
-    
-    
-    var avent = rand(30);
+	roommessage += room.message;
 	
-    if (avent == 1){roommessage += " Your feet are suddenly covered in water, with more rising from an unseen source."; room.water = 1}
-    if (avent == 2){roommessage += " Vines lazily wind their way towards you."; room.plant = 1}
-    if (avent == 3){roommessage += " You feel a gust of wind from the south."; room.south = 1}
-    if (avent == 4){roommessage += " The very air around you seems to emit a warm glow."; room.dark = 0; room.light = 1;}
-    if (avent == 5){roommessage += " The air muffles and dilutes not sound, but light."; room.dark = 1; room.light = 0;}
-    if (avent == 6){roommessage += " You can hear the clicking and whirring  of unseen machinery."; room.manmade = 1;}
-    if (avent == 7){roommessage += " A large crowd of flies is hovering in a corner, seemingly growling at you."; room.animal = 1;}
-    if (avent == 8){roommessage += " You become lost in a cloud of dark light."; room.dark = 1, room.light = 1;}
-    if (avent == 9){roommessage += " There seems to be a lot of gold here. You must resist the urge to loot it all."; room.items = 1;}
-    if (avent == 10){roommessage += " Everything around you seems smoother, or Curvier"; room.manmade = 1;}
-    if (avent == 11){roommessage += " You have a moment of dizziness, a thought of doubt."; pla.sane -= 1;}
-    if (avent == 12){roommessage += " You hear whispering. You turn quickly, but nothing is there."; pla.sane -= 3;}
-    if (avent == 13){roommessage += " You feel a tap on your shoulder, and turn around to find that there is nothing there."; pla.sane -= 5;}
-    if (avent == 14){roommessage += " No matter to the circumstances, you are tired. You take a moment to rest."; pla.sane += 5;}
-    if (avent == 15){
-        roommessage += " You blink. Something seems off.";
-        var item = room.north;
-        room.north = room.east;
-        room.east = room.south;
-        room.south = room.west;
-        room.west = item;
-    }
-    if (avent == 16){roommessage += " You feel a sence of refreshment, of redefining who you are."; pla.sane +=3}
-    if (avent == 17){
-        room = specroom1;
+	
+	var avent = rand(30);
+	
+	if (avent == 1){roommessage += " Your feet are suddenly covered in water, with more rising from an unseen source."; room.water = 1}
+	if (avent == 2){roommessage += " Vines lazily wind their way towards you."; room.plant = 1}
+	if (avent == 3){roommessage += " You feel a gust of wind from the south."; room.south = 1}
+	if (avent == 4){roommessage += " The very air around you seems to emit a warm glow."; room.dark = 0; room.light = 1;}
+	if (avent == 5){roommessage += " The air muffles and dilutes not sound, but light."; room.dark = 1; room.light = 0;}
+	if (avent == 6){roommessage += " You can hear the clicking and whirring  of unseen machinery."; room.manmade = 1;}
+	if (avent == 7){roommessage += " A large crowd of flies is hovering in a corner, seemingly growling at you."; room.animal = 1;}
+	if (avent == 8){roommessage += " You become lost in a cloud of dark light."; room.dark = 1, room.light = 1;}
+	if (avent == 9){roommessage += " There seems to be a lot of gold here. You must resist the urge to loot it all."; room.items = 1;}
+	if (avent == 10){roommessage += " Everything around you seems smoother, or Curvier"; room.manmade = 1;}
+	if (avent == 11){roommessage += " You have a moment of dizziness, a thought of doubt."; pla.sane -= 1;}
+	if (avent == 12){roommessage += " You hear whispering. You turn quickly, but nothing is there."; pla.sane -= 3;}
+	if (avent == 13){roommessage += " You feel a tap on your shoulder, and turn around to find that there is nothing there."; pla.sane -= 5;}
+	if (avent == 14){roommessage += " No matter to the circumstances, you are tired. You take a moment to rest."; pla.sane += 5;}
+	if (avent == 15){
+		roommessage += " You blink. Something seems off.";
+		var item = room.north;
+		room.north = room.east;
+		room.east = room.south;
+		room.south = room.west;
+		room.west = item;
+	}
+	if (avent == 16){roommessage += " You feel a sence of refreshment, of redefining who you are."; pla.sane +=3}
+	if (avent == 17){
+		room = specroom1;
 		roommessage = room.message;
 		search = false;
 		room.items = 0;
-    }
+	}
 	if (avent == 18){
-        room = specroom2;
+		room = specroom2;
 		roommessage = room.message;
 		search = false;
 		room.items = 0;
-    }
-    pla.sane += room.sanity;
-    pla.sane += (equippeditems[0].sane)/5;
-    pla.sane += (equippeditems[1].sane)/5;
-    for (i in pla.minions){
-        pla.sane += (pla.minions[i].sane / 5);
-    }
-    
-    
-    //Determining lootable
-    if (rand(2) == 1 && room.items == 1){
-        lootable = true;
-        roommessage += chestmessages[rand(chestmessages.length-1)];
-    } else {
-        lootable = false;
-    }
+	}
+	pla.sane += room.sanity;
+	pla.sane += (equippeditems[0].sane)/5;
+	pla.sane += (equippeditems[1].sane)/5;
+	for (i in pla.minions){
+		pla.sane += (pla.minions[i].sane / 5);
+	}
+	
+	
+	//Determining lootable
+	if (rand(2) == 1 && room.items == 1){
+		lootable = true;
+		roommessage += chestmessages[rand(chestmessages.length-1)];
+	} else {
+		lootable = false;
+	}
 
-    ableminions = [];
-    for (i in minions){
-        minion = minions[i];
-        if (minion.lvl <= pla.lvl){
-            ableminions.push(minion);
-        }
-    }
-    if (rand(8) == 1 && ableminions.length > 0){
-        var minion = ableminions[rand(ableminions.length)-1];
-        roommessage += minion.message;
-        getMinion(pla, minion);
-    }
+	ableminions = [];
+	for (i in minions){
+		minion = minions[i];
+		if (minion.lvl <= pla.lvl){
+			ableminions.push(minion);
+		}
+	}
+	if (rand(8) == 1 && ableminions.length > 0){
+		var minion = ableminions[rand(ableminions.length)-1];
+		roommessage += minion.message;
+		getMinion(pla, minion);
+	}
 
-     for (i in bosses){
-        var localrand = bosses[i];
-        if (localrand.turn == turn){
-            roommessage += prepbattle(localrand);
-        }
-    }
+	 for (i in bosses){
+		var localrand = bosses[i];
+		if (localrand.turn == turn){
+			roommessage += prepbattle(localrand);
+		}
+	}
 
-    if (room == room38){
-        roommessage += prepbattle(terracotta);
-        search = false;
-    }
+	if (room == room38){
+		roommessage += prepbattle(terracotta);
+		search = false;
+	}
 
-    
-    if (search){
-        if (room == specroom1){
-            if (equippeditems[0].name == "Stone Key"){
-                roommessage += "You insert your stone key into the pedstal..... You are overcome with dread.";
-                prepbattle(adventurer);
-            }
-            
-            search = false;
+	
+	if (search){
+		if (room == specroom1){
+			if (equippeditems[0].name == "Stone Key"){
+				roommessage += "You insert your stone key into the pedstal..... You are overcome with dread.";
+				prepbattle(adventurer);
+			}
+			
+			search = false;
 
-        } 
-        if (cresentstone.quant > 0 && rand(3) == 1){
-               roommessage += prepbattle(unacceptable);
-               cresentstone.quant = 0;
-            
-            }
-        if (equippeditems[0].Name == "Sissors" && equippeditems[1].Name == "Life Thread" && noKillXissor){
-               roommessage += prepbattle(xissor);
-               noKillXissor = false;
-               turnKillXissor = turn;
-            }
-        if (turnKillXissor + 20 == turn && equippeditems[0].Name == "Xissors" && noKillOtherXissor){
-               roommessage += prepbattle(otherXissor);
-               noKillOtherXissor = false;
-            
-        }
-        if (finalsanity == 1 && turn > 20 && pla.trueSane == 0){
-               roommessage += prepbattle(lastinsanity);
-               finalsanity = 0;
-        }
-        
-        if (finalsanity == -1 && turn > 20 && pla.trueSane == 0){
-               roommessage += prepbattle(lastsanity);
-               finalsanity = 0;
-        }
-        
-        if (noKillEpic && turn == 35){
-            if (pla.atk >= pla.def && pla.atk >= pla.agil[0]){
-                roommessage = "";
-                roommessage += prepbattle(epicalpha);
-            } else if (pla.def >= pla.atk && pla.def >= pla.agil[0]){
-                roommessage = "";
-                roommessage += prepbattle(epiccoo);
-            } else if (pla.agil[0] >= pla.atk && pla.agil[0] >= pla.def){
-                roommessage = "";
-                roommessage += prepbattle(epicjim);
-            } else{
-                if (pla.sane <= 0){
-                    finalsanity = -1;
-                    
-                }
-                if (pla.sane > 0){
-                    finalsanity = 1;
-                }
-            }
-        }
-        
-        if (pla.lvl >= 5 && search){
-            var enemyspawn = rand(5);
-            if (enemyspawn == 3){
-                roommessage += prepbattle(creep4);
-            }
-            search = false;
-        }
-        
-        if (pla.lvl >= 4 && search){
-            var enemyspawn = rand(5);
+		} 
+		if (cresentstone.quant > 0 && rand(3) == 1){
+			   roommessage += prepbattle(unacceptable);
+			   cresentstone.quant = 0;
+			
+			}
+		if (equippeditems[0].Name == "Sissors" && equippeditems[1].Name == "Life Thread" && noKillXissor){
+			   roommessage += prepbattle(xissor);
+			   noKillXissor = false;
+			   turnKillXissor = turn;
+			}
+		if (turnKillXissor + 20 == turn && equippeditems[0].Name == "Xissors" && noKillOtherXissor){
+			   roommessage += prepbattle(otherXissor);
+			   noKillOtherXissor = false;
+			
+		}
+		if (finalsanity == 1 && turn > 20 && pla.trueSane == 0){
+			   roommessage += prepbattle(lastinsanity);
+			   finalsanity = 0;
+		}
+		
+		if (finalsanity == -1 && turn > 20 && pla.trueSane == 0){
+			   roommessage += prepbattle(lastsanity);
+			   finalsanity = 0;
+		}
+		
+		if (noKillEpic && turn == 35){
+			if (pla.atk >= pla.def && pla.atk >= pla.agil[0]){
+				roommessage = "";
+				roommessage += prepbattle(epicalpha);
+			} else if (pla.def >= pla.atk && pla.def >= pla.agil[0]){
+				roommessage = "";
+				roommessage += prepbattle(epiccoo);
+			} else if (pla.agil[0] >= pla.atk && pla.agil[0] >= pla.def){
+				roommessage = "";
+				roommessage += prepbattle(epicjim);
+			} else{
+				if (pla.sane <= 0){
+					finalsanity = -1;
+					
+				}
+				if (pla.sane > 0){
+					finalsanity = 1;
+				}
+			}
+		}
+		
+		if (pla.lvl >= 5 && search){
+			var enemyspawn = rand(5);
+			if (enemyspawn == 3){
+				roommessage += prepbattle(creep4);
+			}
+			search = false;
+		}
+		
+		if (pla.lvl >= 4 && search){
+			var enemyspawn = rand(5);
 
-            if (enemyspawn == 1 && room.plant == 0 && room.animal == 0){
-                roommessage += prepbattle(rockgolum);
-            }
-            if (enemyspawn == 2 && room.water == 1){
-                roommessage += prepbattle(koi);
-            }
-            if (enemyspawn == 3){
-                roommessage += prepbattle(creep3);
-            }
+			if (enemyspawn == 1 && room.plant == 0 && room.animal == 0){
+				roommessage += prepbattle(rockgolum);
+			}
+			if (enemyspawn == 2 && room.water == 1){
+				roommessage += prepbattle(koi);
+			}
+			if (enemyspawn == 3){
+				roommessage += prepbattle(creep3);
+			}
 
-            search = false;
-        }
+			search = false;
+		}
 
-        if (pla.lvl >= 3 && search){
-            var enemyspawn = rand(5); 
+		if (pla.lvl >= 3 && search){
+			var enemyspawn = rand(5); 
 
-            if (enemyspawn == 4 && room.plant == 1 && room.animal == 1){
-                roommessage += prepbattle(dog);
-            }
-            if (enemyspawn == 5){
-                roommessage += prepbattle(slime);
-            }
-            if (enemyspawn <= 2 && room.water == 0 && room.dark == 1 && room.animal == 1 && room.light == 0){
-                roommessage += prepbattle(catwatcher);
-            }
-            if (enemyspawn == 3 && room.animal == 1 && room.light == 1){
-                roommessage += prepbattle(nerveball);
-            }
-            search = false;
-        }
-        if (pla.lvl >= 2 && search){
-            var enemyspawn = rand(5); 
-    
-            if (enemyspawn == 1 && room.manmade == 1 && room.water == 0){
-                roommessage += prepbattle(bookofdeath);
-            }
-            if (enemyspawn == 2 && room.manmade == 1){
-                roommessage += prepbattle(clone);
-            }
-            if (enemyspawn == 3 && room.light == 1){
-                roommessage += prepbattle(lightorb);
-            }
-            if (enemyspawn == 4 && room.items == 0){
-                roommessage += prepbattle(mimic);
-                lootable = true;
-            }
-            if (enemyspawn == 5){
-                roommessage += prepbattle(creep2);
-            }
-            search = false;
-            //----
-            
-        }
-        if (pla.lvl >= 1 && search){
-            var enemyspawn = rand(6);
+			if (enemyspawn == 4 && room.plant == 1 && room.animal == 1){
+				roommessage += prepbattle(dog);
+			}
+			if (enemyspawn == 5){
+				roommessage += prepbattle(slime);
+			}
+			if (enemyspawn <= 2 && room.water == 0 && room.dark == 1 && room.animal == 1 && room.light == 0){
+				roommessage += prepbattle(catwatcher);
+			}
+			if (enemyspawn == 3 && room.animal == 1 && room.light == 1){
+				roommessage += prepbattle(nerveball);
+			}
+			search = false;
+		}
+		if (pla.lvl >= 2 && search){
+			var enemyspawn = rand(5); 
+	
+			if (enemyspawn == 1 && room.manmade == 1 && room.water == 0){
+				roommessage += prepbattle(bookofdeath);
+			}
+			if (enemyspawn == 2 && room.manmade == 1){
+				roommessage += prepbattle(clone);
+			}
+			if (enemyspawn == 3 && room.light == 1){
+				roommessage += prepbattle(lightorb);
+			}
+			if (enemyspawn == 4 && room.items == 0){
+				roommessage += prepbattle(mimic);
+				lootable = true;
+			}
+			if (enemyspawn == 5){
+				roommessage += prepbattle(creep2);
+			}
+			search = false;
+			//----
+			
+		}
+		if (pla.lvl >= 1 && search){
+			var enemyspawn = rand(6);
 
-            if (enemyspawn == 1 && room.water == 1 && room.animal == 1){
-                roommessage += prepbattle(anenemy);
-            }
-            if (enemyspawn == 2 && room.plant == 1 && room.water == 0){
-                roommessage += prepbattle(axeurlegs);
-            }
-            if (enemyspawn == 3){
-                roommessage += prepbattle(muffin);
-            }
-            if (enemyspawn >= 5){
-                roommessage += prepbattle(creepybaldguy);
-            }
-            search = false;
-        }
-    }
-    printa(roommessage);
+			if (enemyspawn == 1 && room.water == 1 && room.animal == 1){
+				roommessage += prepbattle(anenemy);
+			}
+			if (enemyspawn == 2 && room.plant == 1 && room.water == 0){
+				roommessage += prepbattle(axeurlegs);
+			}
+			if (enemyspawn == 3){
+				roommessage += prepbattle(muffin);
+			}
+			if (enemyspawn >= 5){
+				roommessage += prepbattle(creepybaldguy);
+			}
+			search = false;
+		}
+	}
+	printa(roommessage);
 }
 
 var lastmove;
 function move(direction){
-    roommessage = "";
-    if (battleprep == -1){
-        var success = false;
-        //north
-        if (room.exitA == "" || room.exitA == " ") {room.exitA = "You go ";}
-        if (room.exitB == "" || room.exitB == " ") {room.exitB = ".";}
-        if(direction === 1){
-           
+	roommessage = "";
+	if (battleprep == -1){
+		var success = false;
+		//north
+		if (room.exitA == "" || room.exitA == " ") {room.exitA = "You go ";}
+		if (room.exitB == "" || room.exitB == " ") {room.exitB = ".";}
+		if(direction === 1){
+		   
 
-            if (room.north === 1){
-                success = true;
-                roommessage = room.exitA + "north" + room.exitB;
-            }
-            else {roommessage = room.exitFail;}
-        }
-        //east
-        if(direction === 2){
-            if (room.east === 1){
-                success = true;
-                roommessage = room.exitA + "east" + room.exitB;
-            }
-            else {roommessage = room.exitFail;}
-        }
-        //south
-        if(direction === 3){
-            if (room.south === 1){
-                success = true;
-                roommessage = room.exitA + "south" + room.exitB;
-            }
-            else {roommessage = room.exitFail;}
-        }
-        //west
-        if(direction === 4){
-            if (room.west === 1){
-                success = true;
-                roommessage = room.exitA + "west" + room.exitB;
-            }
-            else {roommessage = room.exitFail;}
-        }
-        if (success == true) {
-            printb("");
-            roommessage += "<br/>";
-            genRoom();
-            lastmove = direction;
-        } else {printb(roommessage);}
-    }
-    //if (battleprep >= 1) {battleprep = 0; enmFight();}
+			if (room.north === 1){
+				success = true;
+				roommessage = room.exitA + "north" + room.exitB;
+			}
+			else {roommessage = room.exitFail;}
+		}
+		//east
+		if(direction === 2){
+			if (room.east === 1){
+				success = true;
+				roommessage = room.exitA + "east" + room.exitB;
+			}
+			else {roommessage = room.exitFail;}
+		}
+		//south
+		if(direction === 3){
+			if (room.south === 1){
+				success = true;
+				roommessage = room.exitA + "south" + room.exitB;
+			}
+			else {roommessage = room.exitFail;}
+		}
+		//west
+		if(direction === 4){
+			if (room.west === 1){
+				success = true;
+				roommessage = room.exitA + "west" + room.exitB;
+			}
+			else {roommessage = room.exitFail;}
+		}
+		if (success == true) {
+			printb("");
+			roommessage += "<br/>";
+			genRoom();
+			lastmove = direction;
+		} else {printb(roommessage);}
+	}
+	//if (battleprep >= 1) {battleprep = 0; enmFight();}
 }
 
 //Refreshing and Displaying
 function screenchange(number) {
-    screen1 = document.getElementById("RDmain");
-    screen2 = document.getElementById("RDinven");
-    screen3 = document.getElementById("RDfight");
-    screen4 = document.getElementById("RDlimbo");
-    screen5 = document.getElementById("RDmono");
-    screen6 = document.getElementById("RDgrave");
-    screen1.style.height = "0";
-    screen1.style.padding = "0";
-    screen2.style.height = "0";
-    screen2.style.padding = "0";
-    screen3.style.height = "0";
-    screen3.style.padding = "0";
-    screen4.style.height = "0";
-    screen4.style.padding = "0";
-    screen5.style.height = "0";
-    screen5.style.padding = "0";
-    screen6.style.height = "0";
-    screen6.style.padding = "0";
-    if (number === 1) {
-        screen1.style.height = "239px";
-        screen1.style.padding = "10px";
-    }
-    if (number === 2) {
-        screen2.style.height = "239px";
-        screen2.style.padding = "10px";
-    }
-    if (number === 3) {
-        screen3.style.height = "239px";
-        screen3.style.padding = "10px";
-    }
-    if (number === 4) {
-        screen4.style.height = "239px";
-        screen4.style.padding = "10px";
-    }
-    if (number === 5) {
-        screen5.style.height = "239px";
-        screen5.style.padding = "10px";
-    }
-    if (number === 6) {
-        screen6.style.height = "239px";
-        screen6.style.padding = "10px";
-    }
-    prints("changed to screen "+number);
+	screen1 = document.getElementById("RDmain");
+	screen2 = document.getElementById("RDinven");
+	screen3 = document.getElementById("RDfight");
+	screen4 = document.getElementById("RDlimbo");
+	screen5 = document.getElementById("RDmono");
+	screen6 = document.getElementById("RDgrave");
+	screen1.style.height = "0";
+	screen1.style.padding = "0";
+	screen2.style.height = "0";
+	screen2.style.padding = "0";
+	screen3.style.height = "0";
+	screen3.style.padding = "0";
+	screen4.style.height = "0";
+	screen4.style.padding = "0";
+	screen5.style.height = "0";
+	screen5.style.padding = "0";
+	screen6.style.height = "0";
+	screen6.style.padding = "0";
+	if (number === 1) {
+		screen1.style.height = "239px";
+		screen1.style.padding = "10px";
+	}
+	if (number === 2) {
+		screen2.style.height = "239px";
+		screen2.style.padding = "10px";
+	}
+	if (number === 3) {
+		screen3.style.height = "239px";
+		screen3.style.padding = "10px";
+	}
+	if (number === 4) {
+		screen4.style.height = "239px";
+		screen4.style.padding = "10px";
+	}
+	if (number === 5) {
+		screen5.style.height = "239px";
+		screen5.style.padding = "10px";
+	}
+	if (number === 6) {
+		screen6.style.height = "239px";
+		screen6.style.padding = "10px";
+	}
+	prints("changed to screen "+number);
 }
 
 function RDinit() {
-    testu();
-    RDrefresh();
-    screenchange(1);
-    gentables();
-    genRoom();
-    for (i in allitems) {
-        item = allitems[i];
-        var screen = document.getElementById(item.div);
-        var itemdiv = screen.childNodes;
-        quantity = itemdiv[2].childNodes;
-        quantity[0].innerHTML = item.Name;
-        quantity[2].innerHTML = item.desc;
-        itemdiv[1].innerHTML = "<img src='img/"+item.div+".png'>"
-    }
+	testu();
+	RDrefresh();
+	screenchange(1);
+	gentables();
+	genRoom();
+	for (i in allitems) {
+		item = allitems[i];
+		var screen = document.getElementById(item.div);
+		var itemdiv = screen.childNodes;
+		quantity = itemdiv[2].childNodes;
+		quantity[0].innerHTML = item.Name;
+		quantity[2].innerHTML = item.desc;
+		itemdiv[1].innerHTML = "<img src='img/"+item.div+".png'>"
+	}
 
-    for (i in bossitems) {bossitems[i].findable = 1;}
-    setInterval('enmFight()',10)
+	for (i in bossitems) {bossitems[i].findable = 1;}
+	setInterval('enmFight()',10)
 }
 
 function testu(){
-    var localrand = "";
-    for (i in allitems){
-        var item = allitems[i];
-        var item = "<div class=\"RDitem\" onclick=\"equip("+item.div+")\" id=\""+item.div+"\"> <div class=\"RDpic\"></div><div class=\"itemwords\"><div class=\"name\">name</div><div class=\"quant\">null</div><div class=\"desc\">desc</div></div></div>";
-        localrand += item;
-    }
-    var screen = document.getElementById("items");
-    screen.innerHTML = localrand;
-    //do minion divs
-    localrand = "";
-    for (i in minions){
-        var item = minions[i];
-        var item = "<div class=\"RDminion\" onclick=\"prints(\'boop\')\" id=\""+item.div+"\"><div class=\"RDpic\"><img src='img/"+item.div+".png'></div><div class=\"itemwords\"><div class=\"name\" style=\"width:100%\">"+item.name+"</div><div class=\"desc\">"+item.desc+"</div></div><div class=\"invis\" style=\"float:left;clear:left;width:50%;height:34px\">Damage: "+item.atk+"<br/>Defence: "+item.def+"</div><div class=\"invis\" style=\"float:left;width:50%;height:34px\">"+item.descdist+" distracting<br/>"+item.descagil+" agile</div><div class=\"invis\" style=\"float:left;clear:left;width:100%;min-height:0\" id=\""+item.div+"hp\"></div></div>";
-        localrand += item;
-    }
-    var screen = document.getElementById("minions");
-    screen.innerHTML = localrand;
+	var localrand = "";
+	for (i in allitems){
+		var item = allitems[i];
+		var item = "<div class=\"RDitem\" onclick=\"equip("+item.div+")\" id=\""+item.div+"\"> <div class=\"RDpic\"></div><div class=\"itemwords\"><div class=\"name\">name</div><div class=\"quant\">null</div><div class=\"desc\">desc</div></div></div>";
+		localrand += item;
+	}
+	var screen = document.getElementById("items");
+	screen.innerHTML = localrand;
+	//do minion divs
+	localrand = "";
+	for (i in minions){
+		var item = minions[i];
+		var item = "<div class=\"RDminion\" onclick=\"prints(\'boop\')\" id=\""+item.div+"\"><div class=\"RDpic\"><img src='img/"+item.div+".png'></div><div class=\"itemwords\"><div class=\"name\" style=\"width:100%\">"+item.name+"</div><div class=\"desc\">"+item.desc+"</div></div><div class=\"invis\" style=\"float:left;clear:left;width:50%;height:34px\">Damage: "+item.atk+"<br/>Defence: "+item.def+"</div><div class=\"invis\" style=\"float:left;width:50%;height:34px\">"+item.descdist+" distracting<br/>"+item.descagil+" agile</div><div class=\"invis\" style=\"float:left;clear:left;width:100%;min-height:0\" id=\""+item.div+"hp\"></div></div>";
+		localrand += item;
+	}
+	var screen = document.getElementById("minions");
+	screen.innerHTML = localrand;
 }
 
 function dispminions(){
-    for (i in minions){
-        searching = true;
-        for (n in pla.minions){
-            if (pla.minions[n].name == minions[i].name){searching = false}
-        } 
-        var screen = document.getElementById(minions[i].div);
-        if (searching){
-            //minimize minions[i].div
-            screen.style.maxHeight = "0px";
-            screen.style.border = "0px solid black";
-            screen.style.padding = "0px";
-        } else {
-            screen.style.maxHeight = "99999999999999999999999999999999px";
-            screen.style.border = "1px solid black";
-            screen.style.padding = "2px";
-        }
-    }
+	for (i in minions){
+		searching = true;
+		for (n in pla.minions){
+			if (pla.minions[n].name == minions[i].name){searching = false}
+		} 
+		var screen = document.getElementById(minions[i].div);
+		if (searching){
+			//minimize minions[i].div
+			screen.style.maxHeight = "0px";
+			screen.style.border = "0px solid black";
+			screen.style.padding = "0px";
+		} else {
+			screen.style.maxHeight = "99999999999999999999999999999999px";
+			screen.style.border = "1px solid black";
+			screen.style.padding = "2px";
+		}
+	}
 }
 
 function dispitem(item) {
-    var screen = document.getElementById(item.div);
-    if (item.quant >= 1) {
-        screen.style.height = "50px";
-        screen.style.border = "1px solid black";
-        screen.style.padding = "2px";
-    }
-    else {
-        screen.style.height = "0px";
-        screen.style.border = "0px solid black";
-        screen.style.padding = "0px";
+	var screen = document.getElementById(item.div);
+	if (item.quant >= 1) {
+		screen.style.height = "50px";
+		screen.style.border = "1px solid black";
+		screen.style.padding = "2px";
+	}
+	else {
+		screen.style.height = "0px";
+		screen.style.border = "0px solid black";
+		screen.style.padding = "0px";
 
-    }
-    var quantity = screen.childNodes;
-    quantity = quantity[2].childNodes;
-    quantity[1].innerHTML = item.quant;
+	}
+	var quantity = screen.childNodes;
+	quantity = quantity[2].childNodes;
+	quantity[1].innerHTML = item.quant;
 }
 function RDrefresh() {
-    if (pla.agil[0] >= 100 && pla.agil < 1000){
-        pla.agil[0] = 99
-    }
-    for (i in allitems){dispitem(allitems[i]);}
-    dispminions();
-    //gentables();
-    for (i in pla.minions){
-        var minion = pla.minions[i];
-        screen = document.getElementById(minion.div+minion.id);
-        screen = screen.childNodes;
-        var health = 100*(minion.hp/minion.maxhp);
-        if (health < 0){health = 0;}
-        screen[0].style.width = health + "%";
-        
-    }
-    
-    health = pla.hp;
-    pla.atk = pla.baseatk + equippeditems[0].atk + equippeditems[1].atk;
-    pla.def = pla.basedef + equippeditems[0].def + equippeditems[1].def;
-    pla.agil[0] = pla.baseagil[0] + equippeditems[0].agil + equippeditems[1].agil;
-    sanity = Math.floor(pla.sane + equippeditems[0].sane + equippeditems[1].sane);
-    if (score <0){sanity += score*2}
+	if (pla.agil[0] >= 100 && pla.agil < 1000){
+		pla.agil[0] = 99
+	}
+	for (i in allitems){dispitem(allitems[i]);}
+	dispminions();
+	//gentables();
+	for (i in pla.minions){
+		var minion = pla.minions[i];
+		screen = document.getElementById(minion.div+minion.id);
+		screen = screen.childNodes;
+		var health = 100*(minion.hp/minion.maxhp);
+		if (health < 0){health = 0;}
+		screen[0].style.width = health + "%";
+		
+	}
+	
+	health = pla.hp;
+	pla.atk = pla.baseatk + equippeditems[0].atk + equippeditems[1].atk;
+	pla.def = pla.basedef + equippeditems[0].def + equippeditems[1].def;
+	pla.agil[0] = pla.baseagil[0] + equippeditems[0].agil + equippeditems[1].agil;
+	sanity = Math.floor(pla.sane + equippeditems[0].sane + equippeditems[1].sane);
+	if (score <0){sanity += score*2}
 
-    var screen = document.getElementById("hp");
-    screen.innerHTML = health;
-    screen = document.getElementById("dmg");
-    screen.innerHTML = pla.atk;
-    screen = document.getElementById("dfn");
-    screen.innerHTML = pla.def;
-    screen = document.getElementById("agl");
-    screen.innerHTML = pla.agil[0];
-    screen = document.getElementById("score");
-    screen.innerHTML = score;
-    //screen = document.getElementById("lvl");
-    //screen.innerHTML = pla.lvl;
-    screen = document.getElementById("turn");
-    screen.innerHTML = turn;
+	var screen = document.getElementById("hp");
+	screen.innerHTML = health;
+	screen = document.getElementById("dmg");
+	screen.innerHTML = pla.atk;
+	screen = document.getElementById("dfn");
+	screen.innerHTML = pla.def;
+	screen = document.getElementById("agl");
+	screen.innerHTML = pla.agil[0];
+	screen = document.getElementById("score");
+	screen.innerHTML = score;
+	//screen = document.getElementById("lvl");
+	//screen.innerHTML = pla.lvl;
+	screen = document.getElementById("turn");
+	screen.innerHTML = turn;
 
-    screen = document.getElementById("enmhp");
-    var health = 100*(enm.hp/enm.maxhp);
-    if (health < 0){health = 0;}
-    screen.style.width = health + "%";
-    screen = document.getElementById("plahp");
-    health = 100*(pla.hp/pla.maxhp);
-    if (health < 0){health = 0;}
-    screen.style.width = health + "%";
-    
-    
-    
-    var misc;
-    var item = equippeditems[0];
-    screen = document.getElementById("equip1");
-    var childs = screen.childNodes;
-    
-    misc = childs[3].childNodes;
-    misc[1].innerHTML = item.Name;
-    misc[5].innerHTML = item.atk;
-    misc[9].innerHTML = item.def;
-    item = equippeditems[1];
-    screen = document.getElementById("equip2");
-    childs = screen.childNodes;
-    misc = childs[3].childNodes;
-    misc[1].innerHTML = item.Name;
-    misc[5].innerHTML = item.atk;
-    misc[9].innerHTML = item.def;
-    
-    
+	screen = document.getElementById("enmhp");
+	var health = 100*(enm.hp/enm.maxhp);
+	if (health < 0){health = 0;}
+	screen.style.width = health + "%";
+	screen = document.getElementById("plahp");
+	health = 100*(pla.hp/pla.maxhp);
+	if (health < 0){health = 0;}
+	screen.style.width = health + "%";
+	
+	
+	
+	var misc;
+	var item = equippeditems[0];
+	screen = document.getElementById("equip1");
+	var childs = screen.childNodes;
+	
+	misc = childs[3].childNodes;
+	misc[1].innerHTML = item.Name;
+	misc[5].innerHTML = item.atk;
+	misc[9].innerHTML = item.def;
+	item = equippeditems[1];
+	screen = document.getElementById("equip2");
+	childs = screen.childNodes;
+	misc = childs[3].childNodes;
+	misc[1].innerHTML = item.Name;
+	misc[5].innerHTML = item.atk;
+	misc[9].innerHTML = item.def;
+	
+	
 }
 
 function printa(stuff) {
-    var screen = document.getElementById("roomdesc");
-    screen.innerHTML = stuff;
+	var screen = document.getElementById("roomdesc");
+	screen.innerHTML = stuff;
 }
 function printb(stuff) {
-    var screen = document.getElementById("maindesc");
-    screen.innerHTML = stuff;
+	var screen = document.getElementById("maindesc");
+	screen.innerHTML = stuff;
 }
 function printc(thing, stuff) {
-    switch (thing){
-        case 1:
-            where = "fightdesc";
-            break;
-        default:
-            if (thing == enm || thing in enm.minionTree){
-                where = "enmdesc";
-            } else {where = "pladesc";}
-            break;
-    }
-    var screen = document.getElementById(where);
-    screen.innerHTML = stuff;
+	switch (thing){
+		case 1:
+			where = "fightdesc";
+			break;
+		default:
+			if (thing == enm || thing in enm.minionTree){
+				where = "enmdesc";
+			} else {where = "pladesc";}
+			break;
+	}
+	var screen = document.getElementById(where);
+	screen.innerHTML = stuff;
 }
 function prints(stuff) {
-    if (debuginfo){
-        console.log(stuff);
-    }
+	if (debuginfo){
+		console.log(stuff);
+	}
 }
 
 //Looting and getting items
@@ -1132,16 +1132,16 @@ function RDloot() {
 
 	
 	
-    if (lootable) {
-        gentables();
-        var itemget = lootitems[rand(lootitems.length)-1]
-        if (itemget == rock){
-            Unlock(heatrock);
-        }
+	if (lootable) {
+		gentables();
+		var itemget = lootitems[rand(lootitems.length)-1]
+		if (itemget == rock){
+			Unlock(heatrock);
+		}
 		
-        getitem(itemget);
-        lootable = false;
-    } else {printb("there is nothing to loot here.")}
+		getitem(itemget);
+		lootable = false;
+	} else {printb("there is nothing to loot here.")}
 	
 	
 	if (room == specroom2){
@@ -1164,87 +1164,87 @@ function RDloot() {
 	}
 }
 function getitem(item){
-    item.quant += 1;
-    score += item.score;
-    printb("You found "+item.Name + ".<br/>you place the newfound loot in your backpack.");
-    RDrefresh();
+	item.quant += 1;
+	score += item.score;
+	printb("You found "+item.Name + ".<br/>you place the newfound loot in your backpack.");
+	RDrefresh();
 }
 
 //Everything with equipping
 
 function equip(item) {
-    if (item.quant >= 1) {
-        if (equippeditems[0] == nothing) {equippeditems[0] = item; item.quant -= 1;} 
-        else {if (equippeditems[1] == nothing) {equippeditems[1] = item; item.quant -= 1;} else {console.log("Cannot equip. All equip slots used.")}}
-        
-        var item = equippeditems[0];
-        screen = document.getElementById("equip1");
-        var childs = screen.childNodes;
-        childs[1].innerHTML = "<img src = 'img/" + item.div + ".png'>";
-        
-        var item = equippeditems[1];
-        screen = document.getElementById("equip2");
-        var childs = screen.childNodes;
-        childs[1].innerHTML = "<img src = 'img/" + item.div + ".png'>";
-        
-        
-        RDrefresh();
-    } else {console.log("Cannot equip. Not enough items.")}
+	if (item.quant >= 1) {
+		if (equippeditems[0] == nothing) {equippeditems[0] = item; item.quant -= 1;} 
+		else {if (equippeditems[1] == nothing) {equippeditems[1] = item; item.quant -= 1;} else {console.log("Cannot equip. All equip slots used.")}}
+		
+		var item = equippeditems[0];
+		screen = document.getElementById("equip1");
+		var childs = screen.childNodes;
+		childs[1].innerHTML = "<img src = 'img/" + item.div + ".png'>";
+		
+		var item = equippeditems[1];
+		screen = document.getElementById("equip2");
+		var childs = screen.childNodes;
+		childs[1].innerHTML = "<img src = 'img/" + item.div + ".png'>";
+		
+		
+		RDrefresh();
+	} else {console.log("Cannot equip. Not enough items.")}
 }
 function unequip(number){
-    item = equippeditems[number];
-    equippeditems[number] = nothing;
-    screen = document.getElementById("equip"+(number+1));
-    var childs = screen.childNodes;
-    childs[1].innerHTML = "<img src = 'img/no_thing.png'>";
-    item.quant += 1;
-    prints("Unequipped "+item.Name);
-    RDrefresh();
+	item = equippeditems[number];
+	equippeditems[number] = nothing;
+	screen = document.getElementById("equip"+(number+1));
+	var childs = screen.childNodes;
+	childs[1].innerHTML = "<img src = 'img/no_thing.png'>";
+	item.quant += 1;
+	prints("Unequipped "+item.Name);
+	RDrefresh();
 }
 
 function op(thing) {
-    switch (thing){
-        case "allitems":
-            for (i in allitems) {getitem(allitems[i])}
-            break;
-        case "loot":
-            lootable = 1;
-            RDloot();
-            break;
-        case "revive":
-            pla.hp = pla.maxhp;
-            prints("Revived");
-            enm.hp = 0;
-            plaFight(1);
-            break;
-        case "insane":
-            pla.trueSane = -1;
-            pla.baseatk = 16;
-            pla.ddev = 20;
-            pla.maxhp = 110;
-            pla.baseagil = [2, 25];
-            pla.basedef = -5;
-            break;
-        case "sane":
-            pla.trueSane = 1;
-            pla.maxhp = 110;
-            pla.basedef = 5;
-            pla.healval = 2;
-            pla.ddev = 5;
-            pla.baseagil = [1, 18];
-            break;
-        case "minions":
-            for (var i = 0; i < 3; i++){
-                getMinion(pla, miniminion);
-            }
-            for (i in pla.minions){
-                for (var i = 0; i < 3; i++){
-                    getMinion(pla.minions[i], miniminion);
-                }
-                
-            }
-            break;
-    }
+	switch (thing){
+		case "allitems":
+			for (i in allitems) {getitem(allitems[i])}
+			break;
+		case "loot":
+			lootable = 1;
+			RDloot();
+			break;
+		case "revive":
+			pla.hp = pla.maxhp;
+			prints("Revived");
+			enm.hp = 0;
+			plaFight(1);
+			break;
+		case "insane":
+			pla.trueSane = -1;
+			pla.baseatk = 16;
+			pla.ddev = 20;
+			pla.maxhp = 110;
+			pla.baseagil = [2, 25];
+			pla.basedef = -5;
+			break;
+		case "sane":
+			pla.trueSane = 1;
+			pla.maxhp = 110;
+			pla.basedef = 5;
+			pla.healval = 2;
+			pla.ddev = 5;
+			pla.baseagil = [1, 18];
+			break;
+		case "minions":
+			for (var i = 0; i < 3; i++){
+				getMinion(pla, miniminion);
+			}
+			for (i in pla.minions){
+				for (var i = 0; i < 3; i++){
+					getMinion(pla.minions[i], miniminion);
+				}
+				
+			}
+			break;
+	}
 }
 
 
@@ -1261,206 +1261,206 @@ var plaHeal = 0;
 var plaTotal = 0;
 
 function prepbattle(enemy){
-    search = false
-    enm = enemy;
-    console.log(enm.name);
+	search = false
+	enm = enemy;
+	console.log(enm.name);
 	pla.defending = false
-    var localrand = rand(100);
-    if (localrand == 1){
-        enm.minions.push(alltraps[rand(alltraps.length-1)]);
-    }
-    if (enm.name == zarol.name || enm.name == lastinsanity.name){
-        
-        screen = document.getElementById("RDfight");
-        screen.style.backgroundImage = "url('img/screen"+enm.div+".png')";
-        screen.style.color = "#eef";
-        screen = document.getElementById("enmPic");
-        screen.innerHTML = "";
-    } else {
-        screen = document.getElementById("enmPic");
-        screen.innerHTML = "<img src = 'img/enms/" + enm.div + ".png'>";
-        screen = document.getElementById("RDfight");
-        screen.style.backgroundImage = "url('img/screenmain.png')";
-    }
-    
-    if (enm.name == zarol.name){
-        zarol = buildZarol();
-        enm = zarol
-    }
-    battleprep = 500;
-    printc(1, "");
-    printc(enm, "");
-    printc(pla, "");
-    getMinionTree(pla, 1);
-    pla.minionTree = minionTree;
-    getMinionTree(enm, 1);
-    enm.minionTree = minionTree;
-    for (i in enm.minionTree){
-        enm.minionTree[i].atkInt = rand(enm.minionTree[i].atkIntBase);
-    }
-    for (i in pla.minionTree){
-        pla.minionTree[i].atkInt = rand(pla.minionTree[i].atkIntBase);
-    }
-    return enm.message;
+	var localrand = rand(100);
+	if (localrand == 1){
+		enm.minions.push(alltraps[rand(alltraps.length-1)]);
+	}
+	if (enm.name == zarol.name || enm.name == lastinsanity.name){
+		
+		screen = document.getElementById("RDfight");
+		screen.style.backgroundImage = "url('img/screen"+enm.div+".png')";
+		screen.style.color = "#eef";
+		screen = document.getElementById("enmPic");
+		screen.innerHTML = "";
+	} else {
+		screen = document.getElementById("enmPic");
+		screen.innerHTML = "<img src = 'img/enms/" + enm.div + ".png'>";
+		screen = document.getElementById("RDfight");
+		screen.style.backgroundImage = "url('img/screenmain.png')";
+	}
+	
+	if (enm.name == zarol.name){
+		zarol = buildZarol();
+		enm = zarol
+	}
+	battleprep = 500;
+	printc(1, "");
+	printc(enm, "");
+	printc(pla, "");
+	getMinionTree(pla, 1);
+	pla.minionTree = minionTree;
+	getMinionTree(enm, 1);
+	enm.minionTree = minionTree;
+	for (i in enm.minionTree){
+		enm.minionTree[i].atkInt = rand(enm.minionTree[i].atkIntBase);
+	}
+	for (i in pla.minionTree){
+		pla.minionTree[i].atkInt = rand(pla.minionTree[i].atkIntBase);
+	}
+	return enm.message;
 }
 function enmFight(){
-    RDrefresh();
-    if (battleprep >= 1){battleprep -= 1;}
-    if (battleprep == 0){
-        inbattle = true;
-        battleprep = -1;
-        if (enm.boss == false) {enm.hp = enm.maxhp}
-        //customise fight sceren to enemy
-        printc(enm, enm.cry);
-        screenchange(3);
-    }
-    if (inbattle){
-        enm.atkInt -= 1;
-        var deviation;
-        if (enm.atkInt == 0){
-            enm.atkInt = enm.atkIntBase;
-            
-            if (enm.boss){hpratio = enm.hp/enm.hptop}
-            else {var hpratio = 100*(enm.hp/enm.maxhp);}
-            
-            //Print enemy description based on health
-            if (hpratio < 20){
-                printc(1, enm.rundown[0]);
-            }
-            if (hpratio >= 20 && hpratio < 50){
-                printc(1, enm.rundown[1]);
-            }
-            if (hpratio >= 50 && hpratio < 85){
-                printc(1, enm.rundown[2]);
-            }
-            if (hpratio >= 85 && hpratio <= 100){
-                printc(1, enm.rundown[3]);
-            }
-            if (enm.boss){
-                if (hpratio > 100 && hpratio < 200){
-                    printc(1, enm.rundown[4]);
-                }
-                if (hpratio >= 200){
-                    printc(1, enm.rundown[5]);
-                }
-            }
-            var enmdo = rand(enm.healchance[0]);
-            if (enmdo > enm.healchance[1]){enmdo = "heal"} else {enmdo = "atk";}
-            
-            if (enmdo == "heal"){
-                heal(enm);
-            }
-            
-            var message = "";
-            var dmg = 0;
-            if (enmdo == "atk" && enm.hp > 0){
-                attack(enm, pla);
-            }
-        }
+	RDrefresh();
+	if (battleprep >= 1){battleprep -= 1;}
+	if (battleprep == 0){
+		inbattle = true;
+		battleprep = -1;
+		if (enm.boss == false) {enm.hp = enm.maxhp}
+		//customise fight sceren to enemy
+		printc(enm, enm.cry);
+		screenchange(3);
+	}
+	if (inbattle){
+		enm.atkInt -= 1;
+		var deviation;
+		if (enm.atkInt == 0){
+			enm.atkInt = enm.atkIntBase;
+			
+			if (enm.boss){hpratio = enm.hp/enm.hptop}
+			else {var hpratio = 100*(enm.hp/enm.maxhp);}
+			
+			//Print enemy description based on health
+			if (hpratio < 20){
+				printc(1, enm.rundown[0]);
+			}
+			if (hpratio >= 20 && hpratio < 50){
+				printc(1, enm.rundown[1]);
+			}
+			if (hpratio >= 50 && hpratio < 85){
+				printc(1, enm.rundown[2]);
+			}
+			if (hpratio >= 85 && hpratio <= 100){
+				printc(1, enm.rundown[3]);
+			}
+			if (enm.boss){
+				if (hpratio > 100 && hpratio < 200){
+					printc(1, enm.rundown[4]);
+				}
+				if (hpratio >= 200){
+					printc(1, enm.rundown[5]);
+				}
+			}
+			var enmdo = rand(enm.healchance[0]);
+			if (enmdo > enm.healchance[1]){enmdo = "heal"} else {enmdo = "atk";}
+			
+			if (enmdo == "heal"){
+				heal(enm);
+			}
+			
+			var message = "";
+			var dmg = 0;
+			if (enmdo == "atk" && enm.hp > 0){
+				attack(enm, pla);
+			}
+		}
 
-        for (i in pla.minionTree){
-            var minion = pla.minionTree[i];
-            minion.atkInt -= 1;
-            if (minion.atkInt <= 0){
-                minion.atkInt = minion.atkIntBase;
-                var enmdo = rand(minion.healchance[0]);
-                if (enmdo > minion.healchance[1]){enmdo = "heal"} else {enmdo = "atk";}
-                
-                if (enmdo == "heal"){
-                    heal(minion);
-                }
-                
-                var message = "";
-                var dmg = 0;
-                if (enmdo == "atk" && minion.hp > 0){
-                    attack(minion, enm);
-                }
-            }
-        }
-        for (i in enm.minionTree){
-            var minion = enm.minionTree[i];
-            minion.atkInt -= 1;
-            if (minion.atkInt <= 0){
-                minion.atkInt = minion.atkIntBase;
-                var enmdo = rand(minion.healchance[0]);
-                if (enmdo > minion.healchance[1]){enmdo = "heal"} else {enmdo = "atk";}
-                
-                if (enmdo == "heal"){
-                    heal(minion);
-                }
-                
-                var message = "";
-                var dmg = 0;
-                if (enmdo == "atk" && minion.hp > 0){
-                    attack(minion, pla);
-                }
-            }
-        }
+		for (i in pla.minionTree){
+			var minion = pla.minionTree[i];
+			minion.atkInt -= 1;
+			if (minion.atkInt <= 0){
+				minion.atkInt = minion.atkIntBase;
+				var enmdo = rand(minion.healchance[0]);
+				if (enmdo > minion.healchance[1]){enmdo = "heal"} else {enmdo = "atk";}
+				
+				if (enmdo == "heal"){
+					heal(minion);
+				}
+				
+				var message = "";
+				var dmg = 0;
+				if (enmdo == "atk" && minion.hp > 0){
+					attack(minion, enm);
+				}
+			}
+		}
+		for (i in enm.minionTree){
+			var minion = enm.minionTree[i];
+			minion.atkInt -= 1;
+			if (minion.atkInt <= 0){
+				minion.atkInt = minion.atkIntBase;
+				var enmdo = rand(minion.healchance[0]);
+				if (enmdo > minion.healchance[1]){enmdo = "heal"} else {enmdo = "atk";}
+				
+				if (enmdo == "heal"){
+					heal(minion);
+				}
+				
+				var message = "";
+				var dmg = 0;
+				if (enmdo == "atk" && minion.hp > 0){
+					attack(minion, pla);
+				}
+			}
+		}
 
-        if (enm.name == "Adventurer" || enm.name == "Yourself"){
-            plaTime += 1;
-        }
+		if (enm.name == "Adventurer" || enm.name == "Yourself"){
+			plaTime += 1;
+		}
 
-        if (enm == unacceptable){
-            localrand = rand(75);
-            if (localrand == 1){
-                getMinion(enm, cresword);
-            }
-            if (localrand == 2){
-                getMinion(enm, creshield);
-            }
-        }
+		if (enm == unacceptable){
+			localrand = rand(75);
+			if (localrand == 1){
+				getMinion(enm, cresword);
+			}
+			if (localrand == 2){
+				getMinion(enm, creshield);
+			}
+		}
 
-    }
-    if (dodging && monolithTime >= 0) {
-        monolithTime -= 1;
-        var monoPer = 100 * ((monolithOrig - monolithTime)/monolithOrig);
-        prints(monoPer);
-        monoAnimation(Math.floor(monoPer), 4);
-        if (monolithTime <= 0) {
-            prints("Monolith touch");
-            dodging = false;
-            score -= 10;
-            turn = checkpoint;
-            pla.hp = 100;
-            unequip(0);
-            unequip(1);
-            for (i in allitems) {allitems[i].quant = 0;}
-            for (i in bosses) {bosses[i].hp = bosses[i].rehp}
-            genRoom();
-            screenchange(1);
-        }
-    }
-    if (gravetime > 0){
-        gravetime -= 1;
-        if (gravetime == 0){
-            limbob(limbostuff[0], limbostuff[1]);
-        }
-    }
+	}
+	if (dodging && monolithTime >= 0) {
+		monolithTime -= 1;
+		var monoPer = 100 * ((monolithOrig - monolithTime)/monolithOrig);
+		prints(monoPer);
+		monoAnimation(Math.floor(monoPer), 4);
+		if (monolithTime <= 0) {
+			prints("Monolith touch");
+			dodging = false;
+			score -= 10;
+			turn = checkpoint;
+			pla.hp = 100;
+			unequip(0);
+			unequip(1);
+			for (i in allitems) {allitems[i].quant = 0;}
+			for (i in bosses) {bosses[i].hp = bosses[i].rehp}
+			genRoom();
+			screenchange(1);
+		}
+	}
+	if (gravetime > 0){
+		gravetime -= 1;
+		if (gravetime == 0){
+			limbob(limbostuff[0], limbostuff[1]);
+		}
+	}
 }
 var checkpoint = 0
 function plaFight(watdo){
-    RDrefresh();
-    switch (watdo){
-        //attacking
-        case 1:
+	RDrefresh();
+	switch (watdo){
+		//attacking
+		case 1:
 			pla.defending = false
 			prints("player is no longer defending")
-            if (pla.hp > 0){
-                if (enm.name == "Adventurer" || enm.name == "Yourself"){
-                    plaTotal += 1;
-                }
-                attack(pla, enm);
-            }
-            break;
-        //healing
-        case 2:
-            heal(pla);
-            if (enm.name == "Adventurer" || enm.name == "Yourself"){
-                plaHeal += 1;
-                plaTotal += 1;
-            }
-            break;
+			if (pla.hp > 0){
+				if (enm.name == "Adventurer" || enm.name == "Yourself"){
+					plaTotal += 1;
+				}
+				attack(pla, enm);
+			}
+			break;
+		//healing
+		case 2:
+			heal(pla);
+			if (enm.name == "Adventurer" || enm.name == "Yourself"){
+				plaHeal += 1;
+				plaTotal += 1;
+			}
+			break;
 		//defending
 		case 3:
 			if (pla.hp > 0){
@@ -1468,7 +1468,7 @@ function plaFight(watdo){
 			}
 			prints("player is Defending")
 			break;
-    }
+	}
 	if (pla.defending == true) {
 		if (pla.def < 0){
 			pla.defmod = .5;
@@ -1478,216 +1478,216 @@ function plaFight(watdo){
 
 
 function attack(source, target){
-    var attacking = true;
-    for (i in target.minions){
-        var minion = target.minions[i];
-        if (rand(100) <= minion.dist && attacking){
-            attack(source, minion);
-            if (minion.hp <= 0) {
-                killMinion(target, minion);
-                getMinionTree(enm, 1);
-                enm.minionTree = minionTree;
-                getMinionTree(pla, 1);
-                pla.minionTree = minionTree;
-            }
-            attacking = false;
-        }
-    } if (attacking) {
-        Damage(source, target);
-        check(target);
-        attacking = false;
-    }
+	var attacking = true;
+	for (i in target.minions){
+		var minion = target.minions[i];
+		if (rand(100) <= minion.dist && attacking){
+			attack(source, minion);
+			if (minion.hp <= 0) {
+				killMinion(target, minion);
+				getMinionTree(enm, 1);
+				enm.minionTree = minionTree;
+				getMinionTree(pla, 1);
+				pla.minionTree = minionTree;
+			}
+			attacking = false;
+		}
+	} if (attacking) {
+		Damage(source, target);
+		check(target);
+		attacking = false;
+	}
 }
 function Damage(source, target){
-    var message;
-    var newagil = [((target.agil[0]*source.agil[1])-((source.agil[0]*target.agil[1])/2)), (target.agil[1]*source.agil[1])];
-    prints(newagil);
-    if (rand(newagil[1]) <= newagil[0]){
-        message = target.name + " dodged "+ source.name +"'s attack";
-    } else {
-        var deviation = rand(source.ddev * 2)- source.ddev;
-        var dmg = ((source.atk * source.atkmod)+deviation)-(target.def * target.defmod);
+	var message;
+	var newagil = [((target.agil[0]*source.agil[1])-((source.agil[0]*target.agil[1])/2)), (target.agil[1]*source.agil[1])];
+	prints(newagil);
+	if (rand(newagil[1]) <= newagil[0]){
+		message = target.name + " dodged "+ source.name +"'s attack";
+	} else {
+		var deviation = rand(source.ddev * 2)- source.ddev;
+		var dmg = ((source.atk * source.atkmod)+deviation)-(target.def * target.defmod);
 		if (target.defending){
 			dmg = Math.floor(dmg/1.5);
 			if (dmg < 0) {dmg = 0;}
 		} else {
 			if (dmg <= 0){dmg = 1;}
 		}
-        message = source.name+" deals <strong>"+dmg+"</strong> damage to "+ target.name;
-        target.hp = target.hp-dmg;
-    }
-    printc(target, message);
-    prints(message);
+		message = source.name+" deals <strong>"+dmg+"</strong> damage to "+ target.name;
+		target.hp = target.hp-dmg;
+	}
+	printc(target, message);
+	prints(message);
 }
 var minionTree = [];
 function getMinionTree(entity, type){
-    switch(type){
-        case 2:
-            if (entity.minions.length > 0){
-                for (i in entity.minions){
-                    minionTree.push(entity.minions[i]);
-                    if (entity.minions[i].minions.length > 0 ){
-                        getMinionTree(entity.minions[i], 2);
-                    }
-                }
-                return minionTree;
-            }
-            break;
-        case 1:
-            minionTree = [];
-            getMinionTree(entity, 2);
-            return minionTree;
-    }
+	switch(type){
+		case 2:
+			if (entity.minions.length > 0){
+				for (i in entity.minions){
+					minionTree.push(entity.minions[i]);
+					if (entity.minions[i].minions.length > 0 ){
+						getMinionTree(entity.minions[i], 2);
+					}
+				}
+				return minionTree;
+			}
+			break;
+		case 1:
+			minionTree = [];
+			getMinionTree(entity, 2);
+			return minionTree;
+	}
 }
 function killMinion(source, minion){
-    for (i in source.minions){
-        if (source.minions[i] == minion){
-            if (source == pla){
-                var element = document.getElementById(minion.div+minion.id);
-                prints(element);
-                element.parentNode.removeChild(element);
-            }
-            printc(minion, source.name+"'s "+ minion.name+ " is dead.");
-            prints(source.name+"'s "+ minion.name+ " is dead.");
-            source.minions.splice(i, 1);
-        }
-    }
+	for (i in source.minions){
+		if (source.minions[i] == minion){
+			if (source == pla){
+				var element = document.getElementById(minion.div+minion.id);
+				prints(element);
+				element.parentNode.removeChild(element);
+			}
+			printc(minion, source.name+"'s "+ minion.name+ " is dead.");
+			prints(source.name+"'s "+ minion.name+ " is dead.");
+			source.minions.splice(i, 1);
+		}
+	}
 }
 round = 0
 function check(entity){
-    if (entity.hp <= 0){
-        if (entity.name == enm.name && inbattle){
-            inbattle = false;
-            message = "You Kill the enemy.";
-            entity.minions = [];
-            score += 1;
-            pla.sane -= 1;
-            pla.sane += entity.sane; 
-            if (entity.boss == 1){
-                if (entity == creepiestbaldest){
-                    roomgen()
+	if (entity.hp <= 0){
+		if (entity.name == enm.name && inbattle){
+			inbattle = false;
+			message = "You Kill the enemy.";
+			entity.minions = [];
+			score += 1;
+			pla.sane -= 1;
+			pla.sane += entity.sane; 
+			if (entity.boss == 1){
+				if (entity == creepiestbaldest){
+					roomgen()
 					getitem(bossrushtrophy)
 					
-                    //bossrush end stuffs here
-                }
+					//bossrush end stuffs here
+				}
 
 
 
-                if (entity.name == "Zarol"){
-                    
-                    limbo(1, "At the moment of your victory, a swirling vortex of malevolence forms. You attempt in vain to escape it, but you are not yet strong enough. You find yourself in a familiar place...");
-                    
-                }
-               
-                if (entity.name !== "Xissor" || entity.name !== "The Other Xissor" || entity.name !== "True Insanity" || entity.name !== "True Sanity" || entity.name !== "Zarol" || entity.name !== "epicalpha" || entity.name !== "epiccoo" || entity.name !== "epicjim" || entity.name !== "unacceptable"){
-                    checkpoint = entity.turn;
-                }
-                    
-                var localrand = rand(4);
-                if (localrand == 1){
-                    message += "<br/>You Claim your rare prize.";
-                    getitem(entity.loot2);
-                } else {
-                     message += "<br/>You Claim your prize.";
-                    getitem(entity.loot);
-                }
-                bossesbeat += 1;
-               
-                if (entity.name == "Adventurer" || entity.name == "Yourself"){
-                    RDrefresh();
-                    prints("Recreating Adventurer.");
-                    var miscA;
-                    var miscB;
-                    if (equippeditems[0] == nothing){miscA = herosword} else {miscA = equippeditems[0]}
-                    if (equippeditems[1] == nothing){miscB = heroshield} else {miscB = equippeditems[1]}
-                    //function Boss(    hp,         atk,        de,      name,      divname,    maxhp,      ddev, atkgil, heal, sane, loot, loot2, turn, message, cry, rundown, room, interval){
-                    bosses[0] = new Boss(pla.maxhp, pla.atk, pla.def, "Yourself", "adventurer", pla.maxhp, pla.ddev, pla.agil, [plaTotal, plaTotal-plaHeal+1, 4], sanity, miscA, miscB, 10, "You hear the footsteps of someone else.", "It is an Adventurer,  Readying his stance for Battle!", ["He seems oddly unaware of the massive ammounts of damage you have delt him. Much like you were.", "", "", "", "He seems more confident of himself, more sure of his strides.",""], bossroom, (Math.floor(plaTime/plaTotal)));
-                    bosses[0].minions = pla.minions;
-                }
-                if (entity.name == "Last Remnants of Sanity") {
-                    pla.trueSane = -1;
-                    pla.baseatk = 16;
-                    pla.ddev = 20;
-                    pla.maxhp = 110;
-                    pla.baseagil = [2, 25];
-                    pla.basedef = -5;
-                }
-                if (entity.name == "Last Remnants of Insanity") {
-                    pla.trueSane = 1;
-                    pla.maxhp = 110;
-                    pla.basedef = 5;
-                    pla.healval = 2;
-                    pla.ddev = 5;
-                    pla.baseagil = [1, 18];
-                }
-                if (entity == epicjim) {
-                    Unlock(shieldbadge);
-                }
-            }
-            screenchange(1);
-            printb(message);
-            if (room == specroom1 && enm.hp <= 0){
-                round += 1
-                if (round > bosses.length-1){
-                    roomgen()
-                    round = 0
-                }
-                prepbattle(bosses[round])
-            }
-            if (room == room38 && enm.hp <= 0){
-                round += 1
-                if (round < 31){
-                    prepbattle(terracotta)
-                } else{
-                    roomgen()
-                    round = 0;
-                    //terracotta end here.
-                }
-                
-            }
-        }
-        if (entity.name == pla.name){
-            printc(pla, "The enemy Kills you.");
-            inbattle = false;
-            RDrefresh();
-           
-            if (enm.name == "Zarol"){
-                limbo(1, "At the moment of your death, a swirling vortex of malevolence forms. You attempt in vain to escape it, but you are not yet strong enough. You find yourself in a familiar place...");
-                screen = document.getElementById("RDfight");
-                screen.style.backgroundImage = "url('img/screenmain.png')";
-            } else {limbo(0, "After experiencing a moment of extreme pain due to your inevitable death, you find yourself in a suprisingly calm dark space. The only landmarks are a large cliff dropping off into endlessness infront of you, and strange floating structures to high for you to reach. You realize that there is only one thing you can do....");}
-        }
-        if (entity in pla.minions){
-           killMinion(entity.id, 1);
-        }
-    }
+				if (entity.name == "Zarol"){
+					
+					limbo(1, "At the moment of your victory, a swirling vortex of malevolence forms. You attempt in vain to escape it, but you are not yet strong enough. You find yourself in a familiar place...");
+					
+				}
+			   
+				if (entity.name !== "Xissor" || entity.name !== "The Other Xissor" || entity.name !== "True Insanity" || entity.name !== "True Sanity" || entity.name !== "Zarol" || entity.name !== "epicalpha" || entity.name !== "epiccoo" || entity.name !== "epicjim" || entity.name !== "unacceptable"){
+					checkpoint = entity.turn;
+				}
+					
+				var localrand = rand(4);
+				if (localrand == 1){
+					message += "<br/>You Claim your rare prize.";
+					getitem(entity.loot2);
+				} else {
+					 message += "<br/>You Claim your prize.";
+					getitem(entity.loot);
+				}
+				bossesbeat += 1;
+			   
+				if (entity.name == "Adventurer" || entity.name == "Yourself"){
+					RDrefresh();
+					prints("Recreating Adventurer.");
+					var miscA;
+					var miscB;
+					if (equippeditems[0] == nothing){miscA = herosword} else {miscA = equippeditems[0]}
+					if (equippeditems[1] == nothing){miscB = heroshield} else {miscB = equippeditems[1]}
+					//function Boss(	hp,		 atk,		de,	  name,	  divname,	maxhp,	  ddev, atkgil, heal, sane, loot, loot2, turn, message, cry, rundown, room, interval){
+					bosses[0] = new Boss(pla.maxhp, pla.atk, pla.def, "Yourself", "adventurer", pla.maxhp, pla.ddev, pla.agil, [plaTotal, plaTotal-plaHeal+1, 4], sanity, miscA, miscB, 10, "You hear the footsteps of someone else.", "It is an Adventurer,  Readying his stance for Battle!", ["He seems oddly unaware of the massive ammounts of damage you have delt him. Much like you were.", "", "", "", "He seems more confident of himself, more sure of his strides.",""], bossroom, (Math.floor(plaTime/plaTotal)));
+					bosses[0].minions = pla.minions;
+				}
+				if (entity.name == "Last Remnants of Sanity") {
+					pla.trueSane = -1;
+					pla.baseatk = 16;
+					pla.ddev = 20;
+					pla.maxhp = 110;
+					pla.baseagil = [2, 25];
+					pla.basedef = -5;
+				}
+				if (entity.name == "Last Remnants of Insanity") {
+					pla.trueSane = 1;
+					pla.maxhp = 110;
+					pla.basedef = 5;
+					pla.healval = 2;
+					pla.ddev = 5;
+					pla.baseagil = [1, 18];
+				}
+				if (entity == epicjim) {
+					Unlock(shieldbadge);
+				}
+			}
+			screenchange(1);
+			printb(message);
+			if (room == specroom1 && enm.hp <= 0){
+				round += 1
+				if (round > bosses.length-1){
+					roomgen()
+					round = 0
+				}
+				prepbattle(bosses[round])
+			}
+			if (room == room38 && enm.hp <= 0){
+				round += 1
+				if (round < 31){
+					prepbattle(terracotta)
+				} else{
+					roomgen()
+					round = 0;
+					//terracotta end here.
+				}
+				
+			}
+		}
+		if (entity.name == pla.name){
+			printc(pla, "The enemy Kills you.");
+			inbattle = false;
+			RDrefresh();
+		   
+			if (enm.name == "Zarol"){
+				limbo(1, "At the moment of your death, a swirling vortex of malevolence forms. You attempt in vain to escape it, but you are not yet strong enough. You find yourself in a familiar place...");
+				screen = document.getElementById("RDfight");
+				screen.style.backgroundImage = "url('img/screenmain.png')";
+			} else {limbo(0, "After experiencing a moment of extreme pain due to your inevitable death, you find yourself in a suprisingly calm dark space. The only landmarks are a large cliff dropping off into endlessness infront of you, and strange floating structures to high for you to reach. You realize that there is only one thing you can do....");}
+		}
+		if (entity in pla.minions){
+		   killMinion(entity.id, 1);
+		}
+	}
 }
 
 
 
 function heal(entity){
-    if (entity == pla && pla.hp > 0){
-        if (inbattle){
-            var heal = pla.healval + rand(2*pla.hdev)-pla.hdev;
-            pla.hp = pla.hp+heal;
-            prints(" you heal "+heal+" hp!");
-            if (pla.hp > pla.maxhp){pla.hp = pla.maxhp}
-        }
-        if (healable && !inbattle){
-            var heal = pla.healval*10 + rand(4*pla.hdev)-pla.hdev;
-            pla.hp = pla.hp+heal;
-            pla.sane += 0.2;
-            prints(" you heal "+heal+" hp!");
-            if (pla.hp > pla.maxhp){pla.hp = pla.maxhp}
-            healable = false;
-        }
-    } else {
-        if (entity.hp + entity.heal > entity.maxhp){
-            healval = entity.maxhp - entity.hp;
-        } else {healval = entity.heal}
-        entity.hp = entity.hp+healval;
-        printc(entity, entity.name + " heals <strong>"+ healval+ "</strong> hp");
-    }
+	if (entity == pla && pla.hp > 0){
+		if (inbattle){
+			var heal = pla.healval + rand(2*pla.hdev)-pla.hdev;
+			pla.hp = pla.hp+heal;
+			prints(" you heal "+heal+" hp!");
+			if (pla.hp > pla.maxhp){pla.hp = pla.maxhp}
+		}
+		if (healable && !inbattle){
+			var heal = pla.healval*10 + rand(4*pla.hdev)-pla.hdev;
+			pla.hp = pla.hp+heal;
+			pla.sane += 0.2;
+			prints(" you heal "+heal+" hp!");
+			if (pla.hp > pla.maxhp){pla.hp = pla.maxhp}
+			healable = false;
+		}
+	} else {
+		if (entity.hp + entity.heal > entity.maxhp){
+			healval = entity.maxhp - entity.hp;
+		} else {healval = entity.heal}
+		entity.hp = entity.hp+healval;
+		printc(entity, entity.name + " heals <strong>"+ healval+ "</strong> hp");
+	}
 }
 
 var dodging = false;
@@ -1699,127 +1699,127 @@ var monolithOrig = monolithTime;
 var limbostuff = [0, ""];
 
 function limbo(type, message){
-    var thing = document.getElementById("grave2");
-    suffix = [["You where brutaly evicerated by ", "."], ["You were slain by ", ". It mocks your death"],["You where killed by ",". The gods did not favor you today."], ["Your futile exsistance was ended by ", "."],["You where kneecaped by ", ". The cats will miss you."], ["You are dead. "," mocks your death and thinks 'hey, that was easy'."], ["Sometimes, you are favored by the gods. ", " was favored this time."], ["Your entrails where removed by ", "."], ["Your face was torn off by ", "."], ["You were fast, but ", " was faster"], ["You have lost. ", " aplauds your failure."]];
-    prefix = suffix[rand(suffix.length-1)];
-    thing.innerHTML = prefix[0] + enm.name + prefix[1];
-    gravetime = 500;
-    screenchange(6);
-    limbostuff = [type, message];
+	var thing = document.getElementById("grave2");
+	suffix = [["You where brutaly evicerated by ", "."], ["You were slain by ", ". It mocks your death"],["You where killed by ",". The gods did not favor you today."], ["Your futile exsistance was ended by ", "."],["You where kneecaped by ", ". The cats will miss you."], ["You are dead. "," mocks your death and thinks 'hey, that was easy'."], ["Sometimes, you are favored by the gods. ", " was favored this time."], ["Your entrails where removed by ", "."], ["Your face was torn off by ", "."], ["You were fast, but ", " was faster"], ["You have lost. ", " aplauds your failure."]];
+	prefix = suffix[rand(suffix.length-1)];
+	thing.innerHTML = prefix[0] + enm.name + prefix[1];
+	gravetime = 500;
+	screenchange(6);
+	limbostuff = [type, message];
 }
 
 function limbob(type, message){
-    roommessage = "";
-    switch (type) {
-        //normal death
-        case 0:
-            score -= 1;
-            pla.sane -= 5;
-            if (checkpoint < 0){
-                checkpoint = 1
-            }
-            
-            turn = checkpoint;
-            if (turn < -2) {turn = -2}
-            pla.hp = 80+rand(20);
-            var screen = document.getElementById("limbotext");
-            screen.innerHTML = message;
-            
-            if (sanity < 0){
-                //if (rand(100) <= sanity*-1){
-                    //monolith spawn.
-                    console.log("Monolith spawn");
-                    dodging = true;
-                    dodged = 0;
-                    monolithTime = 1500 + (sanity * 1.5);
-                    if (monolithTime <= 1){monolithTime = 5}
-                    monolithOrig = monolithTime;
-                    var screen = document.getElementById("RDmono");
-                    screen.style.backgroundImage = "url('img/monoAnimation/mono1.png')";
-                    screenchange(5);
-                //}
-                
-            } else {
-                screenchange(4);
-            }
-            
-            break;
-        //anything zarol
-        case 1:
-            if (enm.hp <= 0){
-                runs += 1;
-                if (runs == 1){
-                    Unlock(oddplug);
-                }
+	roommessage = "";
+	switch (type) {
+		//normal death
+		case 0:
+			score -= 1;
+			pla.sane -= 5;
+			if (checkpoint < 0){
+				checkpoint = 1
+			}
+			
+			turn = checkpoint;
+			if (turn < -2) {turn = -2}
+			pla.hp = 80+rand(20);
+			var screen = document.getElementById("limbotext");
+			screen.innerHTML = message;
+			
+			if (sanity < 0){
+				//if (rand(100) <= sanity*-1){
+					//monolith spawn.
+					console.log("Monolith spawn");
+					dodging = true;
+					dodged = 0;
+					monolithTime = 1500 + (sanity * 1.5);
+					if (monolithTime <= 1){monolithTime = 5}
+					monolithOrig = monolithTime;
+					var screen = document.getElementById("RDmono");
+					screen.style.backgroundImage = "url('img/monoAnimation/mono1.png')";
+					screenchange(5);
+				//}
+				
+			} else {
+				screenchange(4);
+			}
+			
+			break;
+		//anything zarol
+		case 1:
+			if (enm.hp <= 0){
+				runs += 1;
+				if (runs == 1){
+					Unlock(oddplug);
+				}
 
-                if (runs == 2){
-                    Unlock(cresentstone);
-                }
-            }
-            
-            score += 10;
-            turn = 0;
-            checkpoint = 0
-            pla.sane = pla.sane / 1.1
-            pla.hp = 100
-            unequip(0);
-            unequip(1);
-            var screen = document.getElementById("limbotext");
-            screen.innerHTML = message;
-            for (i in allitems) {
-                allitems[i].quant = 0;
-            }
-            coosomes = [coo33, coosome, colton];
-            bosses[1] = coosomes[rand(3)-1]
-            for (i in bosses) {bosses[i].hp = bosses[i].rehp}
-            //for (i in pla.minions){killMinion(pla, pla.minions[0])}
-            for (var i = 0; i < 28+(runs*2); i++){
-                getMinion(strangecube, cube);
-            }
-            localrand = pla.minions.length;
-            for (var i = 0; i < localrand; i ++){
-                killMinion(pla, pla.minions[0]);
-            }
-            screenchange(4);
-            break;
-        //jumping
-        case 2:
-            genRoom();
-            screenchange(1);
-            break;
-        //dodging monoliths
-        case 3:
-            dodged += 1;
-            var buton = document.getElementById("dodger");
-            buton.style.margin = (rand(15)-1) + "% 0 0 " + (rand(80)-1) + "%";
-            buton = document.getElementById("dodgeButton");
-            buton.innerHTML = runmessages[rand(runmessages.length-1)];
-            if (dodged == 5){
-                dodging = false
-                dodged = 0;
-                monolithTime = 1500;
-                turn = checkpoint;
-                genRoom();
-                screenchange(1);
-                currentFram = 1;
-            }
-            break;
-        default:
-            console.log("you called the limbo case wrong somehow");
-            break;
-    }
+				if (runs == 2){
+					Unlock(cresentstone);
+				}
+			}
+			
+			score += 10;
+			turn = 0;
+			checkpoint = 0
+			pla.sane = pla.sane / 1.1
+			pla.hp = 100
+			unequip(0);
+			unequip(1);
+			var screen = document.getElementById("limbotext");
+			screen.innerHTML = message;
+			for (i in allitems) {
+				allitems[i].quant = 0;
+			}
+			coosomes = [coo33, coosome, colton];
+			bosses[1] = coosomes[rand(3)-1]
+			for (i in bosses) {bosses[i].hp = bosses[i].rehp}
+			//for (i in pla.minions){killMinion(pla, pla.minions[0])}
+			for (var i = 0; i < 28+(runs*2); i++){
+				getMinion(strangecube, cube);
+			}
+			localrand = pla.minions.length;
+			for (var i = 0; i < localrand; i ++){
+				killMinion(pla, pla.minions[0]);
+			}
+			screenchange(4);
+			break;
+		//jumping
+		case 2:
+			genRoom();
+			screenchange(1);
+			break;
+		//dodging monoliths
+		case 3:
+			dodged += 1;
+			var buton = document.getElementById("dodger");
+			buton.style.margin = (rand(15)-1) + "% 0 0 " + (rand(80)-1) + "%";
+			buton = document.getElementById("dodgeButton");
+			buton.innerHTML = runmessages[rand(runmessages.length-1)];
+			if (dodged == 5){
+				dodging = false
+				dodged = 0;
+				monolithTime = 1500;
+				turn = checkpoint;
+				genRoom();
+				screenchange(1);
+				currentFram = 1;
+			}
+			break;
+		default:
+			console.log("you called the limbo case wrong somehow");
+			break;
+	}
 }
 
 currentFram = 1;
 function monoAnimation(percentage, frams){
 
-    if (percentage == (100/frams) * currentFram){
-        
-        var screen = document.getElementById("RDmono");
-        screen.style.backgroundImage = "url('img/monoAnimation/mono" + currentFram + ".png')";
-        currentFram += 1;
-        prints(screen);
-    }
+	if (percentage == (100/frams) * currentFram){
+		
+		var screen = document.getElementById("RDmono");
+		screen.style.backgroundImage = "url('img/monoAnimation/mono" + currentFram + ".png')";
+		currentFram += 1;
+		prints(screen);
+	}
 }
 
 
