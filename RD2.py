@@ -4,8 +4,10 @@ from pygame.locals import *
 import math
 
 #look for:   #VISUALS   to find where HTML visuals were removed
+debug = True
 
 BLACK = (0, 0, 0)
+BLIMBO = (34, 34, 34)
 WHITE = (255, 255, 255)
 BLUE = (0, 0, 220)
 GREEN = (0, 255, 0)
@@ -19,10 +21,10 @@ size = (995, 259)
 font = pygame.font.SysFont('couriernew', 13)
 fontComp = pygame.font.SysFont('couriernew', 16, True)
 smallfont = pygame.font.SysFont('couriernew', 12)
+massive = pygame.font.SysFont('couriernew', 200, True)
 
 screen = pygame.display.set_mode(size)
 clock = pygame.time.Clock()
-debug = True
 
 invenItems = []
 scrollMod = 0
@@ -45,8 +47,19 @@ roommessage = ""
 search = True
 battleprep = -1
 inbattle = False
+checkpoint = 0
+bossesbeat = 0
+running = True
+Screen = 1
+mouse_down = False
 #reAdventurer stuff
 plaTime = 0
+plaatk1 = 0
+plaatk2 = 0
+pladfn = 0
+plaheal = 0
+plaTotal = 1
+
 
 #two sets of coord pairs
 def hitdetect(p1, p2, p3, p4 = None):
@@ -76,6 +89,13 @@ melImg = getImg("special/melee")
 me2Img = pygame.transform.scale(melImg, (50, 50)) #probably make special img
 pasImg = getImg("special/passive")
 prjImg = getImg("special/projectile")
+#Screens
+Smain = getImg("screens/screenmain")
+Sgrave = getImg("screens/gravestone")
+Scompass = getImg("screens/compass")
+Sinsane = getImg("screens/screenlastinsanity")
+Szarol = getImg("screens/screenzarol")
+Sbattle = Smain
 		
 def prints(stuff):
 	global debug
@@ -176,6 +196,11 @@ TM1 = DispObj(wraptext("", 900, font, True), (10, 10), False, (900, 120)) #main 
 TM2 = DispObj(wraptext("", 900, font, True), (10, 130), False, (900, 119)) #room responses
 ItemsDisp = DispObj([], (115, 10), False, (370, 239)) #Inventory items display
 TI1 = None
+TL1 = DispObj([DispObj(Sgrave), 
+	DispObj(fontComp.render("RIP", False, (0, 0, 0)), (88, 30)), 
+	DispObj(wraptext("You are dead. Not big surprise.", 150, font, True), (26, 48), False, (150, 200))
+], (397, 9), False, (200, 250)) #gravestone
+TL2 = DispObj(font.render("RUN DUDE, RUN!!", True, (250, 250, 250)), (428, 120)) #Dodge button
 
 class ItemDisp(object):
 	def refresh(self, type):
@@ -429,10 +454,10 @@ class ItemDisp(object):
 				pygame.draw.rect(self.fight.all[0].img, LGREY, (50, 0, 2, 52))
 				pygame.draw.rect(self.fight.all[0].img, BLUE, (50, 52, 2, (self.item.ammo/self.item.maxammo)*(-52)))#ammo
 				pygame.draw.rect(self.fight.all[0].img, LGREY, (0, 50, 50, 2))
-				pygame.draw.rect(self.fight.all[0].img, GREEN, (0, 50, (self.item.durability/self.item.maxdur)*50, 2))#dura
+				pygame.draw.rect(self.fight.all[0].img, GREEN, (0, 50, (float(self.item.durability)/self.item.maxdur)*50, 2))#dura
 			else:
 				pygame.draw.rect(self.fight.all[0].img, LGREY, (0, 50, 52, 2))
-				pygame.draw.rect(self.fight.all[0].img, GREEN, (0, 50, (self.item.durability/self.item.maxdur)*52, 2))#dura
+				pygame.draw.rect(self.fight.all[0].img, GREEN, (0, 50, (float(self.item.durability)/self.item.maxdur)*52, 2))#dura
 			self.fight.refresh()
 			
 		if type == 3:
@@ -709,7 +734,7 @@ shurikenbag = Item([atkChunk(35, 25, False, False, 1, 5, {"sweeping":5}), atkChu
 
 #JIM GRIND
 #jimsword = item(25, 5, -5, 0, 10, "Jim's Sword", "jimsword", "")
-jimsword = Item([atkChunk(25, 20, True, False, 0, None, {"heavy":3})], [dfnChunk(-20, None), dfnChunk(-20, 4, True)], 500, 0, 10, "Jim's Sword", "An incredibly heavy weapon, you can barely pick it up off the ground; you also wonder how that man could toss it around.", "jimsword", -1)
+jimsword = Item([atkChunk(25, 20, True, False, 0, None, {"heavy":3})], [dfnChunk(-20, None), dfnChunk(-20, 4, True)], 1000, 0, 10, "Jim's Sword", "An incredibly heavy weapon, you can barely pick it up off the ground; you also wonder how that man could toss it around.", "jimsword", -1)
 jimarmor = Item([], [dfnChunk(-10, 5, False, True), dfnChunk(-20), dfnChunk(-5, 8, True, True, None, {"layered":[75, 3]}), dfnChunk(-5, 25, True, False, None, {"trueProtection":True, "thorns":atkChunk(5, 0, False)})], 500, -2, 10, "Enchanted Armor", "Glimmering metallic armor, Material flowing smoothly within it to fill the gaps in its structure.", "jimarmor", -1, False, None, [], {"mending":[5, 4]})
 #hatandboots = item(5, 50, 8, 0, 10, "Hat and Boots", "hatandboots", "Can't Bump your head anymore, and probably won't stub your toes.")
 communism = Item([atkChunk(80, 100, True, False, 2, 1, {"heavy":2}), atkChunk(5, -10)], [], 100, 4, 10, "Crossbow", "An intricate, heavy crossbow with an ingraved name: 'Communism mk. II'", "communism", -1, True, 1, [500, 1])
@@ -734,7 +759,7 @@ class Player(object):
 		self.dmg = 8
 		self.dfn = 0
 		self.passdfn = []
-		self.ddev = 6
+		self.ddev = 3
 		self.heal = 1
 		self.maxhp = 100
 		self.hdev = 3
@@ -767,7 +792,7 @@ bosses = []
 class Enm(object):
 	#enemy base:	   atk, de, name, pic, maxhp, ddev, agil, sane, message, cry, lvl, rundown, heal, interval, equip = [nothing]
 	#boss base:		hp, atk,   de,  name, img, maxhp, ddev, agil, heal, sane, loot, loot2, turn, message, cry, rundown, room, interval, equip = [nothing] #NEW INTERVALS NEED TO BE HALF ORIGONAL
-	def __init__(self, hp, maxhp, atk, ddev, dfn, agil, heal, sane, name, img, message, cry, rundown, interval, actions = [], equip = [nothing], Boss = False, room = None, turn = -1):
+	def __init__(self, hp, maxhp, atk, ddev, dfn, agil, heal, sane, name, img, message, cry, rundown, interval, actions = [], equip = [nothing], Boss = False, room = None, turn = -1, toappend = True):
 		self.hp = float(hp) #initial
 		self.maxhp = maxhp #max
 		self.hptop = hp #
@@ -795,8 +820,9 @@ class Enm(object):
 		if self.boss:
 			self.room = room
 			self.turn = turn
-			global bosses
-			bosses.append(self)
+			if toappend:
+				global bosses
+				bosses.append(self)
 		
 		self.actions = actions
 		self.totalact = 0
@@ -811,7 +837,7 @@ creepybaldguy = Enm(18, 18, 5, 2, 10, [1, 100], 4, -1, "Creepy Bald Guy", "creep
 enm = creepybaldguy
 
 #bosses
-adventurer = Enm(190, 190, 20, 5, 0, [5,100], 30, -7, "Adventurer", "adventurer", "You hear the footsteps of someone else.", "It is an Adventurer, Readying his stance for Battle!", ["He seems oddly unaware of the massive amounts of damage you have dealt him. Much like you are.", "", "", "", "He seems more confident of himself, more sure of his strides.", ""], 50, [["atk1", 4], ["heal", 1]], [herosword, heroshield], True, bossroom, 10)
+adventurer = Enm(190, 190, 10, 5, 0, [5,100], 30, -7, "Adventurer", "adventurer", "You hear the footsteps of someone else.", "It is an Adventurer, Readying his stance for Battle!", ["He seems oddly unaware of the massive amounts of damage you have dealt him. Much like you are.", "", "", "", "He seems more confident of himself, more sure of his strides.", ""], 50, [["atk1", 4], ["heal", 1]], [herosword, heroshield], True, bossroom, 10)
 
 #coo33 = Enm(125, 170, 5, 75, 10, [3,16], 8, -2, "coo33", "coosome", "You hear something behind you.", "\'Here,  Fishy..   Fishy...\'", ["It's bloodied eyes dart across you, searching for ways to finish you off quickly.", "It looks angry, but seems to have survived worse.", "It is smiling, although panting. It seems as though it's malnourishedness is taking effect.", "He seems unfazed, a low growl and a chuckle murmured from within.", "It takes a deep breath, the type one might take after a good nights sleep.", "It seems to be toying with you, darting through the room."], 26, actions, [fishingrod, pencil], True, roomBoss2, 15)
 #coosome = Enm(140, 150, 25, 2, 14, [1,7], 20, -1, "Coosome", "coosome", "You hear something behind you.", "\'Here,  Fishy..   Fishy...\'", ["It's bloodied eyes dart across you, searching for ways to finish you off quickly.", "It looks angry, but seems to have survived worse.", "It is smiling, although panting. It seems as though it's malnourishedness is taking effect.", "He seems unfazed, a low growl and a chuckle murmured from within.", "It takes a deep breath, the type one might take after a good nights sleep.", "It seems to be toying with you, darting through the room."], 34, actions, [fishingrod, pencil], True, roomBoss2, 15)
@@ -843,28 +869,25 @@ buildZarol()
 #minions go here, not needed yet
 
 
+
 def Heal(entity):
 	global pla
 	global inbattle
 	global healable
 	if (entity == pla and pla.hp > 0):
 		if inbattle:
-			heal = pla.heal + random.randint(-pla.hdev, pla.hdev)
-			if (entity.hp + entity.heal > entity.maxhp):
+			heal = pla.heal + random.randint(0, 2*pla.hdev)-pla.hdev
+			if (entity.hp + heal > entity.maxhp):
 				heal = entity.maxhp - entity.hp
-			else:
-				heal = entity.heal
 			entity.hp = entity.hp+heal
 			prints(" you heal "+str(heal)+" hp!") #VISUALS
 			if pla.hp > pla.maxhp:
 				pla.hp = pla.maxhp
 				
 		if healable and not inbattle:
-			heal = pla.heal*10 + random.randint(-pla.hdev, 3*pla.hdev)
-			if (entity.hp + entity.heal > entity.maxhp):
+			heal = pla.heal*10 + random.randint(0, 3*pla.hdev)
+			if (entity.hp + heal > entity.maxhp):
 				heal = entity.maxhp - entity.hp
-			else:
-				heal = entity.heal
 			entity.hp = entity.hp+heal
 			pla.sane += 0.2
 			prints(" you heal "+str(heal)+" hp!") #VISUALS
@@ -922,14 +945,6 @@ def gentables():
 		for i in rooms:
 			if ((i.sanity <= 0 and pla.trueSane < 0) or (i.sanity >= 0 and pla.trueSane > 0)) and i.findable:
 				ablerooms.append(i)
-				
-
-Smain = getImg("screens/screenmain")
-Sgrave = getImg("screens/gravestone")
-Scompass = getImg("screens/compass")
-Sinsane = getImg("screens/screenlastinsanity")
-Szarol = getImg("screens/screenzarol")
-Sbattle = Smain
 
 def prepbattle(enemy):
 	global search
@@ -1120,7 +1135,7 @@ def genRoom():
 		roommessage += prepbattle(terracotta)
 		search = False'''
 
-	'''
+
 	if search:
 		if (noKillEpic and turn == 35):
 			if (pla.atk >= pla.dfn and pla.atk >= pla.agil[0]):
@@ -1138,6 +1153,7 @@ def genRoom():
 				if (pla.sane > 0):
 					finalsanity = 1
 		
+		'''
 		if (finalsanity == 1 and turn > 20 and pla.TrueSane == 0):
 			roommessage += prepbattle(lastinsanity)
 			finalsanity = 0
@@ -1145,7 +1161,6 @@ def genRoom():
 		if (finalsanity == -1 and turn > 20 and pla.TrueSane == 0):
 			roommessage += prepbattle(lastsanity)
 			finalsanity = 0
-		
 		
 		if (pla.lvl >= 5 and search):
 			enemyspawn = rand(5)
@@ -1184,18 +1199,18 @@ def genRoom():
 				roommessage += prepbattle(mimic)
 				lootable = True
 			if (enemyspawn == 5):
-				roommessage += prepbattle(creep2)
+				roommessage += prepbattle(creep2)'''
 			
 		if (pla.lvl >= 1 and search):
 			enemyspawn = rand(6)
-			if (enemyspawn == 1 and room.water == 1 and room.animal == 1):
+			'''if (enemyspawn == 1 and room.water == 1 and room.animal == 1):
 				roommessage += prepbattle(anenemy)
 			if (enemyspawn == 2 and room.plant == 1 and room.water == 0):
 				roommessage += prepbattle(axeurlegs)
 			if (enemyspawn == 3):
-				roommessage += prepbattle(muffin)
+				roommessage += prepbattle(muffin)'''
 			if (enemyspawn >= 5):
-				roommessage += prepbattle(creepybaldguy)'''
+				roommessage += prepbattle(creepybaldguy)
 	global TM1
 	TM1.all = wraptext(roommessage, 900, font, True)
 	TM1.refresh()
@@ -1206,10 +1221,11 @@ lastmove = 1
 def move(direction):
 	global roommessage
 	global battleprep
+	global inbattle
 	global room
 	global TM2
 	roommessage = ""
-	if (battleprep == -1):
+	if (battleprep == -1) and not inbattle:
 		success = False
 		#north
 		if(direction == 1):
@@ -1307,7 +1323,7 @@ def RDloot():
 		TM2.all = wraptext("There is nothing to loot here.", 900, font, True)
 		TM2.refresh()
 	
-def removeitem(item): #must take valid item
+def removeitem(item): #must take valid item. ignores indestructable, only cares about bound
 	global invenItems
 	if item in invenItems:
 		if item.ench["bound"] > 0:
@@ -1320,8 +1336,9 @@ def removeitem(item): #must take valid item
 			prints("Removed: "+item.Name)
 	else:
 		prints(item.Name+" not found in inventory!")
+	refreshItems(1)
 
-#refresh an entity's stats. probably unneeded at this point
+#refresh an entity's stats. (agil)
 def Refresh(ent):
 	agilmod = 0
 	for i in ent.equipped:
@@ -1330,11 +1347,262 @@ def Refresh(ent):
 				agilmod += x.agil
 	
 	ent.agil[0] = ent.baseagil[0] + agilmod
+	
+def op(type):
+	global pla
+	if type == "allitems":
+		global allitems
+		for i in allitems:
+			getitem(i)
+	if type == "loot":
+		global lootable
+		lootable = True
+		RDloot()
+	if type == "revive":
+		global enm
+		pla.hp = pla.maxhp
+		prints("Revived")
+		enm.hp = 0
+		plaFight(1)
+	if type == "insane":
+		pla.trueSane = -1
+		pla.baseatk = 16
+		pla.ddev = 12
+		pla.maxhp = 110
+		pla.baseagil = [8, 100]
+		pla.dfn = -5
+	if type == "sane":
+		pla.trueSane = 1
+		pla.maxhp = 110
+		pla.dfn = 5
+		pla.heal = 2
+		pla.ddev = 3
+		pla.baseagil = [20, 100]
+	if type == "normal":
+		pla.trueSane = 0
+		pla.maxhp = 100
+		pla.baseatk = 8
+		pla.ddev = 6
+		pla.baseagil = [18, 100]
+		pla.dfn = 0
+		pla.heal = 1
+		
+	'''if type == "minions":
+		for (var i = 0; i < 3; i++){
+			getMinion(pla, miniminion);
+		}
+		for i in pla.minions:
+			for (var i = 0; i < 3; i++){
+				getMinion(pla.minions[i], miniminion)'''
+	
+dodging = False
+dodged = 0
+monolithTime = 1500
+gravetime = 0
+monolithOrig = monolithTime
+limbostuff = [0, ""]
+suffix = [["You where brutaly evicerated by ", "."], ["You were slain by ", ". It mocks your death"],["You where killed by ",". The gods did not favor you today."], ["Your futile exsistance was ended by ", "."],["You where kneecaped by ", ". The cats will miss you."], ["You are dead. "," mocks your death and thinks 'hey, that was easy'."], ["Sometimes, you are favored by the gods. ", " was favored this time."], ["Your entrails where removed by ", "."], ["Your face was torn off by ", "."], ["You were fast, but ", " was faster"], ["You have lost. ", " aplauds your failure."]]
+
+def limbo(type, message):
+	global TL1
+	global suffix
+	global gravetime
+	global Screen
+	global limbostuff
+	global font
+	global enm
+	prefix = suffix[rand(len(suffix)-1)]
+	TL1.all[2] = DispObj(wraptext(prefix[0] + enm.name + prefix[1], 150, font, True), (32, 48), False, (150, 200))
+	TL1.refresh()
+	gravetime = 300
+	Screen = 4
+	limbostuff = [type, message]
+
+def limbob(type, message):
+	global roommessage
+	global score
+	global pla
+	global enm
+	global runs
+	global turn
+	global checkpoint
+	global Screen
+	global dodging
+	global dodged
+	global monolithTime
+	global monolithOrig
+	roommessage = ""
+	#normal death
+	if type == 0:
+		score -= 1
+		pla.sane -= 5
+		if (checkpoint < 0):
+			checkpoint = 1
+		
+		turn = checkpoint
+		if (turn < -2):
+			turn = -2
+		pla.hp = 80+rand(20)
+		pla.refresh()
+		#var screen = document.getElementById("limbotext");
+		#screen.innerHTML = message; #VISUALS
+		
+		if (pla.sanity < 0):
+			#if (rand(100) <= pla.sanity*-1):
+				#monolith spawn.
+				dodging = True
+				dodged = 0
+				monolithTime = 1500 + (pla.sanity * 1.5)
+				#do a special animation here, because we can now. #VISUALS
+				if (monolithTime <= 1):
+					monolithTime = 5
+				monolithOrig = monolithTime
+				'''var screen = document.getElementById("RDmono")
+				screen.style.backgroundImage = "url('img/monoAnimation/mono1.png')";'''
+				Screen = 6
+			
+		else:
+			Screen = 5
+	#anything zarol
+	if type == 1:
+		if (enm.hp <= 0):
+			runs += 1
+			'''if (runs == 1):
+				Unlock(oddplug)
+			if (runs == 2):
+				Unlock(cresentstone)
+			'''
+		
+		score += 10
+		turn = 0
+		checkpoint = 0
+		pla.sane = pla.sane / 1.1
+		pla.hp = 100
+		unequip(0)
+		unequip(1)
+		unequip(2)
+		unequip(3)
+		'''
+		var screen = document.getElementById("limbotext");
+		screen.innerHTML = message;'''
+		global invenItems
+		for i in invenItems:
+			removeitem(i)
+		for i in invenItems:
+			removeitem(i)
+			
+		global coo33
+		global coosome
+		global colton
+		global bosses
+		coosomes = [coo33, coosome, colton]
+		bosses[1] = coosomes[rand(3)-1]
+		for i in bosses:
+			i.hp = i.rehp
+		#for (i in pla.minions){killMinion(pla, pla.minions[0])}
+		'''for i in range(28+(runs*2)):
+			getMinion(strangecube, cube)
+		
+		localrand = pla.minions.length
+		for (var i = 0; i < localrand; i ++){
+			killMinion(pla, pla.minions[0]);
+		}'''
+		Screen = 5
+	#you jumped (button)
+	if type ==  2:
+		genRoom()
+		Screen = 1
+
+
+def check(entity):
+	global enm
+	global inbattle
+	global score
+	global pla
+	if (entity.hp <= 0):
+		if (entity.name == enm.name and inbattle):
+			inbattle = False
+			message = "You Kill the enemy."
+			entity.minions = []
+			score += 1
+			pla.sane -= 1
+			pla.sane += entity.sane
+			if entity.boss:
+				global bossesbeat
+				global checkpoint
+				if (entity.name == "Zarol"):
+					limbo(1, "At the moment of your victory, a swirling vortex of malevolence forms. You attempt in vain to escape it, but you are not yet strong enough. You find yourself in a familiar place...");
+				if not (entity.name == "True Insanity" or entity.name == "True Sanity" or entity.name == "Zarol" or entity.name == "epicalpha" or entity.name == "epiccoo" or entity.name == "epicjim"):
+					checkpoint = entity.turn
+					
+				localrand = rand(3)
+				if (localrand == 1):
+					message += " You Claim your rare prize."
+					getitem(entity.equipped[1])
+				else:
+					message += " You Claim your prize."
+					getitem(entity.equipped[0])
+				bossesbeat += 1
+				if (entity.name == "Adventurer" or entity.name == "Yourself"):
+					prints("Recreating Adventurer.")
+					[pla.equipped[2], pla.equipped[3], pla.equipped[0], pla.equipped[1]]
+					if (pla.equipped[2] == nothing):
+						global herosword
+						miscA = herosword
+					else:
+						miscA = pla.equipped[2]
+					if (pla.equipped[3] == nothing):
+						global herosword
+						miscB = herosword
+					else:
+						miscB = pla.equipped[3]
+					if (pla.equipped[0] == nothing):
+						global heroshield
+						miscC = heroshield
+					else:
+						miscC = pla.equipped[0]
+					if (pla.equipped[1] == nothing):
+						global heroshield
+						miscD = heroshield
+					else:
+						miscD = pla.equipped[1]
+					global bosses
+					#bosses[0] = new Boss(pla.maxhp, pla.atk, pla.def, "Yourself", "adventurer", pla.maxhp, pla.ddev, pla.agil, [plaTotal, plaTotal-plaHeal+1, 4], sanity, miscA, miscB, 10, "You hear the footsteps of someone else.", "It is an Adventurer,  Readying his stance for Battle!", ["He seems oddly unaware of the massive ammounts of damage you have delt him. Much like you were.", "", "", "", "He seems more confident of himself, more sure of his strides.",""], bossroom, (Math.floor(plaTime/plaTotal)));
+					bosses[0] = Enm(pla.maxhp, pla.maxhp, pla.dmg, pla.ddev, pla.dfn, pla.baseagil, pla.heal, -15, "Yourself", "adventurer", "You hear the footsteps of someone else.", "It is an Adventurer,  Readying his stance for Battle!", ["He seems oddly unaware of the massive ammounts of damage you have delt him. Much like you were.", "", "", "", "He seems more confident of himself, more sure of his strides.",""], math.floor(plaTime/plaTotal), [["defend", pladfn], ["heal", plaheal], ["atk1", plaatk1], ["atk2", plaatk2]], [miscA, miscB, miscC, miscD], True, bossroom, 10, False)
+					bosses[0].minions = pla.minions
+					
+				if (entity.name == "Last Remnants of Sanity"):
+					op("insane")
+				if (entity.name == "Last Remnants of Insanity"):
+					op("sane")
+			
+			global Screen
+			global TM2
+			Screen = 1
+			#printb(message) #VISUALS
+			TM2.all = wraptext(message, 900, font, True)
+			TM2.refresh()
+			
+		if (entity.name == pla.name):
+			#printc(pla, "The enemy Kills you.") #VISUALS
+			inbattle = False
+		   
+			if (enm.name == "Zarol"):
+				limbo(1, "At the moment of your death, a swirling vortex of malevolence forms. You attempt in vain to escape it, but you are not yet strong enough. You find yourself in a familiar place...")
+				#screen = document.getElementById("RDfight")
+				#screen.style.backgroundImage = "url('img/screenmain.png')"
+				#WHAT DOES THAT DO #VISUALS
+			else:
+				limbo(0, "After experiencing a moment of extreme pain due to your inevitable death, you find yourself in a suprisingly calm dark space. The only landmarks are a large cliff dropping off into endlessness infront of you, and strange floating structures to high for you to reach. You realize that there is only one thing you can do....")
+		#if (entity in pla.minions){
+		#   killMinion(entity.id, 1)
 			
 #does not include: minions, dodging, calculation of boosting items
 def Damage(source, weapon, atk, target):
 	enchValues = [0, 0] #local values needed for enchantments: layered, heavy
-	initdmg = atk.dmg + source.dmg + random.randint(-source.ddev, source.ddev)
+	initdmg = atk.dmg + source.dmg + random.randint(0, 2*source.ddev) - source.ddev
+	if initdmg < 0:
+		initdmg = 0
 	prevdmg = initdmg
 	dmg = initdmg #differentiated for enchants
 	prints("------")
@@ -1356,12 +1624,6 @@ def Damage(source, weapon, atk, target):
 				#Damage calculation
 				prints(tanked)
 				dmg -= tanked
-				if target.defending:
-					if dmg < 0:
-						dmg = 0
-				else:
-					if dmg < 1:
-						dmg = 1
 				
 				prints("newdmg:"+ str(dmg))
 				#Durability reduction
@@ -1388,14 +1650,19 @@ def Damage(source, weapon, atk, target):
 			if enchValues[1] < atk.ench["heavy"]:
 				enchValues[1] += 1
 				dmg = initdmg
-	
 	dmg -= target.dfn
+	if target.defending:
+		if dmg < 0:
+			dmg = 0
+	else:
+		if dmg < 1:
+			dmg = 1
 	message = source.name+" deals <strong>"+str(dmg)+"<strong> damage to "+ target.name
 	target.hp -= dmg
 	prints(target.name+": "+str(target.hp))
 	prints("==============")
+	check(target)
 	return message
-	#check(target)
 
 #takes in source, weapon used, and target.		[how many hits allowed, previous target, sweeping]
 def attack(source, weapon, target, enchValues = [1, None, None]):
@@ -1498,6 +1765,7 @@ def Do(entity):
 			break
 		count += i[1]
 	Refresh(entity)
+
 #MINIONS
 def getMinionTree(entity, type):
 	minionTree = []
@@ -1512,53 +1780,6 @@ def getMinionTree(entity, type):
 		minionTree += getMinionTree(entity, 2)
 		return minionTree
 		
-def op(type):
-	global pla
-	if type == "allitems":
-		global allitems
-		for i in allitems:
-			getitem(i)
-	if type == "loot":
-		global lootable
-		lootable = True
-		RDloot()
-	if type == "revive":
-		global enm
-		pla.hp = pla.maxhp
-		prints("Revived")
-		enm.hp = 0
-		plaFight(1)
-	if type == "insane":
-		pla.trueSane = -1
-		pla.baseatk = 16
-		pla.ddev = 12
-		pla.maxhp = 110
-		pla.baseagil = [8, 100]
-		pla.dfn = -5
-	if type == "sane":
-		pla.trueSane = 1
-		pla.maxhp = 110
-		pla.dfn = 5
-		pla.heal = 2
-		pla.ddev = 3
-		pla.baseagil = [20, 100]
-	if type == "normal":
-		pla.trueSane = 0
-		pla.maxhp = 100
-		pla.baseatk = 8
-		pla.ddev = 6
-		pla.baseagil = [18, 100]
-		pla.dfn = 0
-		pla.heal = 1
-		
-	'''if type == "minions":
-		for (var i = 0; i < 3; i++){
-			getMinion(pla, miniminion);
-		}
-		for i in pla.minions:
-			for (var i = 0; i < 3; i++){
-				getMinion(pla.minions[i], miniminion)'''
-		
 
 #Getting visuals for screens
 looot = font.render("Loot", True, (0, 0, 0))
@@ -1567,21 +1788,17 @@ baack = font.render("Back", True, (0, 0, 0))
 Fdfn = DispObj(ac2Img, (130, 199))
 Fheal = DispObj(getImg("special/heal"), (190, 199))
 
-running = True
-Screen = 1
-mouse_down = False
 genRoom()
 
-getitem(shurikenbag)
+'''getitem(shurikenbag)
 getitem(spoon)
 getitem(sivgoggles)
 getitem(jimarmor)
 getitem(communism)
-prepbattle(creepybaldguy)
+prepbattle(creepybaldguy)'''
 
 #main loop
 while running:
-	lootable = True
 	for event in pygame.event.get(): #key input
 		if event.type == pygame.QUIT: 
 			running = False
@@ -1619,6 +1836,17 @@ while running:
 		if event.type == pygame.KEYDOWN and debug:
 			if event.key == K_1:
 				op("allitems")
+			if event.key == K_4:
+				Screen = 4
+			if event.key == K_5:
+				Screen = 5
+			if event.key == K_6:
+				Screen = 6
+			if event.key == K_q:
+				pla.hp = 0
+				check(pla)
+			if event.key == K_w:
+				turn = 9
 				
 	mouse_pos = pygame.mouse.get_pos()
 	
@@ -1651,6 +1879,7 @@ while running:
 
 			if hitDetect((910, 10), (75, 24), mouse_pos): #invetory, button size: 75 x 24 px
 				Screen = 2
+				pla.refresh()
 			if hitDetect((910, 37), (75, 24), mouse_pos): #loot
 				RDloot()
 			if hitDetect((910, 64), (75, 24), mouse_pos): #fight
@@ -1731,13 +1960,18 @@ while running:
 		pygame.draw.rect(screen, LGREY, (10, 10, 820, 9)) #backing
 		if enm.defending:
 			pygame.draw.rect(screen, GREY, (10, 10, 820, 9)) #backing
-		pygame.draw.rect(screen, RED, (11, 11, (float(enm.hp)/enm.maxhp)*818, 3))#enm hp
+		ratio = (float(enm.hp)/enm.maxhp)
+		if ratio < 0:
+			ratio = 0
+		pygame.draw.rect(screen, RED, (11, 11, ratio*818, 3))#enm hp
 		#pygame.draw.rect(screen, GREY, (11, 15, 820, 3))#enm armor durability
 		
 		pygame.draw.rect(screen, LGREY, (589, 240, 400, 9)) #backing
 		if pla.defending:
 			pygame.draw.rect(screen, GREY, (589, 240, 400, 9)) #backing
-			
+		ratio = (float(pla.hp)/pla.maxhp)
+		if ratio < 0:
+			ratio = 0
 		pygame.draw.rect(screen, RED, (589, 241, (float(pla.hp)/pla.maxhp)*400, 3))#you hp
 		#you armor
 		
@@ -1749,27 +1983,111 @@ while running:
 		
 		if mouse_down:
 			if hitDetect(pla.equipped[2].div.fight.coords, pla.equipped[2].div.fight.size, mouse_pos):
+				if enm == adventurer:
+					plaatk1 += 1
+					plaTotal += 1
 				attack(pla, pla.equipped[2], enm)
 				pla.equipped[2].div.refresh(2)
 			if hitDetect(pla.equipped[3].div.fight.coords, pla.equipped[3].div.fight.size, mouse_pos):
+				if enm == adventurer:
+					plaatk2 += 1
+					plaTotal += 1
 				attack(pla, pla.equipped[3], enm)
 				pla.equipped[3].div.refresh(2)
 			if hitDetect(Fdfn.coords, (52, 52), mouse_pos):
 				pla.defending = True
 				prints("DEFENDING")
 				Refresh(pla)
+				if enm == adventurer:
+					pladfn += 1
+					plaTotal += 1
 			if hitDetect(Fheal.coords, (52, 52), mouse_pos):
 				Heal(pla)
 				prints("HEALED")
+				if enm == adventurer:
+					plaheal += 1
+					plaTotal += 1
 			mouse_down = False
-
 		
 	if Screen == 4: #Grave, limbo 1
-		screen.fill(BLACK)
+		screen.fill(BLIMBO)
+		screen.blit(TL1.img, TL1.coords)
+		
+	if Screen == 5: #Text & cliff, limbo 2
+		screen.fill(BLIMBO)
+	
+	if Screen == 6: #Monoliths
+		screen.fill(BLIMBO)
+		screen.blit(TL2.img, TL2.coords)
+		screen.blit(massive.render(str(monolithTime), False, RED), (200, 15)) #for now ;)
+		if mouse_down:
+			mouse_down = False
+			if hitDetect(TL2.coords, (50, 16), mouse_pos):
+				dodged += 1
+				localrand = runmessages[rand(runmessages.length-1)]
+				TL2.img = font.render(localrand, False, (250, 250, 250))
+				TL2.coords = (10+rand(975-font.size(localrand)[0]), 10+rand(239-font.size(localrand)[1]))
+				if (dodged == 5):
+					dodging = False
+					dodged = 0
+					monolithTime = 1500
+					turn = checkpoint
+					genRoom()
+					Screen = 1
 		
 		
-	if Screen == 5: #Monoliths, limbo 2
-		screen.fill(BLACK)
+	if inbattle: #BATTLING
+		enm.atkInt -= 1
+		if (enm.atkInt == 0):
+			enm.atkInt = enm.atkIntBase
+			Do(enm)
+			pla.refresh()
+			
+			if (enm.boss):
+				hpratio = 100*(enm.hp/enm.hptop)
+			else:
+				hpratio = 100*(enm.hp/enm.maxhp)
+			
+			#Print enemy description based on health
+			'''if (hpratio < 20):
+				prints(enm.rundown[0])
+			if (hpratio >= 20 && hpratio < 50){
+				prints(enm.rundown[1]);
+			}
+			if (hpratio >= 50 && hpratio < 85){
+				prints(enm.rundown[2]);
+			}
+			if (hpratio >= 85 && hpratio <= 100){
+				printc(enm.rundown[3]);
+			}
+			if (enm.boss){
+				if (hpratio > 100 && hpratio < 200){
+					printc(enm.rundown[4]);
+				}
+				if (hpratio >= 200){
+					printc(enm.rundown[5]);
+				}
+			}''' #VISUALS
+			
+
+		for i in pla.minionTree:
+			i.atkInt -= 1
+			if (i.atkInt <= 0):
+				i.atkInt = i.atkIntBase
+				Do(i)
+		for i in enm.minionTree:
+			i.atkInt -= 1
+			if (i.atkInt <= 0):
+				i.atkInt = i.atkIntBase
+				Do(i)
+
+		if (enm.name == "Adventurer" or enm.name == "Yourself"):
+			plaTime += 1
+		
+		if (gravetime > 0):
+			gravetime -= 1
+			if (gravetime == 0):
+				limbob(limbostuff[0], limbostuff[1])
 	
 	
 	#little stuff all the time
@@ -1815,7 +2133,6 @@ while running:
 		if Screen == 3:
 			i.div.refresh(2)
 			
-	
 	if (battleprep > 0):
 		battleprep -= 1
 	if (battleprep == 0):
@@ -1826,92 +2143,11 @@ while running:
 		#customise fight screen to enemy
 		#printc(enm, enm.cry); #VISUALS
 		Screen = 3
-		
-	if inbattle: #BATTLING
-		enm.atkInt -= 1
-		if (enm.atkInt == 0):
-			enm.atkInt = enm.atkIntBase
-			
-			if (enm.boss):
-				hpratio = 100*(enm.hp/enm.hptop)
-			else:
-				hpratio = 100*(enm.hp/enm.maxhp)
-			
-			#Print enemy description based on health
-			'''if (hpratio < 20):
-				prints(enm.rundown[0])
-			if (hpratio >= 20 && hpratio < 50){
-				prints(enm.rundown[1]);
-			}
-			if (hpratio >= 50 && hpratio < 85){
-				prints(enm.rundown[2]);
-			}
-			if (hpratio >= 85 && hpratio <= 100){
-				printc(enm.rundown[3]);
-			}
-			if (enm.boss){
-				if (hpratio > 100 && hpratio < 200){
-					printc(enm.rundown[4]);
-				}
-				if (hpratio >= 200){
-					printc(enm.rundown[5]);
-				}
-			}''' #VISUALS
-			
-			Do(enm)
-			
-			'''if (enmdo > enm.healchance[1]){enmdo = "heal"} else {enmdo = "atk";}
-			
-			if (enmdo == "heal"){
-				heal(enm);
-			}
-			
-			var message = "";
-			var dmg = 0;
-			if (enmdo == "atk" && enm.hp > 0){
-				attack(enm, pla)'''
-
-		'''for (i in pla.minionTree){
-			var minion = pla.minionTree[i];
-			minion.atkInt -= 1;
-			if (minion.atkInt <= 0){
-				minion.atkInt = minion.atkIntBase;
-				var enmdo = rand(minion.healchance[0]);
-				if (enmdo > minion.healchance[1]){enmdo = "heal"} else {enmdo = "atk";}
-				
-				if (enmdo == "heal"){
-					heal(minion);
-				}
-				
-				var message = "";
-				var dmg = 0;
-				if (enmdo == "atk" && minion.hp > 0){
-					attack(minion, enm);
-				}
-			}
-		}
-		for (i in enm.minionTree){
-			var minion = enm.minionTree[i];
-			minion.atkInt -= 1;
-			if (minion.atkInt <= 0){
-				minion.atkInt = minion.atkIntBase;
-				var enmdo = rand(minion.healchance[0]);
-				if (enmdo > minion.healchance[1]){enmdo = "heal"} else {enmdo = "atk";}
-				
-				if (enmdo == "heal"){
-					heal(minion);
-				}
-				
-				var message = "";
-				var dmg = 0;
-				if (enmdo == "atk" && minion.hp > 0){
-					attack(minion, pla);
-				}
-			}
-		}'''
-
-		if (enm.name == "Adventurer" or enm.name == "Yourself"):
-			plaTime += 1
+	
+	if gravetime > 0:
+		gravetime -= 1
+		if (gravetime == 0):
+			limbob(limbostuff[0], limbostuff[1])
 	
 	pygame.display.update()
 	clock.tick(50)
