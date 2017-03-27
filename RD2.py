@@ -733,7 +733,6 @@ hair = Item([atkChunk(1, 1, False, True, 0, None, {"destructive":30})], [], 10, 
 shurikenbag = Item([atkChunk(35, 25, False, False, 1, 5, {"sweeping":5}), atkChunk(15, 20, True, False, 0, 1, {"returning":[2, 80], "destructive":10})], [dfnChunk(5, 4, True)], 100, -35, 10, "Shuriken Pouch", "A small, blood filled pouch, when you reach your hand into it, you always pull out a shuriken.", "shurikenbag", -1, False, 10, [1, 1], {"bound":1, "mending":[5, 2]})
 
 #JIM GRIND
-#jimsword = item(25, 5, -5, 0, 10, "Jim's Sword", "jimsword", "")
 jimsword = Item([atkChunk(25, 20, True, False, 0, None, {"heavy":3})], [dfnChunk(-20, None), dfnChunk(-20, 4, True)], 1000, 0, 10, "Jim's Sword", "An incredibly heavy weapon, you can barely pick it up off the ground; you also wonder how that man could toss it around.", "jimsword", -1)
 jimarmor = Item([], [dfnChunk(-10, 5, False, True), dfnChunk(-20), dfnChunk(-5, 8, True, True, None, {"layered":[75, 3]}), dfnChunk(-5, 25, True, False, None, {"trueProtection":True, "thorns":atkChunk(5, 0, False)})], 500, -2, 10, "Enchanted Armor", "Glimmering metallic armor, Material flowing smoothly within it to fill the gaps in its structure.", "jimarmor", -1, False, None, [], {"mending":[5, 4]})
 #hatandboots = item(5, 50, 8, 0, 10, "Hat and Boots", "hatandboots", "Can't Bump your head anymore, and probably won't stub your toes.")
@@ -741,8 +740,10 @@ communism = Item([atkChunk(80, 100, True, False, 2, 1, {"heavy":2}), atkChunk(5,
 
 #CUBE
 #inactivecube = item(25, 7, 20, 0, 10, "Inactive Cube", "inactivecube", "")
+inactivecube = Item([atkChunk(30, 30, False, False, 2, None, {"sweeping":2}), atkChunk(10, 5, False, True)], [dfnChunk(10, 0, True, True)], 80, -6, 10, "Electrical Device", "You have no idea how it works, bbut it looks far beyond any tech you have ever seen.", "device", -1, False, None, [], {"mending":[20, 1]})
 #card = item(2, 25, 25, 0, 20, "00000111", "card", "")
 #device = item(40, 0, 6, 0, 20, "Electrical device", "device", "You have no idea how it works, but it looks far beyond any tech you have seen.")
+nullifier = Item([atkChunk(-50, 0, False, True)], [], 9999, -10, -10, "Nullifier", "null, nada, none", "no_thing", -1, False, None, [], {}, False)
 
 #ZAROL
 zaroltrophy = Item([], [], 1, 0, 30, "Zarol Trophy", "Thinking back, Seriously. How the hell did you do that?", "zaroltrophy", -1, True, None, [], {"bound":2})
@@ -766,8 +767,8 @@ class Player(object):
 		self.baseagil = [18, 100]
 		self.agil = [15, 100]
 		self.lvl = 1
-		self.sane = 8
-		self.sanity = 8
+		self.sane = 8 #PLAYER sanity
+		self.sanity = 8 #WITH ITEMS sanity
 		self.trueSane = 0
 		self.minions = []
 		self.id = 0
@@ -780,6 +781,13 @@ class Player(object):
 	
 	def refresh(self):
 		#set self.sanity
+		localrand = self.sane
+		for i in pla.equipped:
+			localrand += i.sane
+		global score
+		if score < 0:
+			localrand += score*2
+		self.sanity = math.floor(localrand)
 		#set two attack chunks
 		#for i in 
 		global TI1
@@ -832,6 +840,10 @@ class Enm(object):
 		self.defending = False
 		self.minions = []
 		self.minionTree = []
+		self.dist = 0
+		
+	def Minionize(self, dist):
+		self.dist = dist
 
 creepybaldguy = Enm(18, 18, 5, 2, 10, [1, 100], 4, -1, "Creepy Bald Guy", "creep", "You know you are being watched. Always... ", "you feel it staring through your eyes, Into your Soul.", ["Even though it seems nearly dead, it continues its steady gaze deep into your eyes.", "it seems to have lost some hair in this fight. You blink, realizing it was already bald.", "it seems to be observing, only attacking to see how you react.", "it is sitting there, staring at you. Waiting and observing your every move."], 100, [["atk1", 3], ["heal", 1]])
 enm = creepybaldguy
@@ -839,21 +851,21 @@ enm = creepybaldguy
 #bosses
 adventurer = Enm(190, 190, 10, 5, 0, [5,100], 30, -7, "Adventurer", "adventurer", "You hear the footsteps of someone else.", "It is an Adventurer, Readying his stance for Battle!", ["He seems oddly unaware of the massive amounts of damage you have dealt him. Much like you are.", "", "", "", "He seems more confident of himself, more sure of his strides.", ""], 50, [["atk1", 4], ["heal", 1]], [herosword, heroshield], True, bossroom, 10)
 
-coo33 = Enm(125, 170, 5, 75, 10, [3,16], 8, -2, "coo33", "coosome", "You hear something behind you.", "\'Here,  Fishy..   Fishy...\'", ["It's bloodied eyes dart across you, searching for ways to finish you off quickly.", "It looks angry, but seems to have survived worse.", "It is smiling, although panting. It seems as though it's malnourishedness is taking effect.", "He seems unfazed, a low growl and a chuckle murmured from within.", "It takes a deep breath, the type one might take after a good nights sleep.", "It seems to be toying with you, darting through the room."], 26, actions, [fishingrod, pencil], True, roomBoss2, 15)
-coosome = Enm(140, 150, 25, 2, 14, [1,7], 20, -1, "Coosome", "coosome", "You see someone, just as they see you. He stares at you with deadpan eyes.", "", ["It's bloodied eyes dart across you, searching for ways to finish you off quickly.", "It looks angry, but seems to have survived worse.", "It is smiling, although panting. It seems as though it's malnourishedness is taking effect.", "He seems unfazed, a low growl and a chuckle murmured from within.", "It takes a deep breath, the type one might take after a good nights sleep.", "It seems to be toying with you, darting through the room."], 34, actions, [fishingrod, pencil], True, roomBoss2, 15)
-colton = Enm(120, 140, 10, 8, 10, [5,16], 12, -1, "Colton", "coosome", "You see a person, just as he hears you. He jumps, making an odd noise.", "", ["It's bloodied eyes dart across you, searching for ways to finish you off quickly.", "It looks angry, but seems to have survived worse.", "It is smiling, although panting. It seems as though it's malnourishedness is taking effect.", "He seems unfazed, a low growl and a chuckle murmured from within.", "It takes a deep breath, the type one might take after a good nights sleep.", "It seems to be toying with you, darting through the room."], 41, actions, [drawingpad, pencil], True, roomBoss2, 15)
+coo33 = Enm(125, 170, 5, 75, 10, [19,100], 8, -2, "coo33", "coosome", "You hear something behind you.", "\'Here,  Fishy..   Fishy...\'", ["It's bloodied eyes dart across you, searching for ways to finish you off quickly.", "It looks angry, but seems to have survived worse.", "It is smiling, although panting. It seems as though it's malnourishedness is taking effect.", "He seems unfazed, a low growl and a chuckle murmured from within.", "It takes a deep breath, the type one might take after a good nights sleep.", "It seems to be toying with you, darting through the room."], 26, actions, [fishingrod, pencil], True, roomBoss2, 15)
+coosome = Enm(140, 150, 25, 2, 14, [14,100], 20, -1, "Coosome", "coosome", "You see someone, just as they see you. He stares at you with deadpan eyes.", "", ["It's bloodied eyes dart across you, searching for ways to finish you off quickly.", "It looks angry, but seems to have survived worse.", "It is smiling, although panting. It seems as though it's malnourishedness is taking effect.", "He seems unfazed, a low growl and a chuckle murmured from within.", "It takes a deep breath, the type one might take after a good nights sleep.", "It seems to be toying with you, darting through the room."], 34, actions, [fishingrod, pencil], True, roomBoss2, 15)
+colton = Enm(120, 140, 10, 8, 10, [28,90], 12, -1, "Colton", "coosome", "You see a person, just as he hears you. He jumps, making an odd noise.", "", ["It's bloodied eyes dart across you, searching for ways to finish you off quickly.", "It looks angry, but seems to have survived worse.", "It is smiling, although panting. It seems as though it's malnourishedness is taking effect.", "He seems unfazed, a low growl and a chuckle murmured from within.", "It takes a deep breath, the type one might take after a good nights sleep.", "It seems to be toying with you, darting through the room."], 41, actions, [drawingpad, pencil], True, roomBoss2, 15)
 
-alpha = Enm(350, 500, 14, 6, 0, [68, 100], 10, -3, "Alpha", "alpha", "You hear sudden quick footsteps from behind you.", "you turn to see someone dashing at you, Swinging a large axe!", ["", "", "", "", "", ""], 60, [["atk1", 4], ["heal", 1]], [alphaxe, sivgoggles], True, roomBoss3, 20)
-jimgrind = Enm(200, 200, 35, 2, 35, [1,44], 12, -2, "Jim Grind", "jimgrind", "Someone is in the room with you. You turn just fast enough to see him. He knows he has been spotted.", "A stern look on his face; A deadly look in his eyes.", ["", "You can see small gaps in his defence now, chinks in his armor.", "His breathing is heavy, and his swings are slower, yet just as powerful.", "He stands with a confident air about him, holding his sword firmly.", "His armor is beginning to glow, even the largest chinks in his armor closing as the armor reshapes into its original form.", "He seems unaware of your blows, simply tanking all damage you may deal to him."], 130, actions, [jimsword, jimarmor], True, roomBoss4, 25)
-#strangecube = Enm(250, 350, 1, 2, -5, [10,100], 75, -3, "Strange Cube", "cube", "A strange cube is sitting on the ground in front or you.", "Sudden arcs of electricity jump across its surface as it rises into the air.", ["Although grounded, it still musters up powerful shocks upon you.", "It appears to have physical damage, and is barely able to keep itself aloft.", "It is wavering now, seeming to have less energy within it, focusing on attacks.", "It floats evenly in front of you, electricity visibly through internal circuits.", "electricity is visible streaking across its surface, arcing to nearby surfaces.", "It's magnetic fields are powerful, you can feel them pulling on your magnetic accessories."], 37, actions, [inactivecube, device], True, bossroom, 30)
+alpha = Enm(350, 500, 14, 6, 0, [60, 80], 10, -3, "Alpha", "alpha", "You hear sudden quick footsteps from behind you.", "you turn to see someone dashing at you, Swinging a large axe!", ["", "", "", "", "", ""], 60, [["atk1", 4], ["heal", 1]], [alphaxe, sivgoggles], True, roomBoss3, 20)
+jimgrind = Enm(200, 200, 35, 2, 35, [3,120], 12, -2, "Jim Grind", "jimgrind", "Someone is in the room with you. You turn just fast enough to see him. He knows he has been spotted.", "A stern look on his face; A deadly look in his eyes.", ["", "You can see small gaps in his defence now, chinks in his armor.", "His breathing is heavy, and his swings are slower, yet just as powerful.", "He stands with a confident air about him, holding his sword firmly.", "His armor is beginning to glow, even the largest chinks in his armor closing as the armor reshapes into its original form.", "He seems unaware of your blows, simply tanking all damage you may deal to him."], 130, actions, [jimsword, jimarmor], True, roomBoss4, 25)
+#strangecube = Enm(250, 350, 1, 2, -5, [10,100], 75, -3, "Strange Cube", "cube", "A strange cube is sitting on the ground in front or you.", "Sudden arcs of electricity jump across its surface as it rises into the air.", ["Although grounded, it still musters up powerful shocks upon you.", "It appears to have physical damage, and is barely able to keep itself aloft.", "It is wavering now, seeming to have less energy within it, focusing on attacks.", "It floats evenly in front of you, electricity visibly through internal circuits.", "electricity is visible streaking across its surface, arcing to nearby surfaces.", "It's magnetic fields are powerful, you can feel them pulling on your magnetic accessories."], 37, actions, [inactivecube, device, nullifier], True, bossroom, 30)
 
-#epicalpha = Enm(450, 450, 50, 12, 10, [5,6], 20, -6, "Alpha 949", "alpha", "You find yourself in a familiar looking room. Looking around, you realize you have some unfinished business. You hear sudden quick footsteps from behind you.", "you turn to see a familiar figure dashing towards you, Swinging a large axe!", ["", "", "", "", "", ""], 45, actions, [sivgoggles, shurikenbag], True, roomBoss3, -100)
-#epicjim = Enm(320, 360, 45, 2, 150, [0,1], 35, -2, "Jim Grind", "jimgrind", "You find yourself in a familiar looking room. Looking around, you realize you have some unfinished business. Someone is in the room with you. You turn to face him. You both know who won last time. ", "A stern look on his face; A deadly look in his eyes.", ["", "You can see small gaps in his defence now, chinks in his armor.", "His breathing is heavy, and his swings are slower, yet just as powerful.", "He stands with a confident air about him, holding his sword firmly.", "His armor is beginning to glow, even the largest chinks in his armor closing as the armor reshapes into its original form.", "He seems unaware of your blows, simply tanking all damage you may deal to him."], 95, actions, [jimarmor, hatandboots], True, roomBoss4, -100)
-#epiccoo = Enm(400, 400, 40, 100, 15, [19,64], 22, -4, "The Coosome", "coosome", "You find yourself in a familiar looking room. Looking around, you realize you have some unfinished business. You hear a familiar chilling voice behind you.", "\'Here,  Fishy..   Fishy...\'", ["It's bloodied eyes dart across you, searching for ways to finish you off quickly.", "It looks angry, but seems to have survived worse.", "It is smiling, although panting. It seems as though it's malnourishedness is taking effect.", "He seems unfazed, a low growl and a chuckle murmured from within.", "It takes a deep breath, the type one might take after a good nights sleep.", "It seems to be toying with you, darting through the room."], 25, actions, [pencil, spoon], True, roomBoss2, -100)
+#epicalpha = Enm(450, 450, 50, 12, 10, [65, 80], 20, -6, "Alpha 949", "alpha", "You find yourself in a familiar looking room. Looking around, you realize you have some unfinished business. You hear sudden quick footsteps from behind you.", "you turn to see a familiar figure dashing towards you, Swinging a large axe!", ["", "", "", "", "", ""], 45, actions, [sivgoggles, shurikenbag], True, roomBoss3, -100)
+#epicjim = Enm(320, 360, 45, 2, 150, [0,110], 35, -2, "Jim Grind", "jimgrind", "You find yourself in a familiar looking room. Looking around, you realize you have some unfinished business. Someone is in the room with you. You turn to face him. You both know who won last time. ", "A stern look on his face; A deadly look in his eyes.", ["", "You can see small gaps in his defence now, chinks in his armor.", "His breathing is heavy, and his swings are slower, yet just as powerful.", "He stands with a confident air about him, holding his sword firmly.", "His armor is beginning to glow, even the largest chinks in his armor closing as the armor reshapes into its original form.", "He seems unaware of your blows, simply tanking all damage you may deal to him."], 95, actions, [jimarmor, hatandboots], True, roomBoss4, -100)
+#epiccoo = Enm(400, 400, 40, 100, 15, [30,100], 22, -4, "The Coosome", "coosome", "You find yourself in a familiar looking room. Looking around, you realize you have some unfinished business. You hear a familiar chilling voice behind you.", "\'Here,  Fishy..   Fishy...\'", ["It's bloodied eyes dart across you, searching for ways to finish you off quickly.", "It looks angry, but seems to have survived worse.", "It is smiling, although panting. It seems as though it's malnourishedness is taking effect.", "He seems unfazed, a low growl and a chuckle murmured from within.", "It takes a deep breath, the type one might take after a good nights sleep.", "It seems to be toying with you, darting through the room."], 25, actions, [pencil, spoon], True, roomBoss2, -100)
 
-lastsanity = Enm(500, 500, 18, 5, 16, [2,7], 100, -100, "Last Remnants of Sanity", "lastsanity", "You feel parts of your mind fighting back, with nonsense of '<i>Something is wrong</i>.'", "You realize you need to silence these nagging voices.", ["<i>You are destroying yourself...</i>", "<i>Do you even know the names of the people you killed?</i>", "<i></i>", "<i>Something is seriously wrong with you,</i>"], 60, actions, [], True, bossroom, -100)
-lastinsanity = Enm(1000, 1000, 15, 90, 10, [1,64], 3, 100, "Last Remnants of Insanity", "lastinsanity", "You feel parts of your mind begin to come together.......", "You have come to a realization: the only way to obtain your goal is to wipe insanity from your mind.", ["but.. What is this place?", "How do you not return to what was already there?", "", ""], 25, actions, [], True, bossroom, -100)
-#creepiestbaldest = Enm(400, 500, 40, 1, 5, [5,6], 20, -20, "The Knowing Eye", "creepiestbaldest", "You see one blink. And with its eyes, another one is opening.", "You feel its knowing gaze, that it has nothing more to learn.", ["", "", "", "", "", ""], 55, [["atk1", ]], [map, shinedisk], True, room34, 52)
+lastsanity = Enm(500, 500, 18, 5, 16, [29,100], 100, -100, "Last Remnants of Sanity", "lastsanity", "You feel parts of your mind fighting back, with nonsense of '<i>Something is wrong</i>.'", "You realize you need to silence these nagging voices.", ["<i>You are destroying yourself...</i>", "<i>Do you even know the names of the people you killed?</i>", "<i></i>", "<i>Something is seriously wrong with you,</i>"], 60, actions, [], True, bossroom, -100)
+lastinsanity = Enm(1000, 1000, 15, 90, 10, [2,100], 3, 100, "Last Remnants of Insanity", "lastinsanity", "You feel parts of your mind begin to come together.......", "You have come to a realization: the only way to obtain your goal is to wipe insanity from your mind.", ["but.. What is this place?", "How do you not return to what was already there?", "", ""], 25, actions, [], True, bossroom, -100)
+#creepiestbaldest = Enm(400, 500, 40, 1, 5, [83, 100], 20, -20, "The Knowing Eye", "creepiestbaldest", "You see one blink. And with its eyes, another one is opening.", "You feel its knowing gaze, that it has nothing more to learn.", ["", "", "", "", "", ""], 55, [["atk1", ]], [map, shinedisk], True, room34, 52)
 
 zarol = None
 def buildZarol():
@@ -864,11 +876,11 @@ def buildZarol():
 	global zarolflesh
 	global zarolmist
 	global zaroltrophy
-	zarol = Enm(500+score, 10000+score*2, 5, 80, 18+runs*5, [5, 100], 1000+score, -10, "Zarol", "zarol", "You stand in the final room, reveling in your victory.  From just over your left shoulder, you hear heavy breathing.", "Your head slowly swivels, back poker straight, to look into three wide red eyes.", ["Everything you can see is unrecognizable, even the boss that has now dispersed to the point of surrounding you.", "It is infuriated by your damage, darkness billowing from its wounds, disintegrating all it touches.", "You seem to have gotten its attention, but it's cold glare assures you this is not a good.", "It seems almost to be ignoring you, focusing solely on destruction.", "You feel an aura of confidence, coming from it as it methodically destroys all that surrounds it.", "You feel a burst of energy from it, enveloping you with searing pain."], 75, actions, [zaroltrophy, zaroltrophy], True, bossroom, 50)
+	zarol = Enm(500+score, 10000+score*2, 5, 80, 18+runs*5, [5, 100], 1000+score, -10, "Zarol", "zarol", "You stand in the final room, reveling in your victory.  From just over your left shoulder, you hear heavy breathing.", "Your head slowly swivels, back poker straight, to look into three wide red eyes.", ["Everything you can see is unrecognizable, even the boss that has now dispersed to the point of surrounding you.", "It is infuriated by your damage, darkness billowing from its wounds, disintegrating all it touches.", "You seem to have gotten its attention, but it's cold glare assures you this is not a good.", "It seems almost to be ignoring you, focusing solely on destruction.", "You feel an aura of confidence, coming from it as it methodically destroys all that surrounds it.", "You feel a burst of energy from it, enveloping you with searing pain."], 75, actions, [zaroltrophy, zaroltrophy], True, bossroom, 50) #maybe set toappend to False?
 buildZarol()
 #minions go here, not needed yet
-
-
+#for i in bosses:
+#	print i.name, i.turn
 
 def Heal(entity):
 	global pla
@@ -996,6 +1008,9 @@ def genRoom():
 	global finalsanity
 	global room
 	global lootable
+	
+	pla.refresh()
+	print pla.sane, pla.sanity
 	
 	prints("Generating room.")
 	gentables()
@@ -1325,6 +1340,7 @@ def RDloot():
 	
 def removeitem(item): #must take valid item. ignores indestructable, only cares about bound
 	global invenItems
+	global pla
 	if item in invenItems:
 		if item.ench["bound"] > 0:
 			item.ench["bound"] = item.ench["bound"] -1
@@ -1334,8 +1350,19 @@ def removeitem(item): #must take valid item. ignores indestructable, only cares 
 		else:
 			invenItems.remove(item)
 			prints("Removed: "+item.Name)
+	elif item in pla.equipped:
+		if item.ench["bound"] > 0:
+			item.ench["bound"] = item.ench["bound"] -1
+			prints("Bound item: "+item.Name)
+			if item.durability <= 0:
+				item.broken = True
+		else:
+			invenItems.remove(item)
+			prints("Removed: "+item.Name)
+		
 	else:
 		prints(item.Name+" not found in inventory!")
+	item.div.refresh(1)
 	refreshItems(1)
 
 #refresh an entity's stats. (agil)
@@ -1369,7 +1396,7 @@ def op(type):
 		pla.baseatk = 16
 		pla.ddev = 12
 		pla.maxhp = 110
-		pla.baseagil = [8, 100]
+		pla.baseagil = [10, 110]
 		pla.dfn = -5
 	if type == "sane":
 		pla.trueSane = 1
@@ -1377,13 +1404,13 @@ def op(type):
 		pla.dfn = 5
 		pla.heal = 2
 		pla.ddev = 3
-		pla.baseagil = [20, 100]
+		pla.baseagil = [10, 90]
 	if type == "normal":
 		pla.trueSane = 0
 		pla.maxhp = 100
 		pla.baseatk = 8
 		pla.ddev = 6
-		pla.baseagil = [18, 100]
+		pla.baseagil = [8, 100]
 		pla.dfn = 0
 		pla.heal = 1
 		
@@ -1498,7 +1525,7 @@ def limbob(type, message):
 		coosomes = [coo33, coosome, colton]
 		bosses[1] = coosomes[rand(3)-1]
 		for i in bosses:
-			i.hp = i.rehp
+			i.hp = i.hptop
 		#for (i in pla.minions){killMinion(pla, pla.minions[0])}
 		'''for i in range(28+(runs*2)):
 			getMinion(strangecube, cube)
@@ -1509,9 +1536,6 @@ def limbob(type, message):
 		}'''
 		Screen = 5
 	#you jumped (button)
-	if type ==  2:
-		genRoom()
-		Screen = 1
 
 
 def check(entity):
@@ -1527,6 +1551,7 @@ def check(entity):
 			score += 1
 			pla.sane -= 1
 			pla.sane += entity.sane
+			pla.refresh()
 			if entity.boss:
 				global bossesbeat
 				global checkpoint
@@ -1847,10 +1872,19 @@ while running:
 				check(pla)
 			if event.key == K_w:
 				turn = 9
+				print "prepped for adventurer"
 			if event.key == K_e:
 				turn = 14
+				print "prepped for Coosome"
 			if event.key == K_r:
 				turn = 19
+				print "prepped for Alpha"
+			if event.key == K_t:
+				turn = 24
+				print "prepped for Jim"
+			if event.key == K_y:
+				turn = 49
+				print "prepped for Zarol"
 				
 	mouse_pos = pygame.mouse.get_pos()
 	
@@ -2019,6 +2053,11 @@ while running:
 		
 	if Screen == 5: #Text & cliff, limbo 2
 		screen.fill(BLIMBO)
+		
+		if mouse_down:
+			mouse_down = False
+			genRoom()
+			Screen = 1
 	
 	if Screen == 6: #Monoliths
 		screen.fill(BLIMBO)
