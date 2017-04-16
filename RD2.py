@@ -690,7 +690,7 @@ allitems.remove(nothing)
 acorncap = Item([], [dfnChunk(1, 1, True)], 15, 4, 9, "Acorn Cap", "If you were really tiny, like, smaller than a squirrel, this would be the perfect armor. You place it over your heart  You call it a kiss", "acorncap", 1)
 boardgame = Item([], [dfnChunk(0, 1, True), dfnChunk(-1, 1)], 32, 2, 2, "Board Game", "The cardboard is battered  from years of wear, but you can see the winding  path your piece would take if you were a winner.   You're not a winner.", "boardgame", 1)
 bobbypin = Item([atkChunk(2, 1)], [], 35, 1, 1, "Bobby Pin", "Ow... it's sharp.", "bobbypin", 1)
-safetypin = Item([atkChunk(3, 4)], [], 40, 1, 1, "Safety pin", "Not actually very safe at all.\nActually quite dangerous.", "safetypin", 1)
+safetypin = Item([atkChunk(3, 4)], [], 40, 1, 1, "Safety pin", "Not actually very safe at all. Actually quite dangerous.", "safetypin", 1)
 woodstick = Item([atkChunk(1, 0)], [dfnChunk(-1, 2)], 10, 3, 1, "Wooden Stick", "It might not be the best sword, but hey, it's worth a try.", "woodstick", 1)
 brokenglasses = Item([], [dfnChunk(3, 1, True), dfnChunk(-1, 0)], 10, -1, 2, "Broken Glasses", "The few shards of perfectly clear glass in these frames could have only been made by magic.", "brokenglasses", 1)
 fakesword = Item([atkChunk(0, 2)], [dfnChunk(0, 1)], 10, 2, 1, "Fake Sword", "This is actually just an inflatable party favor", "fakesword", 1)
@@ -1281,7 +1281,7 @@ def getitem(item): #AAAAAAAAAAAAAAAHHHHHHHHHHHHHHHHHHHHH
 	invenItems.insert(0, Item(item.atkChunks, item.dfnChunks, item.durability, item.sane, item.score, item.Name, item.desc, item.img, item.lvl, item.destructable, item.ammo, item.regenammo, item.ench, False)) #need to change to a special item, probably a custom object
 	score += item.score
 	prints("Found: "+item.Name)
-	TM2.all = wraptext("You found "+item.Name + ".\nYou place the newfound loot in your backpack.", 900, font, True)
+	TM2.all = wraptext("You found "+item.Name + ". You place the newfound loot in your backpack.", 900, font, True)
 	TM2.refresh()
 	refreshItems(1)
 	
