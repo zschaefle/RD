@@ -96,7 +96,87 @@ if watdo == "1" or watdo == "2":
 		outtext = id+" = Enm("+hp+", "+maxhp+", "+atk+", "+ddev+", "+dfn+", "+agil+", "+heal+", "+sane+", "+name+", "+img+", "+message+", "+cry+", "+rundown+", "+interval+", "+actions+", "+equip+", True, "+room+", "+turn+")"
 		
 		
-		
+	if watdo == "1":
+		equip, boss, room, turn = "[", "True", "bossroom", "-1"
+		#atk, de, name, pic, maxhp, ddev, agil, sane, message, cry, lvl, rundown, heal, interval)
+		x = ""
+		quote = False
+		for i in intext:
+			if i == '"':
+				if quote:
+					quote = False
+				else:
+					quote = True
+			if (i == "," or i == ")") and not quote:
+				print count, x
+				if count == 0:
+					atk = x
+					x = ""
+				if count == 1:
+					dfn = x
+					x = ""
+				if count == 2:
+					name = x
+					x = ""
+				if count == 3:
+					pic = x
+					x = ""
+				if count == 4:
+					maxhp = x
+					x = ""
+				if count == 5:
+					ddev = x
+					x = ""
+				if count == 6:
+					agil = x
+					x = ""
+				if count == 7:
+					x += ","
+				if count == 8:
+					agil = x
+					x = ""
+				if count == 10:	
+					x = ""
+				if count == 11:
+					heal = x[:len(x)-1]
+					x = ""
+				if count == 12:
+					sane = x
+					x = ""
+				if count in [13, 18, 19, 20, 21, 22]:
+					x += ", "
+				if count == 14:
+					equip += x+"]"
+					x = ""
+				if count == 15:
+					turn = x
+					x = ""
+				if count == 16:
+					message = x
+					x = ""
+				if count == 17:
+					cry = x
+					x = ""
+				if count == 23:
+					rundown = x
+					x = ""
+				if count == 24:
+					room = x
+					x = ""
+				if count == 25:
+					interval = str(int(x)/2)
+					x = ""
+				count += 1
+			else:
+				if i == "=" and count == -1:
+					id = x
+				elif i == "(" and count == -1:
+					count = 0
+					x = ""
+				else:
+					if (i != " ") or quote:
+						x += i
+		outtext = id+" = Enm("+hp+", "+maxhp+", "+atk+", "+ddev+", "+dfn+", "+agil+", "+heal+", "+sane+", "+name+", "+img+", "+message+", "+cry+", "+rundown+", "+interval+", "+actions+", "+equip+", True, "+room+", "+turn+")"
 		
 		
 		
