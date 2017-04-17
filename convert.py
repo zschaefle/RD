@@ -24,6 +24,7 @@ if watdo == "1" or watdo == "2":
 					quote = False
 				else:
 					quote = True
+
 			if (i == "," or i == ")") and not quote:
 				print count, x
 				if count == 0:
@@ -123,45 +124,44 @@ if watdo == "1" or watdo == "2":
 					x = ""
 				if count == 4:
 					maxhp = x
+					hp = x
 					x = ""
 				if count == 5:
 					ddev = x
 					x = ""
 				if count == 6:
-					agil = x
-					x = ""
-				if count == 7:
-					x += ","
+					agil1 = int(x[1:])
+					x += ""
 				if count == 8:
-					agil = x
+					agil2 = int(x[:len(x)-1])
 					x = ""
-				if count == 10:	
-					x = ""
-				if count == 11:
-					heal = x[:len(x)-1]
-					x = ""
-				if count == 12:
+				if count == 9:
 					sane = x
 					x = ""
+				if count == 10:
+					message = x
+					x = ""
+				if count == 11:
+					cry = x
+					x = ""
+				if count == 12:
+					turn = x
+					x = ""
+				if count == 13:
+					rundown = x
+					x = ""
+
+
+				if count == 15:	#skip first values of heal for now. NEED TO DO: turn into action value
+					x = ""
+				if count == 16:
+					heal = x[:len(x)-1]
+					x = ""
+
 				if count in [13, 18, 19, 20, 21, 22]:
 					x += ", "
 				if count == 14:
 					equip += x+"]"
-					x = ""
-				if count == 15:
-					turn = x
-					x = ""
-				if count == 16:
-					message = x
-					x = ""
-				if count == 17:
-					cry = x
-					x = ""
-				if count == 23:
-					rundown = x
-					x = ""
-				if count == 24:
-					room = x
 					x = ""
 				if count == 25:
 					interval = str(int(x)/2)
@@ -176,7 +176,8 @@ if watdo == "1" or watdo == "2":
 				else:
 					if (i != " ") or quote:
 						x += i
-		outtext = id+" = Enm("+hp+", "+maxhp+", "+atk+", "+ddev+", "+dfn+", "+agil+", "+heal+", "+sane+", "+name+", "+img+", "+message+", "+cry+", "+rundown+", "+interval+", "+actions+", "+equip+", True, "+room+", "+turn+")"
+		agil = "[", str(round(agil1/agil2*100)), ", 100]"
+		outtext = id+" = Enm("+hp+", "+maxhp+", "+atk+", "+ddev+", "+dfn+", "+agil+", "+heal+", "+sane+", "+name+", "+img+", "+message+", "+cry+", "+rundown+", "+interval+", "+actions+", "+equip+")"
 		
 		
 		
