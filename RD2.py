@@ -778,12 +778,31 @@ class Player(object):
 		self.agilmod = 1
 		self.defending = False
 		self.equipped = [nothing, nothing, nothing, nothing]
+
+		self.hpratio = 1.0
+		self.dfratio = 0.0
 	
+	def reStats(self):
+		self.dfratio = float(0)
+		self.hpratio = float(1)
+		dfTotal = 0
+		for i in self.equipped:
+			dfTotal += i.maxdur
+			self.dfratio += i.durability
+		self.dfratio = self.dfratio/dfTotal
+		
+		ratio = (float(enm.hp)/enm.maxhp)
+		if ratio < 0:
+			ratio = 0
+
+		self.hpratio = ratio
+
 	def refresh(self):
 		#set self.sanity
 		localrand = self.sane
-		for i in pla.equipped:
+		for i in self.equipped:
 			localrand += i.sane
+
 		global score
 		if score < 0:
 			localrand += score*2
@@ -842,6 +861,9 @@ class Enm(object):
 		self.minionTree = []
 		self.dist = 0
 		
+		self.hpratio = 1.0
+		self.dfratio = 0.0
+
 	def Minionize(self, dist):
 		self.dist = dist
 
@@ -869,8 +891,8 @@ enm = creepybaldguy
 adventurer = Enm(190, 190, 10, 5, 0, [5,100], 30, -7, "Adventurer", "adventurer", "You hear the footsteps of someone else.", "It is an Adventurer, Readying his stance for Battle!", ["He seems oddly unaware of the massive amounts of damage you have dealt him. Much like you are.", "", "", "", "He seems more confident of himself, more sure of his strides.", ""], 50, [["atk1", 4], ["heal", 1]], [herosword, heroshield], True, bossroom, 10)
 
 coo33 = Enm(125, 170, 5, 75, 10, [19,100], 8, -2, "coo33", "coosome", "You hear something behind you.", "\'Here,  Fishy..   Fishy...\'", ["It's bloodied eyes dart across you, searching for ways to finish you off quickly.", "It looks angry, but seems to have survived worse.", "It is smiling, although panting. It seems as though it's malnourishedness is taking effect.", "He seems unfazed, a low growl and a chuckle murmured from within.", "It takes a deep breath, the type one might take after a good nights sleep.", "It seems to be toying with you, darting through the room."], 26, actions, [fishingrod, pencil], True, roomBoss2, 15)
-coosome = Enm(140, 150, 25, 2, 14, [14,100], 20, -1, "Coosome", "coosome", "You see someone, just as they see you. He stares at you with deadpan eyes.", "", ["It's bloodied eyes dart across you, searching for ways to finish you off quickly.", "It looks angry, but seems to have survived worse.", "It is smiling, although panting. It seems as though it's malnourishedness is taking effect.", "He seems unfazed, a low growl and a chuckle murmured from within.", "It takes a deep breath, the type one might take after a good nights sleep.", "It seems to be toying with you, darting through the room."], 34, actions, [fishingrod, pencil], True, roomBoss2, 15)
-colton = Enm(120, 140, 10, 8, 10, [28,90], 12, -1, "Colton", "coosome", "You see a person, just as he hears you. He jumps, making an odd noise.", "", ["It's bloodied eyes dart across you, searching for ways to finish you off quickly.", "It looks angry, but seems to have survived worse.", "It is smiling, although panting. It seems as though it's malnourishedness is taking effect.", "He seems unfazed, a low growl and a chuckle murmured from within.", "It takes a deep breath, the type one might take after a good nights sleep.", "It seems to be toying with you, darting through the room."], 41, actions, [drawingpad, pencil], True, roomBoss2, 15)
+coosome = Enm(140, 150, 25, 2, 14, [14,100], 20, -1, "Coosome", "coosome", "You see someone, just as they see you. He stares at you with deadpan eyes.", "", ["It's bloodied eyes dart across you, searching for ways to finish you off quickly.", "It looks angry, but seems to have survived worse.", "It is smiling, although panting. It seems as though it's malnourishedness is taking effect.", "He seems unfazed, a low growl and a chuckle murmured from within.", "It takes a deep breath, the type one might take after a good nights sleep.", "It seems to be toying with you, darting through the room."], 34, actions, [fishingrod, pencil], True, roomBoss2, 15, False)
+colton = Enm(120, 140, 10, 8, 10, [28,90], 12, -1, "Colton", "coosome", "You see a person, just as he hears you. He jumps, making an odd noise.", "", ["It's bloodied eyes dart across you, searching for ways to finish you off quickly.", "It looks angry, but seems to have survived worse.", "It is smiling, although panting. It seems as though it's malnourishedness is taking effect.", "He seems unfazed, a low growl and a chuckle murmured from within.", "It takes a deep breath, the type one might take after a good nights sleep.", "It seems to be toying with you, darting through the room."], 41, actions, [drawingpad, pencil], True, roomBoss2, 15, False)
 
 alpha = Enm(350, 500, 14, 6, 0, [60, 80], 10, -3, "Alpha", "alpha", "You hear sudden quick footsteps from behind you.", "you turn to see someone dashing at you, Swinging a large axe!", ["", "", "", "", "", ""], 60, [["atk1", 4], ["heal", 1]], [alphaxe, sivgoggles], True, roomBoss3, 20)
 jimgrind = Enm(200, 200, 35, 2, 35, [3,120], 12, -2, "Jim Grind", "jimgrind", "Someone is in the room with you. You turn just fast enough to see him. He knows he has been spotted.", "A stern look on his face; A deadly look in his eyes.", ["", "You can see small gaps in his defence now, chinks in his armor.", "His breathing is heavy, and his swings are slower, yet just as powerful.", "He stands with a confident air about him, holding his sword firmly.", "His armor is beginning to glow, even the largest chinks in his armor closing as the armor reshapes into its original form.", "He seems unaware of your blows, simply tanking all damage you may deal to him."], 130, actions, [jimsword, jimarmor], True, roomBoss4, 25)
@@ -1185,7 +1207,6 @@ def genRoom():
 				if (pla.sane > 0):
 					finalsanity = 1
 		
-		'''
 		if (finalsanity == 1 and turn > 20 and pla.TrueSane == 0):
 			roommessage += prepbattle(lastinsanity)
 			finalsanity = 0
@@ -1220,7 +1241,7 @@ def genRoom():
 				roommessage += prepbattle(nerveball)
 		
 		if (pla.lvl >= 2 and search):
-			enemyspawn = rand(5)
+			enemyspawn = rand(6)
 			if (enemyspawn == 1 and room.manmade == 1 and room.water == 0):
 				roommessage += prepbattle(bookofdeath)
 			if (enemyspawn == 2 and room.manmade == 1):
@@ -1231,16 +1252,16 @@ def genRoom():
 				roommessage += prepbattle(mimic)
 				lootable = True
 			if (enemyspawn == 5):
-				roommessage += prepbattle(creep2)'''
+				roommessage += prepbattle(creep2)
 			
 		if (pla.lvl >= 1 and search):
 			enemyspawn = rand(6)
-			'''if (enemyspawn == 1 and room.water == 1 and room.animal == 1):
+			if (enemyspawn == 1 and room.water == 1 and room.animal == 1):
 				roommessage += prepbattle(anenemy)
 			if (enemyspawn == 2 and room.plant == 1 and room.water == 0):
 				roommessage += prepbattle(axeurlegs)
-			if (enemyspawn == 3):
-				roommessage += prepbattle(muffin)'''
+			#if (enemyspawn == 3):
+				#roommessage += prepbattle(muffin)
 			if (enemyspawn >= 5):
 				roommessage += prepbattle(creepybaldguy)
 	global TM1
@@ -2015,10 +2036,8 @@ while running:
 		pygame.draw.rect(screen, LGREY, (10, 10, 820, 9)) #backing
 		if enm.defending:
 			pygame.draw.rect(screen, GREY, (10, 10, 820, 9)) #backing
-		ratio = (float(enm.hp)/enm.maxhp)
-		if ratio < 0:
-			ratio = 0
 		pygame.draw.rect(screen, RED, (11, 11, ratio*818, 3))#enm hp
+
 		#pygame.draw.rect(screen, GREY, (11, 15, 820, 3))#enm armor durability
 		
 		pygame.draw.rect(screen, LGREY, (589, 240, 400, 9)) #backing
