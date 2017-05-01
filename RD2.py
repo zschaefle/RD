@@ -713,7 +713,7 @@ nerfgun = Item([atkChunk(2, 10, False, False, 0, 1)], [], 60, 3, 3, "Nerf Gun", 
 
 #LEVEL 3
 higgs = Item([atkChunk(1, 1, False, True, 1)], [], 5, -15, 4, "Higgs Boson", "You have no idea how you found this. And you know you probably shouldn't have been able to.", "higgs", 3, True, None, [], {"mending":[1000, -1]})
-
+romace = Item([], [], 1, 5, 5, "Romace", "It was love at first slice.", "mace", 3)#"mace of restoration, neverwinter game"
 
 #--BOSS ITEMS--
 #HERO
@@ -2056,18 +2056,17 @@ while running:
 		pygame.draw.rect(screen, LGREY, (10, 10, 820, 9)) #backing
 		if enm.defending:
 			pygame.draw.rect(screen, GREY, (10, 10, 820, 9)) #backing
-		pygame.draw.rect(screen, RED, (11, 11, ratio*818, 3))#enm hp
+		pygame.draw.rect(screen, RED, (11, 11, enm.hpratio*818, 3))#enm hp
 
-		#pygame.draw.rect(screen, GREY, (11, 15, 820, 3))#enm armor durability
+		pygame.draw.rect(screen, BLUE, (11, 15, enm.dfratio*818, 3))#enm armor durability
 		
 		pygame.draw.rect(screen, LGREY, (589, 240, 400, 9)) #backing
 		if pla.defending:
 			pygame.draw.rect(screen, GREY, (589, 240, 400, 9)) #backing
-		ratio = (float(pla.hp)/pla.maxhp)
-		if ratio < 0:
-			ratio = 0
-		pygame.draw.rect(screen, RED, (589, 241, (float(pla.hp)/pla.maxhp)*400, 3))#you hp
+
+		pygame.draw.rect(screen, RED, (589, 241, pla.dfratio*400, 3))#you hp
 		#you armor
+		pygame.draw.rect(screen, BLUE, (589, 245, pla.dfratio*400, 3))#enm armor durability
 		
 		#your items, make modular positions w/ dispobj
 		screen.blit(pla.equipped[2].div.fight.img, pla.equipped[2].div.fight.coords)
