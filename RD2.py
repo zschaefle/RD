@@ -1107,7 +1107,8 @@ def genRoom():
 	if (search or turn == 1):
 		 room = ablerooms[rand(len(ablerooms))-1]
 	roommessage += room.message
-	
+	if room.isref:
+		prints("Room is a reference.")
 	
 	avent = random.randint(1, 30)
 	
