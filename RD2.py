@@ -791,7 +791,7 @@ class Player(object):
 			self.dfratio += i.durability
 		self.dfratio = self.dfratio/dfTotal
 		
-		ratio = (float(enm.hp)/enm.maxhp)
+		ratio = (float(self.hp)/self.maxhp)
 		if ratio < 0:
 			ratio = 0
 
@@ -813,6 +813,8 @@ class Player(object):
 		TI1 = DispObj([DispObj(smallfont.render("Health: "+str(self.hp), True, (0, 0, 0))), DispObj(smallfont.render("Base Dmg: "+str(self.dmg), True, (0, 0, 0)), (0, 15)), DispObj(smallfont.render("Base Dfn: "+str(self.dfn), True, (0, 0, 0)), (0, 30)), DispObj(smallfont.render("Score: "+str(score), True, (0, 0, 0)), (0, 45)), DispObj(smallfont.render("Level: "+str(self.lvl), True, (0, 0, 0)), (0, 60)), DispObj(smallfont.render("Room: "+str(turn), True, (0, 0, 0)), (0, 75))], (10, 126), False, (195, 120)) #inventory stats
 		
 pla = Player()
+pla.refresh()
+pla.reStats()
 pla.refresh()
 actions = [["atk1", 1]]
 bosses = []
@@ -866,6 +868,21 @@ class Enm(object):
 
 	def Minionize(self, dist):
 		self.dist = dist
+
+	def reStats(self):
+		self.dfratio = float(0)
+		self.hpratio = float(1)
+		dfTotal = 0
+		for i in self.equipped:
+			dfTotal += i.maxdur
+			self.dfratio += i.durability
+		self.dfratio = self.dfratio/dfTotal
+		
+		ratio = (float(self.hp)/self.maxhp)
+		if ratio < 0:
+			ratio = 0
+
+		self.hpratio = ratio
 
 creepybaldguy = Enm(18, 18, 5, 2, 10, [1, 100], 4, -1, "Creepy Bald Guy", "creep", "You know you are being watched. Always... ", "you feel it staring through your eyes, Into your Soul.", ["Even though it seems nearly dead, it continues its steady gaze deep into your eyes.", "it seems to have lost some hair in this fight. You blink, realizing it was already bald.", "it seems to be observing, only attacking to see how you react.", "it is sitting there, staring at you. Waiting and observing your every move."], 100, [["atk1", 3]], [nothing])
 creep2 = Enm(35, 35, 8, 3, 12, [1, 100], 8, -1, "Creepier Bald Guy", "creep2", "You know you are being watched. Always... ", "you feel it staring through your eyes, Into your Soul.", ["Even though it seems nearly dead, it continues its steady gaze deep into your eyes.", "it seems to have lost some hair in this fight. You blink, realizing it was already bald.", "it seems to be observing, only attacking to see how you react.", "it is sitting there, staring at you. Waiting and observing your every move."], 87, [["heal", 1], ["atk1", 19]], [nothing])
@@ -1792,7 +1809,10 @@ def attack(source, weapon, target, enchValues = [1, None, None]):
 			attacking = False
 			for c in messages:
 				prints(c)
+			target.reStats()
+			source.reStats()
 			return messages, enchValues
+
 
 def Do(entity):
 	global enm
