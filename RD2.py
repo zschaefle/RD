@@ -573,7 +573,7 @@ room37 = Room(1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, -7, "yesssssssssssssss", "You exi
 room38 = Room(0, 1, 0, 1, 0, 1, rand(1), 0, 1, 0, 1, 6, "You are in a large overhang, light from outside illuminating a massive array of small, intricately detailed clay soldiers.", "You clamber towards the ", "ern light, holding your hands above your eyes to block the light", "You stumble over the remains of the small clay soldiers, cracking them even further.", True)
 room39 = Room(0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 3, "You are in a room, quite bland. You feel like it is a blank canvas, and you can do anything with it.", "You stroll to the ", ".", "Looks like you cannot, in fact, do anything with this room.")
 room40 = Room(1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, rand(6) - 3, "Spikes jut up from the ground as the world molds into shape. The landscape begins to for itself, like concrete pouring into a mould. In fact, the landscape seems like one of nature, if all plant mater was replaced by concrete. In the far distance you see two figures, you feel it would be a bad idea to get their attention.", "Gaining your footing on the uneaven ground, you stumble a few steps towards the ", ", just as you fully ready yourself to leave you hear a gleeful shout and the world reforms...", "The spiking cement grass impedes you, causing you to trip almost immediately.", True)
-room41 = Room(0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 3, "You can't stop blinking for a period... When you finally stop you see the world as it once was, pure and without pollution. It fills you with a tranquility, knowing there was something before humans ruined it... and maybe some echo of it here")
+room41 = Room(0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 3, "You can't stop blinking for a period... When you finally stop you see the world as it once was, pure and without pollution. It fills you with a tranquility, knowing there was something before humans ruined it... and maybe some echo of it here.", "", "", "")
 
 bossroom = Room(0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, -2, "You find yourself in a wide open room. The ceiling is high and dark. An ominous feeling of doom hangs over you.", "Exhausted, you leave through the ", " door.", "You somehow walk into a nonexistent wall.", False, False)
 roomBoss2 = Room(0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 1, -2, "You are in a small stone cavern, many twisting passageways leading through a winding cave system. You feel a drop of water plop on your head.", "You climb out through a ", "ern cave.", "You climb through a tunnel, only to find yourself in a room similar to the one you came from.", False, False)
@@ -787,6 +787,7 @@ class Player(object):
 		self.dfratio = 0.0
 	
 	def reStats(self):
+		prints("Recalculating stats for: "+self.name)
 		self.dfratio = float(0)
 		self.hpratio = float(1)
 		dfTotal = 0
@@ -874,6 +875,7 @@ class Enm(object):
 		self.dist = dist
 
 	def reStats(self):
+		prints("Recalculating stats for: "+self.name)
 		self.dfratio = float(0)
 		self.hpratio = float(1)
 		dfTotal = 0
@@ -966,6 +968,7 @@ def Heal(entity):
 			if (pla.hp > pla.maxhp):
 				pla.hp = pla.maxhp
 			healable = False
+		pla.reStats()
 	else:
 		if (entity.hp + entity.heal > entity.maxhp):
 			heal = entity.maxhp - entity.hp
@@ -973,6 +976,7 @@ def Heal(entity):
 			heal = entity.heal
 		entity.hp = entity.hp+heal
 		#printc(entity, entity.name + " heals <strong>"+ heal+ "</strong> hp") #VISUALS
+		entity.reStats()
 
 #based on player level, changes aspects of game such as tiers of items, and rooms.
 def gentables():
@@ -2069,9 +2073,9 @@ while running:
 		if pla.defending:
 			pygame.draw.rect(screen, GREY, (589, 240, 400, 9)) #backing
 
-		pygame.draw.rect(screen, RED, (589, 241, pla.dfratio*400, 3))#you hp
+		pygame.draw.rect(screen, RED, (589, 241, pla.hpratio*400, 3))#you hp
 		#you armor
-		pygame.draw.rect(screen, BLUE, (589, 245, pla.dfratio*400, 3))#enm armor durability
+		pygame.draw.rect(screen, BLUE, (589, 245, pla.dfratio*400, 3))#you armor durability
 		
 		#your items, make modular positions w/ dispobj
 		screen.blit(pla.equipped[2].div.fight.img, pla.equipped[2].div.fight.coords)
