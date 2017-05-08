@@ -28,6 +28,7 @@ clock = pygame.time.Clock()
 
 invenItems = []
 scrollMod = 0
+scrollMom = 0
 netSize = 0
 score = 0
 turn = 0
@@ -713,10 +714,18 @@ onepin = Item([atkChunk(5, 5, False)], [], 100, 2, 4, "One Pin", "The tip is dul
 nerfgun = Item([atkChunk(2, 10, False, False, 0, 1)], [], 60, 3, 3, "Nerf Gun", "Sometimes Styrofoam bullets can hurt.", "nerfgun", 1, True, 6, [750, 6])
 
 #LEVEL 2
+mirror0 = Item([], [dfnChunk(-15, 20, False, False, False, {"reflecting":0.2})], 10, 5, 3, "Grimy Mirror", "Covered with muck, seems to reflect things thrown upon it. But still only as durable as any old plate of glass.", "mirror0", 2)
 
 #LEVEL 3
 higgs = Item([atkChunk(1, 1, False, True, 1)], [], 5, -15, 4, "Higgs Boson", "You have no idea how you found this. And you know you probably shouldn't have been able to.", "higgs", 3, True, None, [], {"mending":[1000, -1]})
-romace = Item([], [], 1, 5, 5, "Romace", "It was love at first slice.", "mace", 3)#"mace of restoration, neverwinter game"
+romace = Item([atkChunk(26, 5)], [dfnChunk(-3, 2, True), dfnChunk(-10, 18, False, False, True, {"thorns":atkChunk(5, -10)})], 1000, 5, 5, "Romace", "It was love at first slice.", "mace", 3)#"mace of restoration, neverwinter game"
+mirror1 = Item([], [dfnChunk(-20, None, False, False, False, {"reflecting":0.6})], 40, 6, 3, "Mirror", "Quite clear, seems to reflect anything thrown upon it. But still only as durable as any old plate of glass.", "mirror1", 3)
+
+#LEVEL 4
+mirror2 = Item([], [dfnChunk(-10, None, False, False, False, {"reflecting":1, "trueProtection":True})], 50, 7, 3, "Shiny Mirror", "Clean as new, seems to reflect anything thrown upon it perfectly. But still only as durable as any old plate of glass.", "mirror2", 4)
+
+#LEVEL 5
+mirror3 = Item([], [dfnChunk(-10, None, False, False, False, {"reflecting":1.4, "trueProtection":True})], 100, 2, 3, "Gleaming Mirror", "Shining like nothing before, Reflecting things tossed upon it with vigor to surpass your own.", "mirror1", 5)
 
 
 #--BOSS ITEMS--
@@ -743,7 +752,6 @@ jimarmor = Item([], [dfnChunk(-10, 5, False, True), dfnChunk(-20), dfnChunk(-5, 
 communism = Item([atkChunk(80, 100, True, False, 2, 1, {"heavy":2}), atkChunk(5, -10)], [], 100, 4, 10, "Crossbow", "An intricate, heavy crossbow with an ingraved name: 'Communism mk. II'", "communism", -1, True, 1, [500, 1])
 
 #CUBE
-#inactivecube = item(25, 7, 20, 0, 10, "Inactive Cube", "inactivecube", "")
 inactivecube = Item([atkChunk(30, 30, False, False, 2, None, {"sweeping":2}), atkChunk(10, 5, False, True)], [dfnChunk(10, 0, True, True)], 80, -6, 10, "Electrical Device", "You have no idea how it works, bbut it looks far beyond any tech you have ever seen.", "device", -1, False, None, [], {"mending":[20, 1]})
 #card = item(2, 25, 25, 0, 20, "00000111", "card", "")
 #device = item(40, 0, 6, 0, 20, "Electrical device", "device", "You have no idea how it works, but it looks far beyond any tech you have seen.")
@@ -826,6 +834,7 @@ bosses = []
 class Enm(object):
 	#enemy base:	   atk, de, name, pic, maxhp, ddev, agil, sane, message, cry, lvl, rundown, heal, interval, equip = [nothing]
 	#boss base:		hp, atk,   de,  name, img, maxhp, ddev, agil, heal, sane, loot, loot2, turn, message, cry, rundown, room, interval, equip = [nothing] #NEW INTERVALS NEED TO BE HALF ORIGONAL
+					  #hp, maxhp, atk, ddev, de, agil, heal, sane, lvl, name, pic, message, desc, interval, distract
 	def __init__(self, hp, maxhp, atk, ddev, dfn, agil, heal, sane, name, img, message, cry, rundown, interval, actions = [], equip = [nothing], Boss = False, room = None, turn = -1, toappend = True):
 		self.hp = float(hp) #initial
 		self.maxhp = maxhp #max
@@ -1903,23 +1912,22 @@ while running:
 			if event.button == 4 and Screen == 2:
 				if hitDetect((115, 10), (370, 239), mouse_pos): #scrolling on the items list
 					if netSize > 239: #Scrolling up
-						#netSize
-						scrollMod += 10 #ammount scrolled
-						if scrollMod > 0: #make sure you didn't scroll too far
-							scrollMod = 0
-						refreshItems(2) #update display with new coords
+						if scrollMom >= -8:
+							scrollMom += 10
+						else:
+							scrollMom = -10
 					else:
-						scrollMod = 0
+						scrollMom = 0
 				
 			if event.button == 5 and Screen == 2:
 				if hitDetect((115, 10), (370, 239), mouse_pos): #scrolling on the items list
 					if netSize > 239: #Scrolling down
-						scrollMod -= 10
-						if scrollMod + netSize < 239: #make sure you didn't scroll too far
-							scrollMod = 0-(netSize - 239)
-						refreshItems(2) #make sure you didn't scroll too far
+						if scrollMom <= 8:
+							scrollMom -= 10
+						else:
+							scrollMom = 10
 					else:
-						scrollMod = 0
+						scrollMom = 0
 						
 		if event.type == pygame.MOUSEBUTTONUP:
 			if event.button == 1:
@@ -1954,7 +1962,7 @@ while running:
 				print "prepped for Zarol"
 				
 	mouse_pos = pygame.mouse.get_pos()
-	
+
 	
 	if Screen == 1: #main screen
 		screen.fill(Cbacking)
@@ -2257,6 +2265,33 @@ while running:
 		if (gravetime == 0):
 			limbob(limbostuff[0], limbostuff[1])
 	
+	if scrollMom != 0:
+		if scrollMom < -70:
+			scrollMom = -70
+		if scrollMom > 70:
+			scrollMom = 70
+
+		if scrollMom < 0:
+			if scrollMom < -45:
+				scrollMom += 0.5
+			else:
+				scrollMom += 1
+		if scrollMom > 0:
+			if scrollMom > 45:
+				scrollMom -= 0.5
+			else:
+				scrollMom -= 1
+		scrollMod += scrollMom
+
+		if scrollMod > 0: #make sure you didn't scroll too far
+			scrollMod = 0
+			scrollMom = 0
+		refreshItems(2) #update display with new coords
+		if scrollMod + netSize < 239: #make sure you didn't scroll too far
+			scrollMod = 0-(netSize - 239)
+			scrollMom = 0
+		refreshItems(2) #make sure you didn't scroll too far
+
 	pygame.display.update()
 	clock.tick(50)
 	
