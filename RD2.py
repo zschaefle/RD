@@ -274,13 +274,13 @@ class ItemDisp(object):
 					
 					#agildesc, piercing
 					astring = ""
-					if i.agil < 0:
-						astring = "Hindering"
-					if i.agil < -20:
+					if i.agil < -2:
 						astring = "Cumbersome"
+					if i.agil < -20:
+						astring = "Hindering"
 					if i.agil == 0:
 						astring = "Unobtrusive"
-					if i.agil > 0:
+					if i.agil > 2:
 						astring = "Balanced"
 					if i.agil > 20:
 						astring = "Nimble"
@@ -388,13 +388,13 @@ class ItemDisp(object):
 					
 				#agildesc, durable
 				astring = ""
-				if i.agil < 0:
-					astring = "Hindering"
-				if i.agil < -20:
+				if i.agil < -2:
 					astring = "Cumbersome"
+				if i.agil < -20:
+					astring = "Hindering"
 				if i.agil == 0:
 					astring = "Unobtrusive"
-				if i.agil > 0:
+				if i.agil > 2:
 					astring = "Nimble"
 				if i.agil > 20:
 					astring = "Agile"
@@ -716,14 +716,13 @@ onepin = Item([atkChunk(5, 5, False)], [], 100, 2, 4, "One Pin", "The tip is dul
 nerfgun = Item([atkChunk(2, 10, False, False, 0, 1)], [], 60, 3, 3, "Nerf Gun", "Sometimes Styrofoam bullets can hurt.", "nerfgun", 1, True, 6, [750, 6])
 
 #LEVEL 2
-#circularsaw = item(15, 0, 0, -15, 9, "Circular saw", "circularsaw", "You feel as though only a psychopath would use this as a weapon. The stains of blood imply that it already has.")
-#circularsaw = Item([], [], )
+circularsaw = Item([atkChunk(15, 0, True, False, 1, None, {"destructive":5, "heavy":1})], [dfnChunk(-1, -5, True)], 120, -7, 8, "Circular Saw", "You feel as though only a psychopath would use this as a weapon. The stains of blood imply that it already has.", "circularsaw", 2)
 mirror0 = Item([], [dfnChunk(-15, 20, False, False, False, {"reflecting":0.2})], 10, 5, 3, "Grimy Mirror", "Covered with muck, seems to reflect things thrown upon it. But still only as durable as any old plate of glass.", "mirror0", 2)
 
 #LEVEL 3
 higgs = Item([atkChunk(1, 1, False, True, 1)], [], 5, -15, 4, "Higgs Boson", "You have no idea how you found this. And you know you probably shouldn't have been able to.", "higgs", 3, True, None, [], {"mending":[1000, -1]})
-romace = Item([atkChunk(26, 5)], [dfnChunk(-3, 2, True), dfnChunk(-10, 18, False, False, True, {"thorns":atkChunk(5, -10)})], 1000, 5, 5, "Romace", "It was love at first slice.", "mace", 3)#"mace of restoration, neverwinter game"
-mirror1 = Item([], [dfnChunk(-20, None, False, False, False, {"reflecting":0.6})], 40, 6, 3, "Mirror", "Quite clear, seems to reflect anything thrown upon it. But still only as durable as any old plate of glass.", "mirror1", 3)
+romace = Item([atkChunk(26, 5)], [dfnChunk(-3, 2, True), dfnChunk(-10, 18, False, False, True, {"thorns":atkChunk(5, -10)})], 500, 5, 5, "Romace", "It was love at first slice.", "mace", 3)#"mace of restoration, neverwinter game"
+mirror1 = Item([], [dfnChunk(-20, None, False, False, False, {"reflecting":0.6})], 30, 6, 3, "Mirror", "Quite clear, seems to reflect anything thrown upon it. But still only as durable as any old plate of glass.", "mirror1", 3)
 
 #LEVEL 4
 mirror2 = Item([], [dfnChunk(-10, None, False, False, False, {"reflecting":1, "trueProtection":True})], 50, 7, 3, "Shiny Mirror", "Clean as new, seems to reflect anything thrown upon it perfectly. But still only as durable as any old plate of glass.", "mirror2", 4)
@@ -1732,7 +1731,9 @@ def Damage(source, weapon, atk, target):
 				#Durability reduction
 				weapon.durability -= x.ench["destructive"]
 				if not x.dur: #if durability is taken into account
-					i.durability -= tanked + atk.ench["destructive"]
+					i.durability -= atk.ench["destructive"]
+					if tanked > 0:
+						i.durability -= tanked
 					if i.durability < 0: #if armor is destroyed, only tank as much as it can
 						dmg -= i.durability
 						#if dmg > prevdmg:  #only do this if rebounding is back
