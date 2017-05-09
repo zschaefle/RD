@@ -690,6 +690,8 @@ class Item(object):
 
 
 nothing = Item([], [], 1, 0, 0, "", "", "no_thing", -1, False)
+nothing.img = getImg("special/passive")
+nothing.div = ItemDisp(nothing)
 allitems.remove(nothing)
 acorncap = Item([], [dfnChunk(1, 1, True)], 15, 4, 9, "Acorn Cap", "If you were really tiny, like, smaller than a squirrel, this would be the perfect armor. You place it over your heart  You call it a kiss", "acorncap", 1)
 boardgame = Item([], [dfnChunk(0, 1, True), dfnChunk(-1, 1)], 32, 2, 2, "Board Game", "The cardboard is battered  from years of wear, but you can see the winding  path your piece would take if you were a winner.   You're not a winner.", "boardgame", 1)
@@ -714,6 +716,8 @@ onepin = Item([atkChunk(5, 5, False)], [], 100, 2, 4, "One Pin", "The tip is dul
 nerfgun = Item([atkChunk(2, 10, False, False, 0, 1)], [], 60, 3, 3, "Nerf Gun", "Sometimes Styrofoam bullets can hurt.", "nerfgun", 1, True, 6, [750, 6])
 
 #LEVEL 2
+#circularsaw = item(15, 0, 0, -15, 9, "Circular saw", "circularsaw", "You feel as though only a psychopath would use this as a weapon. The stains of blood imply that it already has.")
+#circularsaw = Item([], [], )
 mirror0 = Item([], [dfnChunk(-15, 20, False, False, False, {"reflecting":0.2})], 10, 5, 3, "Grimy Mirror", "Covered with muck, seems to reflect things thrown upon it. But still only as durable as any old plate of glass.", "mirror0", 2)
 
 #LEVEL 3
@@ -1544,6 +1548,7 @@ def limbob(type, message):
 			turn = -2
 		pla.hp = 80+rand(20)
 		pla.refresh()
+		pla.reStat()
 		#var screen = document.getElementById("limbotext");
 		#screen.innerHTML = message; #VISUALS
 		
