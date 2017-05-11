@@ -61,6 +61,9 @@ pladfn = 0
 plaheal = 0
 plaTotal = 1
 
+#prevent crashes
+nothing = None
+
 
 #two sets of coord pairs
 def hitdetect(p1, p2, p3, p4 = None):
@@ -107,7 +110,10 @@ def rand(num):
 	return random.randint(1, num)
 
 def cbrt(num):
-	return num ** (1.0/3.0)
+	if num < 0:
+		return -(math.abs(num) ** (1.0/3.0))
+	else:
+		return num ** (1.0/3.0)
 	
 def addEnch(type, en1, en2): #DO THORNS GOOD
 	if type == 1: #defensive
@@ -207,8 +213,9 @@ class ItemDisp(object):
 	def refresh(self, type):
 		global smallfont
 		global font
+		global nothing
 		#NORMAL IMAGE, name and description with image
-		if type == 1:
+		if type == 1 and self.item != nothing:
 			self.norm = DispObj([
 				DispObj(self.mini, (2, 2)), 
 				DispObj(font.render(self.item.Name, True, (0, 0, 0)), (54, 2)), 
@@ -375,7 +382,8 @@ class ItemDisp(object):
 				astring = "Dfn: "
 				if i.all:
 					localrand.all.append(DispObj(dfnImg, (0, 0)))
-					astring += "+"
+					if i.dfn >= 0 or i.dfn == None:
+						astring += "+"
 				else:
 					localrand.all.append(DispObj(actImg, (0, 0)))
 				if i.dfn == None:
@@ -448,6 +456,10 @@ class ItemDisp(object):
 			else:
 				self.fight.all.append(DispObj(self.mini))
 			
+		if type == 1 and self.item == nothing:
+			self.side = DispObj([], (0, 0), False, (0, 0)) #very invisable
+			self.fight = DispObj([DispObj(pygame.Surface((52, 52), pygame.SRCALPHA, 32).convert_alpha()), DispObj(self.mini)], (10, 199), False, (52, 52))
+		
 		#FIGHT display
 		if type == 2:
 			#global pla
@@ -774,7 +786,6 @@ class Player(object):
 		self.hp = 100
 		self.dmg = 8
 		self.dfn = 0
-		self.passdfn = []
 		self.ddev = 3
 		self.heal = 1
 		self.maxhp = 100
@@ -788,9 +799,6 @@ class Player(object):
 		self.minions = []
 		self.id = 0
 		self.minionTree = []
-		self.atkmod = 1
-		self.defmod = 1
-		self.agilmod = 1
 		self.defending = False
 		self.equipped = [nothing, nothing, nothing, nothing]
 
@@ -831,7 +839,6 @@ class Player(object):
 pla = Player()
 pla.refresh()
 pla.reStats()
-pla.refresh()
 actions = [["atk1", 1]]
 bosses = []
 class Enm(object):
@@ -876,12 +883,14 @@ class Enm(object):
 			self.totalact += i[1]
 		
 		self.defending = False
+		self.hpratio = 1.0
+		self.dfratio = 0.0
+		
+		#Minions stuff
 		self.minions = []
 		self.minionTree = []
 		self.dist = 0
 		
-		self.hpratio = 1.0
-		self.dfratio = 0.0
 
 	def Minionize(self, dist):
 		self.dist = dist
@@ -894,7 +903,7 @@ class Enm(object):
 		for i in self.equipped:
 			dfTotal += i.maxdur
 			self.dfratio += i.durability
-		self.dfratio = self.dfratio/dfTotal
+		self.dfratio = self.dfratio/dfTotal #Wait, why doesn't this crash all the time?
 		
 		ratio = (float(self.hp)/self.maxhp)
 		if ratio < 0:
@@ -1951,6 +1960,7 @@ while running:
 			if event.key == K_q:
 				pla.hp = 0
 				check(pla)
+				print "Killing player."
 			if event.key == K_w:
 				turn = 9
 				print "prepped for adventurer"
@@ -1966,6 +1976,14 @@ while running:
 			if event.key == K_y:
 				turn = 49
 				print "prepped for Zarol"
+			if event.key == K_a:
+				pla.refresh()
+				pla.reStats()
+				gentables()
+				print "Sanity:", pla.sane
+				print "Item modified sanity:", pla.sanity
+				print "True sanity:", pla.trueSane
+				print "Defending:", pla.defending
 				
 	mouse_pos = pygame.mouse.get_pos()
 
@@ -2244,7 +2262,7 @@ while running:
 				i.durability += 1 #and it only fixes a little bit
 				if i.durability > 0:
 					i.broken = False
-		#also do ammo in here
+					
 		if i.regenTick != -1 and not i.broken and i.ammo < i.maxammo: #don't let them preload! that's weird!
 			i.regenTick += 1
 			if i.regenTick >= i.regenammo[0]:
