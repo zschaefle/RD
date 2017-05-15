@@ -60,6 +60,7 @@ plaatk2 = 0
 pladfn = 0
 plaheal = 0
 plaTotal = 1
+bossmisc = 0
 
 #prevent crashes
 nothing = None
