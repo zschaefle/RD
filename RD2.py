@@ -972,24 +972,34 @@ def Heal(entity):
 	if (entity == pla and pla.hp > 0):
 		if inbattle:
 			heal = pla.heal + random.randint(0, 2*pla.hdev)-pla.hdev
-			if (entity.hp + heal > entity.maxhp):
-				heal = entity.maxhp - entity.hp
-			entity.hp = entity.hp+heal
-			prints(" you heal "+str(heal)+" hp!") #VISUALS
+			if (pla.hp + heal > pla.maxhp):
+				heal = pla.maxhp - pla.hp
+			pla.hp = pla.hp+heal
 			if pla.hp > pla.maxhp:
+				heal -= pla.hp - pla.maxhp
 				pla.hp = pla.maxhp
+			pla.reStats()
+			return "you heal "+str(heal)+" hp"
 				
-		if healable and not inbattle:
-			heal = pla.heal*10 + random.randint(0, 3*pla.hdev)
-			if (entity.hp + heal > entity.maxhp):
-				heal = entity.maxhp - entity.hp
-			entity.hp = entity.hp+heal
-			pla.sane += 0.2
-			prints(" you heal "+str(heal)+" hp!") #VISUALS
-			if (pla.hp > pla.maxhp):
-				pla.hp = pla.maxhp
-			healable = False
-		pla.reStats()
+		else:
+			if healable:
+				heal = pla.heal*10 + random.randint(0, 3*pla.hdev)
+				if (pla.hp + heal > pla.maxhp):
+					heal = pla.maxhp - pla.hp
+				pla.hp = pla.hp+heal
+				pla.sane += 0.2 #soon REMOVE
+				if (pla.hp > pla.maxhp):
+					heal -= pla.hp - pla.maxhp
+					pla.hp = pla.maxhp
+				healable = False
+				if heal > 0:
+					pla.reStats()
+					return "You heal "+str(heal)+" hp!"
+				else:
+					healable = True
+					return "You are already at peak health."
+			else:
+				return "You feel as though you should move on."
 	else:
 		if (entity.hp + entity.heal > entity.maxhp):
 			heal = entity.maxhp - entity.hp
@@ -1080,6 +1090,7 @@ def prepbattle(enemy):
 		i.atkInt = rand(i.atkIntBase)
 	for i in pla.minionTree:
 		i.atkInt = rand(i.atkIntBase)
+	enm.reStats()
 	return enm.message
 
 #The meat of the game, Generates the room randomly
@@ -1358,6 +1369,13 @@ def move(direction):
 			TM2.all = wraptext(room.exitFail, 900, font, True)
 			TM2.refresh()
 			prints("move failed.")
+	else:
+		if inbattle:
+			TM2.all = wraptext("It is too dangerous to leave something behind you.", 900, font, True)
+			TM2.refresh()
+		else:
+			TM2.all = wraptext("You feel this would be a bad idea.", 900, font, True)
+			TM2.refresh()
 	
 def getitem(item): #AAAAAAAAAAAAAAAHHHHHHHHHHHHHHHHHHHHH
 	global invenItems
@@ -1901,6 +1919,8 @@ def getMinionTree(entity, type):
 looot = font.render("Loot", True, (0, 0, 0))
 inveen = font.render("Inventory", True, (0, 0, 0))
 baack = font.render("Back", True, (0, 0, 0))
+heeal = font.render("Heal", True, (0, 0, 0))
+meem = font.render("Meditate", True, (0, 0, 0))
 Fdfn = DispObj(ac2Img, (130, 199))
 Fheal = DispObj(getImg("special/heal"), (190, 199))
 
@@ -1995,11 +2015,16 @@ while running:
 		screen.blit(TM1.img, TM1.coords)
 		screen.blit(TM2.img, TM2.coords)
 		#buttons on side
-		pygame.draw.rect(screen, Cbacking, [910, 10 , 75, 24])
+		pygame.draw.rect(screen, Cbacking, [910, 10, 75, 24])
 		screen.blit(inveen, (910, 10))
-		pygame.draw.rect(screen, Cbacking, [910, 37 , 75, 24])
-		pygame.draw.rect(screen, Cbacking, [910, 64 , 75, 24])
+		pygame.draw.rect(screen, Cbacking, [910, 37, 75, 24])
 		screen.blit(looot, (910, 37))
+		pygame.draw.rect(screen, Cbacking, [910, 64, 75, 24])
+		screen.blit(heeal, (910, 64))
+		if inbattle:
+			pygame.draw.rect(screen, Cbacking, [910, 91, 75, 24])
+		#screen.blit(meem, (910, 91))
+		
 		screen.blit(Scompass, (910, 174))
 		
 		
@@ -2019,7 +2044,10 @@ while running:
 				pla.refresh()
 			if hitDetect((910, 37), (75, 24), mouse_pos): #loot
 				RDloot()
-			if hitDetect((910, 64), (75, 24), mouse_pos): #fight
+			if hitDetect((910, 64), (75, 24), mouse_pos): #heal
+				TM2.all = wraptext(Heal(pla), 900, font, True)
+				TM2.refresh()
+			if hitDetect((910, 91), (75, 24), mouse_pos) and inbattle: #fight - will be meditate
 				Screen = 3
 	
 	if Screen == 2: #inven screen
