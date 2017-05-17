@@ -41,7 +41,6 @@ lootable = False
 chestmessages = ["There is a small chest about the size of your fist lurking in the corner. ", "A golden chest sits with elegant details and pure beauty.", "There\'s a lumpy sack over there", "You hear the wheeze of a chest.  \"Open me\" it calls, with the music of its collapsing wood.", "In a rotting monster carcass, you glimpse something... interesting.", "There\'s a lump in the ground. Like a squirrel buried a tasty rock and then ran off and died.", "Something calls your attention. It sucks you in. You imagine riches.", "You smell something.  It smells like goods.", "You glimpse a confection of wood and nails, almost big enough to hold something.", "There is a small door that seems to have something sticking out, perhaps something useful."]
 runmessages = ["Run", "Dodge", "Sprint", "Jump", "Duck", "Roll", "Slide", "Feint", "Fake", "Switch", "Distract", "Twist", "Lurch", "Insult", "Shout"]
 #unlockmessages = ["You hear the sound of something unlocking from far away.", "You feel the dongeon blink, and you have a moment of deja vu.", "A feeling of release washes over you, the feeling of access.", "You feel something click, almost like a realization."]
-score = 0
 healable = True
 noKillEpic = True
 roommessage = ""
@@ -53,7 +52,7 @@ bossesbeat = 0
 running = True
 Screen = 1
 mouse_down = False
-#reAdventurer stuff
+#Boss stuff
 plaTime = 0
 plaatk1 = 0
 plaatk2 = 0
@@ -61,6 +60,8 @@ pladfn = 0
 plaheal = 0
 plaTotal = 1
 bossmisc = 0
+finalbosses = ["zarol", "zarol", "zarol", "Coo", "North", "Blue", "Jim", "Siv"]
+endboss = "zarol"
 
 #prevent crashes
 nothing = None
@@ -112,7 +113,7 @@ def rand(num):
 
 def cbrt(num):
 	if num < 0:
-		return -(math.abs(num) ** (1.0/3.0))
+		return -(math.fabs(num) ** (1.0/3.0))
 	else:
 		return num ** (1.0/3.0)
 	
@@ -952,16 +953,22 @@ lastinsanity = Enm(1000, 1000, 15, 90, 10, [2,100], 3, 100, "Last Remnants of In
 #creepiestbaldest = Enm(400, 500, 40, 1, 5, [83, 100], 20, -20, "The Knowing Eye", "creepiestbaldest", "You see one blink. And with its eyes, another one is opening.", "You feel its knowing gaze, that it has nothing more to learn.", ["", "", "", "", "", ""], 55, [["atk1", ]], [map, shinedisk], True, room34, 52)
 
 zarol = None
-def buildZarol():
-	global zarol
+def buildFinal():
 	global score
 	global runs
-	global bossroom
-	global zarolflesh
-	global zarolmist
-	global zaroltrophy
-	zarol = Enm(500+score, 10000+score*2, 5, 80, 18+runs*5, [5, 100], 1000+score, -10, "Zarol", "zarol", "You stand in the final room, reveling in your victory.  From just over your left shoulder, you hear heavy breathing.", "Your head slowly swivels, back poker straight, to look into three wide red eyes.", ["Everything you can see is unrecognizable, even the boss that has now dispersed to the point of surrounding you.", "It is infuriated by your damage, darkness billowing from its wounds, disintegrating all it touches.", "You seem to have gotten its attention, but it's cold glare assures you this is not a good.", "It seems almost to be ignoring you, focusing solely on destruction.", "You feel an aura of confidence, coming from it as it methodically destroys all that surrounds it.", "You feel a burst of energy from it, enveloping you with searing pain."], 75, actions, [zaroltrophy, zaroltrophy], True, bossroom, 50, False)
-buildZarol()
+	global bossmisc
+	global endboss
+	
+	if endboss == "zarol":
+		global bossroom
+		global zarolflesh
+		global zarolmist
+		global zaroltrophy
+		enm = Enm(500+score, 10000+score*2, 5, 80, 18+runs*5, [5, 100], 1000+score, -10, "Zarol", "zarol", "You stand in the final room, reveling in your victory.  From just over your left shoulder, you hear heavy breathing.", "Your head slowly swivels, back poker straight, to look into three wide red eyes.", ["Everything you can see is unrecognizable, even the boss that has now dispersed to the point of surrounding you.", "It is infuriated by your damage, darkness billowing from its wounds, disintegrating all it touches.", "You seem to have gotten its attention, but it's cold glare assures you this is not a good.", "It seems almost to be ignoring you, focusing solely on destruction.", "You feel an aura of confidence, coming from it as it methodically destroys all that surrounds it.", "You feel a burst of energy from it, enveloping you with searing pain."], 75, actions, [zaroltrophy, zaroltrophy], True, bossroom, 45, False)
+	
+	#add all other final bosses: "Coo", "North", "Blue", "Jim", "Siv"
+	
+	return enm
 #minions go here, not needed yet
 #for i in bosses:
 #	print i.name, i.turn
@@ -1069,7 +1076,7 @@ def prepbattle(enemy):
 	if (localrand == 1){
 		enm.minions.push(alltraps[rand(alltraps.length-1)]);
 	}'''
-	if enm.name == zarol.name:
+	if enm.name == "Zarol":
 		global Szarol
 		Sbattle = Szarol
 	elif enm.name == lastinsanity.name:
@@ -1105,6 +1112,7 @@ def genRoom():
 	global finalsanity
 	global room
 	global lootable
+	global endboss
 	
 	pla.refresh()
 	print pla.sane, pla.sanity
@@ -1136,15 +1144,22 @@ def genRoom():
 		search = False
 		
 	global bosses
-	for i in bosses:
+	for i in bosses: #bosses
 		if (i.turn == turn):
 			search = False
 			room = i.room
-	if turn == 35:
+	if turn == 35: #epics
 		search = False
+	
+	if turn == 45: #final bosses
+		search = False
+		prepbattle(buildFinal())
+		global enm
+		room = enm.room
+			
 
 	if (search or turn == 1):
-		 room = ablerooms[rand(len(ablerooms))-1]
+		room = ablerooms[rand(len(ablerooms))-1]
 	roommessage += room.message
 	if room.isref:
 		prints("Room is a reference.")
@@ -1215,6 +1230,23 @@ def genRoom():
 		search = False;
 		room.items = 0;
 	}'''
+	
+	if turn == 1:
+		localrand = ""
+		if endboss == "zarol":
+			localrand = "You can feel the tremors of a great power from within the dongeon."
+		if endboss == "Siv":
+			localrand = "You feel a need to quicken your step."
+		if endboss == "North":
+			localrand = "You feel the need for luck to be on your side."
+		if endboss == "Blue":
+			localrand = "You feel the need for luck to be on your side."
+		if endboss == "Coo":
+			localrand = "You know you will need to be prepared."
+		if endboss == "Jim":
+			localrand = "You feel a powerful greed from deep below."
+		roommessage += localrand
+	
 	pla.sane += room.sanity
 	for i in pla.equipped:
 		pla.sane += (i.sane)/5
@@ -1327,6 +1359,16 @@ def genRoom():
 	TM1.all = wraptext(roommessage, 900, font, True)
 	TM1.refresh()
 
+#Sets the final boss of that run and removes from list. run before genroom. 
+def SetBoss():
+	global endboss
+	global finalbosses
+	global runs
+	if runs > 1:
+		endboss = random.choice(finalbosses)
+		finalbosses.remove(endboss)
+	else:
+		endboss = "zarol"
 	
 lastmove = 1
 
@@ -1575,7 +1617,7 @@ def limbob(type, message):
 			turn = -2
 		pla.hp = 80+rand(20)
 		pla.refresh()
-		pla.reStat()
+		pla.reStats()
 		#var screen = document.getElementById("limbotext");
 		#screen.innerHTML = message; #VISUALS
 		
@@ -1618,10 +1660,10 @@ def limbob(type, message):
 		var screen = document.getElementById("limbotext");
 		screen.innerHTML = message;'''
 		global invenItems
-		for i in invenItems:
-			removeitem(i)
-		for i in invenItems:
-			removeitem(i)
+		for i in range(len(invenItems)):
+			removeitem(invenItems[len(invenItems)-(i+1)])
+		for i in range(len(invenItems)):
+			removeitem(invenItems[len(invenItems)-(i+1)])
 			
 		global coo33
 		global coosome
@@ -1631,6 +1673,9 @@ def limbob(type, message):
 		bosses[1] = coosomes[rand(3)-1]
 		for i in bosses:
 			i.hp = i.hptop
+		global noKillEpic
+		noKillEpic = True
+		SetBoss()
 		#for (i in pla.minions){killMinion(pla, pla.minions[0])}
 		'''for i in range(28+(runs*2)):
 			getMinion(strangecube, cube)
@@ -1708,7 +1753,8 @@ def check(entity):
 			
 			global Screen
 			global TM2
-			Screen = 1
+			if Screen == 2:
+				Screen = 1
 			#printb(message) #VISUALS
 			TM2.all = wraptext(message, 900, font, True)
 			TM2.refresh()
@@ -1865,7 +1911,7 @@ def attack(source, weapon, target, enchValues = [1, None, None]):
 			source.reStats()
 			return messages, enchValues
 
-
+#Battle actions
 def Do(entity):
 	global enm
 	global pla
@@ -1925,6 +1971,7 @@ meem = font.render("Meditate", True, (0, 0, 0))
 Fdfn = DispObj(ac2Img, (130, 199))
 Fheal = DispObj(getImg("special/heal"), (190, 199))
 
+SetBoss()
 genRoom()
 
 '''getitem(shurikenbag)
@@ -1941,10 +1988,11 @@ while running:
 			running = False
 			
 		if event.type == pygame.MOUSEBUTTONDOWN:
-			if event.button == 1:
+			if event.button == 1: #lclick
 				mouse_down = True
-			if event.button == 3:
-				Screen = 1
+			if event.button == 3: #rclick
+				if Screen in [2, 3]:
+					Screen = 1
 			if event.button == 4 and Screen == 2:
 				if hitDetect((115, 10), (370, 239), mouse_pos): #scrolling on the items list
 					if netSize > 239: #Scrolling up
@@ -1995,16 +2043,18 @@ while running:
 				turn = 24
 				print "prepped for Jim"
 			if event.key == K_y:
-				turn = 49
-				print "prepped for Zarol"
+				turn = 44
+				print "prepped for Final Boss:", endboss
 			if event.key == K_a:
 				pla.refresh()
 				pla.reStats()
 				gentables()
+				print "----------"
 				print "Sanity:", pla.sane
 				print "Item modified sanity:", pla.sanity
 				print "True sanity:", pla.trueSane
 				print "Defending:", pla.defending
+				print "Final Boss:", endboss
 				
 	mouse_pos = pygame.mouse.get_pos()
 
