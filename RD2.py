@@ -204,12 +204,12 @@ def wraptext(text, fullline, Font, render = False, color = (0,0,17)):  #need way
 TM1 = DispObj(wraptext("", 900, font, True), (10, 10), False, (900, 120)) #main room desc
 TM2 = DispObj(wraptext("", 900, font, True), (10, 130), False, (900, 119)) #room responses
 ItemsDisp = DispObj([], (115, 10), False, (370, 239)) #Inventory items display
-TI1 = None
 TL1 = DispObj([DispObj(Sgrave), 
 	DispObj(fontComp.render("RIP", False, (0, 0, 0)), (88, 30)), 
 	DispObj(wraptext("You are dead. Not big surprise.", 150, font, True), (26, 48), False, (150, 200))
 ], (397, 9), False, (200, 250)) #gravestone
 TL2 = DispObj(font.render("RUN DUDE, RUN!!", True, (250, 250, 250)), (428, 120)) #Dodge button
+TL3 = DispObj(wraptext("", 975, font, True), (10, 10), False, (975, 200)) #cliff message
 
 class ItemDisp(object):
 	def refresh(self, type):
@@ -465,14 +465,15 @@ class ItemDisp(object):
 		#FIGHT display
 		if type == 2:
 			#global pla
+			self.item.refresh()
 			if self.item.ammo != None:
 				pygame.draw.rect(self.fight.all[0].img, LGREY, (50, 0, 2, 52))
 				pygame.draw.rect(self.fight.all[0].img, BLUE, (50, 52, 2, (self.item.ammo/self.item.maxammo)*(-52)))#ammo
 				pygame.draw.rect(self.fight.all[0].img, LGREY, (0, 50, 50, 2))
-				pygame.draw.rect(self.fight.all[0].img, GREEN, (0, 50, (float(self.item.durability)/self.item.maxdur)*50, 2))#dura
+				pygame.draw.rect(self.fight.all[0].img, GREEN, (0, 50, (self.item.dfratio)*50, 2))#dura
 			else:
 				pygame.draw.rect(self.fight.all[0].img, LGREY, (0, 50, 52, 2))
-				pygame.draw.rect(self.fight.all[0].img, GREEN, (0, 50, (float(self.item.durability)/self.item.maxdur)*52, 2))#dura
+				pygame.draw.rect(self.fight.all[0].img, GREEN, (0, 50, (self.item.dfratio)*52, 2))#dura
 			self.fight.refresh()
 			
 		if type == 3:
@@ -636,7 +637,12 @@ class atkChunk(object):
 		
 allitems = []
 class Item(object):
-	#old: 				offence, defence, agility, sanity, score, name, divname, desc
+	def refresh(self):
+		try:
+			self.dfratio = float(self.durability)/self.maxdur
+		except ZeroDivisionError:
+			self.dfratio = 0
+			
 	def __init__(self, offence, defence, durability, sanity, score, name, desc, img, lvl, destructable = True, ammo = None, regenammo = [], enchs = {}, toappend = True):
 		self.atkChunks = offence
 		self.dfnChunks = defence
@@ -677,6 +683,8 @@ class Item(object):
 		else:
 			self.findable = True
 		
+		self.dfratio = 0
+		self.refresh()
 		self.act = False #active defence
 		self.dfn = False #passive defence
 		self.pas = False #passive effects
@@ -701,9 +709,11 @@ class Item(object):
 		if toappend:
 			global allitems
 			allitems.append(self)
+			
 
 
-nothing = Item([], [], 1, 0, 0, "", "", "no_thing", -1, False)
+		
+nothing = Item([], [], 0, 0, 0, "", "", "no_thing", -1, False)
 nothing.img = getImg("special/passive")
 nothing.div = ItemDisp(nothing)
 allitems.remove(nothing)
@@ -761,18 +771,18 @@ alphaxe = Item([atkChunk(20, -2, True, False, 0, None, {"sweeping":2, "heavy":1}
 sivgoggles = Item([atkChunk(4, 15, False, True, 1, None, {"sweeping":1})], [dfnChunk(10, 2, True), dfnChunk(25, 2, False, True, True, {"trueProtection":True})], 30, -15, 10, "Alpha's Glasses", "Gazing through them, You can see things. Where they are, and where they are going.", "sivgoggles", -1, False, None, [], {"bound":4, "mending":[3, 1]})
 hair = Item([atkChunk(1, 1, False, True, 0, None, {"destructive":30})], [], 10, -100, 10, "Alpha's Hair", "You stole this from a boss. Well, stole isn't the right word. More of Generated through Desire.", "hair", -1, False, None, [], {"bound":10})
 shurikenbag = Item([atkChunk(35, 25, False, False, 1, 5, {"sweeping":5}), atkChunk(15, 20, True, False, 0, 1, {"returning":[2, 80], "destructive":10})], [dfnChunk(5, 4, True)], 100, -35, 10, "Shuriken Pouch", "A small, blood filled pouch, when you reach your hand into it, you always pull out a shuriken.", "shurikenbag", -1, False, 10, [1, 1], {"bound":1, "mending":[5, 2]})
+#rune = Item() #the god rune
 
 #JIM GRIND
 jimsword = Item([atkChunk(25, 20, True, False, 0, None, {"heavy":3})], [dfnChunk(-20, None), dfnChunk(-20, 4, True)], 1000, 0, 10, "Jim's Sword", "An incredibly heavy weapon, you can barely pick it up off the ground; you also wonder how that man could toss it around.", "jimsword", -1)
-jimarmor = Item([], [dfnChunk(-10, 5, False, True), dfnChunk(-20), dfnChunk(-5, 8, True, True, None, {"layered":[75, 3]}), dfnChunk(-5, 25, True, False, None, {"trueProtection":True, "thorns":atkChunk(5, 0, False)})], 500, -2, 10, "Enchanted Armor", "Glimmering metallic armor, Material flowing smoothly within it to fill the gaps in its structure.", "jimarmor", -1, False, None, [], {"mending":[5, 4]})
-#hatandboots = item(5, 50, 8, 0, 10, "Hat and Boots", "hatandboots", "Can't Bump your head anymore, and probably won't stub your toes.")
 communism = Item([atkChunk(80, 100, True, False, 2, 1, {"heavy":2}), atkChunk(5, -10)], [], 100, 4, 10, "Crossbow", "An intricate, heavy crossbow with an ingraved name: 'Communism mk. II'", "communism", -1, True, 1, [500, 1])
-
+jimarmor = Item([], [dfnChunk(-10, 5, False, True), dfnChunk(-20), dfnChunk(-5, 8, True, True, None, {"layered":[70, 2]}), dfnChunk(-5, 25, True, False, None, {"trueProtection":True, "thorns":atkChunk(5, 0, False)})], 500, -2, 10, "Enchanted Armor", "Glimmering metallic armor, Material flowing smoothly within it to fill the gaps in its structure.", "jimarmor", -1, False, None, [], {"mending":[5, 4]})
+hatandboots = Item([], [dfnChunk(15, 10, False, True), dfnChunk(0, None, False, False, False, {"trueProtection":True}), dfnChunk(0, 15, True, True, False, {"layered":[80, 2]}), dfnChunk(20, 20, True, False, False, {"trueProtection":True})], 800, -2, 10, "Hat and Boots", "Can't Bump your head anymore, and probably won't stub your toes.", "hatandboots", -1, False, None, [], {"mending":[1, 1], "bound":2})
+	
 #CUBE
-inactivecube = Item([atkChunk(30, 30, False, False, 2, None, {"sweeping":2}), atkChunk(10, 5, False, True)], [dfnChunk(10, 0, True, True)], 80, -6, 10, "Electrical Device", "You have no idea how it works, bbut it looks far beyond any tech you have ever seen.", "device", -1, False, None, [], {"mending":[20, 1]})
+device = Item([atkChunk(30, 30, False, False, 2, None, {"sweeping":2}), atkChunk(10, 5, False, True)], [], 80, -6, 10, "Electrical Device", "You have no idea how it works, but it looks far beyond any tech you have ever seen.", "device", -1, False, None, [], {"mending":[20, 1]})
+inactivecube = Item([], [dfnChunk(0, 1)], 1, 0, 10, "Inactive Cube", "You bet you could find some way to use it.", "inactivecube", -1, False)
 #card = item(2, 25, 25, 0, 20, "00000111", "card", "")
-#device = item(40, 0, 6, 0, 20, "Electrical device", "device", "You have no idea how it works, but it looks far beyond any tech you have seen.")
-nullifier = Item([atkChunk(-50, 0, False, True)], [], 9999, -10, -10, "Nullifier", "null, nada, none", "no_thing", -1, False, None, [], {}, False)
 
 #ZAROL
 zaroltrophy = Item([], [], 1, 0, 30, "Zarol Trophy", "Thinking back, Seriously. How the hell did you do that?", "zaroltrophy", -1, True, None, [], {"bound":2})
@@ -815,7 +825,11 @@ class Player(object):
 		for i in self.equipped:
 			dfTotal += i.maxdur
 			self.dfratio += i.durability
-		self.dfratio = self.dfratio/dfTotal
+		
+		try:
+			self.dfratio = self.dfratio/dfTotal #Wait, why doesn't this crash all the time? is it because of the nothing item?
+		except ZeroDivisionError:
+			self.dfratio = 0
 		
 		ratio = (float(self.hp)/self.maxhp)
 		if ratio < 0:
@@ -905,7 +919,10 @@ class Enm(object):
 		for i in self.equipped:
 			dfTotal += i.maxdur
 			self.dfratio += i.durability
-		self.dfratio = self.dfratio/dfTotal #Wait, why doesn't this crash all the time?
+		try:
+			self.dfratio = self.dfratio/dfTotal #Wait, why doesn't this crash all the time? is it because of the nothing item?
+		except ZeroDivisionError:
+			self.dfratio = 0
 		
 		ratio = (float(self.hp)/self.maxhp)
 		if ratio < 0:
@@ -933,6 +950,8 @@ dog = Enm(175, 175, 10, 20, 10, [4, 100], 0, 0, "Dog", "dog", "The sounds of a h
 muffin = Enm(30, 30, 2, 2, 2, [80, 100], 20, 4, "Muffin", "muffin", "A bake sale is going on nearby", "An angry muffin attacks you with it's tiny fangs bared!", ["Only now, with its body crumbling, does it consider you might be stronger, and begins searching for an escape", "Though a few bit-sized chunks have fallen off, it maintains its combative stance.", "A few crumbs have fallen off, but it still stays committed.", "'I SHALL NOT BE DEFEATED' it shouts"], 25, [["heal", 4], ["atk1", 11]], [nothing])
 rockgolum = Enm(200, 200, 10, 20, 35, [1, 100], 10, 0, "Rock Golum", "rockgolum", "You hear a thumping from nearby", "A golum bursts from the wall!", ["", "", "", ""], 75, [["heal", 1], ["atk1", 99]], [nothing])
 enm = creepybaldguy
+
+
 #bosses
 adventurer = Enm(190, 190, 10, 5, 0, [5,100], 30, -7, "Adventurer", "adventurer", "You hear the footsteps of someone else.", "It is an Adventurer, Readying his stance for Battle!", ["He seems oddly unaware of the massive amounts of damage you have dealt him. Much like you are.", "", "", "", "He seems more confident of himself, more sure of his strides.", ""], 50, [["atk1", 4], ["heal", 1]], [herosword, heroshield], True, bossroom, 10)
 
@@ -942,7 +961,7 @@ colton = Enm(120, 140, 10, 8, 10, [28,90], 12, -1, "Colton", "coosome", "You see
 
 alpha = Enm(350, 500, 14, 6, 0, [60, 80], 10, -3, "Alpha", "alpha", "You hear sudden quick footsteps from behind you.", "you turn to see someone dashing at you, Swinging a large axe!", ["", "", "", "", "", ""], 60, [["atk1", 4], ["heal", 1]], [alphaxe, sivgoggles], True, roomBoss3, 20)
 jimgrind = Enm(200, 200, 35, 2, 35, [3,120], 12, -2, "Jim Grind", "jimgrind", "Someone is in the room with you. You turn just fast enough to see him. He knows he has been spotted.", "A stern look on his face; A deadly look in his eyes.", ["", "You can see small gaps in his defence now, chinks in his armor.", "His breathing is heavy, and his swings are slower, yet just as powerful.", "He stands with a confident air about him, holding his sword firmly.", "His armor is beginning to glow, even the largest chinks in his armor closing as the armor reshapes into its original form.", "He seems unaware of your blows, simply tanking all damage you may deal to him."], 130, actions, [jimsword, jimarmor], True, roomBoss4, 25)
-#strangecube = Enm(250, 350, 1, 2, -5, [10,100], 75, -3, "Strange Cube", "cube", "A strange cube is sitting on the ground in front or you.", "Sudden arcs of electricity jump across its surface as it rises into the air.", ["Although grounded, it still musters up powerful shocks upon you.", "It appears to have physical damage, and is barely able to keep itself aloft.", "It is wavering now, seeming to have less energy within it, focusing on attacks.", "It floats evenly in front of you, electricity visibly through internal circuits.", "electricity is visible streaking across its surface, arcing to nearby surfaces.", "It's magnetic fields are powerful, you can feel them pulling on your magnetic accessories."], 37, actions, [inactivecube, device, nullifier], True, bossroom, 30)
+#strangecube = Enm(250, 350, -50, 2, -5, [10,100], 75, -3, "Strange Cube", "cube", "A strange cube is sitting on the ground in front or you.", "Sudden arcs of electricity jump across its surface as it rises into the air.", ["Although grounded, it still musters up powerful shocks upon you.", "It appears to have physical damage, and is barely able to keep itself aloft.", "It is wavering now, seeming to have less energy within it, focusing on attacks.", "It floats evenly in front of you, electricity visibly through internal circuits.", "electricity is visible streaking across its surface, arcing to nearby surfaces.", "It's magnetic fields are powerful, you can feel them pulling on your magnetic accessories."], 37, actions, [inactivecube, device], True, bossroom, 30)
 
 #epicalpha = Enm(450, 450, 50, 12, 10, [65, 80], 20, -6, "Alpha 949", "alpha", "You find yourself in a familiar looking room. Looking around, you realize you have some unfinished business. You hear sudden quick footsteps from behind you.", "you turn to see a familiar figure dashing towards you, Swinging a large axe!", ["", "", "", "", "", ""], 45, actions, [sivgoggles, shurikenbag], True, roomBoss3, -100)
 #epicjim = Enm(320, 360, 45, 2, 150, [0,110], 35, -2, "Jim Grind", "jimgrind", "You find yourself in a familiar looking room. Looking around, you realize you have some unfinished business. Someone is in the room with you. You turn to face him. You both know who won last time. ", "A stern look on his face; A deadly look in his eyes.", ["", "You can see small gaps in his defence now, chinks in his armor.", "His breathing is heavy, and his swings are slower, yet just as powerful.", "He stands with a confident air about him, holding his sword firmly.", "His armor is beginning to glow, even the largest chinks in his armor closing as the armor reshapes into its original form.", "He seems unaware of your blows, simply tanking all damage you may deal to him."], 95, actions, [jimarmor, hatandboots], True, roomBoss4, -100)
@@ -966,7 +985,27 @@ def buildFinal():
 		global zaroltrophy
 		enm = Enm(500+score, 10000+score*2, 5, 80, 18+runs*5, [5, 100], 1000+score, -10, "Zarol", "zarol", "You stand in the final room, reveling in your victory.  From just over your left shoulder, you hear heavy breathing.", "Your head slowly swivels, back poker straight, to look into three wide red eyes.", ["Everything you can see is unrecognizable, even the boss that has now dispersed to the point of surrounding you.", "It is infuriated by your damage, darkness billowing from its wounds, disintegrating all it touches.", "You seem to have gotten its attention, but it's cold glare assures you this is not a good.", "It seems almost to be ignoring you, focusing solely on destruction.", "You feel an aura of confidence, coming from it as it methodically destroys all that surrounds it.", "You feel a burst of energy from it, enveloping you with searing pain."], 75, actions, [zaroltrophy, zaroltrophy], True, bossroom, 45, False)
 	
-	#add all other final bosses: "Coo", "North", "Blue", "Jim", "Siv"
+	if endboss == "Coo":
+		global spoon
+		global pencil
+		print "COO BOSS SPAWN"
+		
+	if endboss == "North":
+		print "NORTH BOSS SPAWN"
+		
+	if endboss == "Blue":
+		print "BLUE BOSS SPAWN"
+		
+	if endboss == "Jim":
+		global jimsword
+		global communism
+		global jimarmor
+		#global hatandboots
+		print "JIM BOSS SPAWN"
+		
+	if endboss == "Siv":
+		#global rune
+		print "SIV BOSS SPAWN"
 	
 	return enm
 #minions go here, not needed yet
@@ -1620,6 +1659,8 @@ def limbob(type, message):
 		pla.reStats()
 		#var screen = document.getElementById("limbotext");
 		#screen.innerHTML = message; #VISUALS
+		TL3.all = wraptext(message, 975, font, True, (255, 255, 255))
+		TL3.refresh()
 		
 		if (pla.sanity < 0):
 			#if (rand(100) <= pla.sanity*-1):
@@ -1660,10 +1701,12 @@ def limbob(type, message):
 		var screen = document.getElementById("limbotext");
 		screen.innerHTML = message;'''
 		global invenItems
+		localrand = len(invenItems)
 		for i in range(len(invenItems)):
-			removeitem(invenItems[len(invenItems)-(i+1)])
+			removeitem(invenItems[localrand-(i+1)])
+		localrand = len(invenItems)
 		for i in range(len(invenItems)):
-			removeitem(invenItems[len(invenItems)-(i+1)])
+			removeitem(invenItems[localrand-(i+1)])
 			
 		global coo33
 		global coosome
@@ -1753,7 +1796,7 @@ def check(entity):
 			
 			global Screen
 			global TM2
-			if Screen == 2:
+			if Screen == 3:
 				Screen = 1
 			#printb(message) #VISUALS
 			TM2.all = wraptext(message, 900, font, True)
@@ -2228,16 +2271,17 @@ while running:
 		
 	if Screen == 5: #Text & cliff, limbo 2
 		screen.fill(BLIMBO)
-		
+		screen.blit(TL3.img, TL3.coords)
 		if mouse_down:
 			mouse_down = False
 			genRoom()
 			Screen = 1
 	
 	if Screen == 6: #Monoliths
+		monolithTime -= 1
 		screen.fill(BLIMBO)
-		screen.blit(TL2.img, TL2.coords)
 		screen.blit(massive.render(str(monolithTime), False, RED), (200, 15)) #for now ;)
+		screen.blit(TL2.img, TL2.coords)
 		if mouse_down:
 			mouse_down = False
 			if hitDetect(TL2.coords, (50, 16), mouse_pos):
