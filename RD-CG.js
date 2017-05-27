@@ -965,7 +965,7 @@ function RDinit() {
 		quantity = itemdiv[2].childNodes;
 		quantity[0].innerHTML = item.Name;
 		quantity[2].innerHTML = item.desc;
-		itemdiv[1].innerHTML = "<img src='img/"+item.div+".png'>"
+		itemdiv[1].innerHTML = "<img src='Assets/img/items/"+item.div+".png'>"
 	}
 
 	for (i in bossitems) {bossitems[i].findable = 1;}
@@ -985,7 +985,7 @@ function testu(){
 	localrand = "";
 	for (i in minions){
 		var item = minions[i];
-		var item = "<div class=\"RDminion\" onclick=\"prints(\'boop\')\" id=\""+item.div+"\"><div class=\"RDpic\"><img src='img/"+item.div+".png'></div><div class=\"itemwords\"><div class=\"name\" style=\"width:100%\">"+item.name+"</div><div class=\"desc\">"+item.desc+"</div></div><div class=\"invis\" style=\"float:left;clear:left;width:50%;height:34px\">Damage: "+item.atk+"<br/>Defence: "+item.def+"</div><div class=\"invis\" style=\"float:left;width:50%;height:34px\">"+item.descdist+" distracting<br/>"+item.descagil+" agile</div><div class=\"invis\" style=\"float:left;clear:left;width:100%;min-height:0\" id=\""+item.div+"hp\"></div></div>";
+		var item = "<div class=\"RDminion\" onclick=\"prints(\'boop\')\" id=\""+item.div+"\"><div class=\"RDpic\"><img src='Assets/img/entities/"+item.div+".png'></div><div class=\"itemwords\"><div class=\"name\" style=\"width:100%\">"+item.name+"</div><div class=\"desc\">"+item.desc+"</div></div><div class=\"invis\" style=\"float:left;clear:left;width:50%;height:34px\">Damage: "+item.atk+"<br/>Defence: "+item.def+"</div><div class=\"invis\" style=\"float:left;width:50%;height:34px\">"+item.descdist+" distracting<br/>"+item.descagil+" agile</div><div class=\"invis\" style=\"float:left;clear:left;width:100%;min-height:0\" id=\""+item.div+"hp\"></div></div>";
 		localrand += item;
 	}
 	var screen = document.getElementById("minions");
@@ -1180,12 +1180,12 @@ function equip(item) {
 		var item = equippeditems[0];
 		screen = document.getElementById("equip1");
 		var childs = screen.childNodes;
-		childs[1].innerHTML = "<img src = 'img/" + item.div + ".png'>";
+		childs[1].innerHTML = "<img src = 'Assets/img/items/" + item.div + ".png'>";
 		
 		var item = equippeditems[1];
 		screen = document.getElementById("equip2");
 		var childs = screen.childNodes;
-		childs[1].innerHTML = "<img src = 'img/" + item.div + ".png'>";
+		childs[1].innerHTML = "<img src = 'Assets/img/items/" + item.div + ".png'>";
 		
 		
 		RDrefresh();
@@ -1196,7 +1196,7 @@ function unequip(number){
 	equippeditems[number] = nothing;
 	screen = document.getElementById("equip"+(number+1));
 	var childs = screen.childNodes;
-	childs[1].innerHTML = "<img src = 'img/no_thing.png'>";
+	childs[1].innerHTML = "<img src = 'Assets/img/items/no_thing.png'>";
 	item.quant += 1;
 	prints("Unequipped "+item.Name);
 	RDrefresh();
@@ -1272,15 +1272,15 @@ function prepbattle(enemy){
 	if (enm.name == zarol.name || enm.name == lastinsanity.name){
 		
 		screen = document.getElementById("RDfight");
-		screen.style.backgroundImage = "url('img/screen"+enm.div+".png')";
+		screen.style.backgroundImage = "url('Assets/img/screens/"+enm.div+".png')";
 		screen.style.color = "#eef";
 		screen = document.getElementById("enmPic");
 		screen.innerHTML = "";
 	} else {
 		screen = document.getElementById("enmPic");
-		screen.innerHTML = "<img src = 'img/enms/" + enm.div + ".png'>";
+		screen.innerHTML = "<img src = 'Assets/img/entities/" + enm.div + ".png'>";
 		screen = document.getElementById("RDfight");
-		screen.style.backgroundImage = "url('img/screenmain.png')";
+		screen.style.backgroundImage = "url('Assets/img/screens/screenmain.png')";
 	}
 	
 	if (enm.name == zarol.name){
@@ -1654,7 +1654,7 @@ function check(entity){
 			if (enm.name == "Zarol"){
 				limbo(1, "At the moment of your death, a swirling vortex of malevolence forms. You attempt in vain to escape it, but you are not yet strong enough. You find yourself in a familiar place...");
 				screen = document.getElementById("RDfight");
-				screen.style.backgroundImage = "url('img/screenmain.png')";
+				screen.style.backgroundImage = "url('Assets/img/screens/screenmain.png')";
 			} else {limbo(0, "After experiencing a moment of extreme pain due to your inevitable death, you find yourself in a suprisingly calm dark space. The only landmarks are a large cliff dropping off into endlessness infront of you, and strange floating structures to high for you to reach. You realize that there is only one thing you can do....");}
 		}
 		if (entity in pla.minions){
@@ -1735,7 +1735,7 @@ function limbob(type, message){
 					if (monolithTime <= 1){monolithTime = 5}
 					monolithOrig = monolithTime;
 					var screen = document.getElementById("RDmono");
-					screen.style.backgroundImage = "url('img/monoAnimation/mono1.png')";
+					screen.style.backgroundImage = "url('Assets/img/monoAnimation/mono1.png')";
 					screenchange(5);
 				//}
 				
@@ -1816,7 +1816,7 @@ function monoAnimation(percentage, frams){
 	if (percentage == (100/frams) * currentFram){
 		
 		var screen = document.getElementById("RDmono");
-		screen.style.backgroundImage = "url('img/monoAnimation/mono" + currentFram + ".png')";
+		screen.style.backgroundImage = "url('Assets/img/monoAnimation/mono" + currentFram + ".png')";
 		currentFram += 1;
 		prints(screen);
 	}
