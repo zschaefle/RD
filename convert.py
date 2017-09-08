@@ -1,7 +1,7 @@
 import io
 import math
 
-watdo = raw_input("Type (1 for enm, 2 for boss, 3 for item):  ")
+watdo = raw_input("Type (1 for enm, 2 for boss, 3 for minion):  ")
 doc = open("in.txt", 'r')
 outtext = ""
 while True:
@@ -14,9 +14,105 @@ while True:
 
 	id = ""
 
-	if watdo == "1" or watdo == "2":
+	if watdo == "1" or watdo == "2" or watdo == "3":
 		#hp, maxhp, atk, ddev, dfn, agil, heal, sane, name, img, message, cry, rundown, interval, actions = [], equip = [nothing], Boss = False, room = None, turn = -1):
 		hp, maxhp, atk, ddev, dfn, agil, heal, sane, name, img, message, cry, rundown, interval, actions = "0", "0", "0", "0", "0", "[]", "0", "0", "", "", "", "", "[", "1", "actions"
+		
+		if watdo == "3":
+			equip, boss, room, turn = "[", "True", "bossroom", "-1"
+			#hp, atk, de, name, divname, maxhp, ddev, agil, heal, sane, loot, loot2, turn, message, cry, rundown, room, interval
+			#hp, maxhp, atk, ddev, de, agil, heal, sane, lvl, name, pic, message, desc, interval, distract
+			x = ""
+			quote = False
+			for i in intext:
+				if i == '"':
+					if quote:
+						quote = False
+					else:
+						quote = True
+				if (i == "," or i == ")") and not quote:
+					print count, x
+					if count == 0:
+						hp = x
+						x = ""
+					if count == 1:
+						maxhp = x
+						x = ""
+					if count == 2:
+						atk = x
+						x = ""
+					if count == 3:
+						ddev = x
+						x = ""
+					if count == 4:
+						dfn = x
+						x = ""
+					if count == 5:
+						agil1 = float(x[1:])
+						print agil1
+						x = ""
+					if count == 6:
+						agil2 = float(x[:len(x)-1])
+						x = ""
+						print agil2
+					
+					if count == 7:
+						heal1 = int(x[1:])
+						x = ""
+					if count == 8:	
+						heal2 = int(x)
+						x = ""
+						heals = heal1-heal2
+						if heals < 0:
+							heals = 0
+							actions = "[[\"atk1\", "+str(heal2)+"]]"
+						else:
+							actions = "[[\"heal\", "+str(heals)+"], [\"atk1\", "+str(heal2)+"]]"
+						
+					if count == 9:
+						heal = x[:len(x)-1]
+						x = ""
+						
+					if count == 10:
+						sane = x
+						x = ""
+					if count == 11:
+						turn = x
+						x = ""
+					if count == 12:
+						name = x
+						x = ""
+					if count == 13:
+						img = x
+						x = ""
+					if count == 14:
+						message = x
+						x = ""
+					if count == 15:
+						cry = x
+						x = ""
+					if count == 16:
+						interval = str(int(x)/2)
+						x = ""
+					if count == 17:
+						dist = x
+						x = ""
+
+
+					'''if count in [11, 12, 13]:
+						x += ", "'''
+					count += 1
+				else:
+					if i == "=" and count == -1:
+						id = x
+					elif i == "(" and count == -1:
+						count = 0
+						x = ""
+					else:
+						if (i != " ") or quote:
+							x += i
+			agil = "["+ str(int(round(100 * (agil1 / agil2))))+ ", 100]"
+			outtext += "\n"+id+" = Enm("+hp+", "+maxhp+", "+atk+", "+ddev+", "+dfn+", "+agil+", "+heal+", "+sane+", "+name+", "+img+", "+message+", "+cry+", [""], "+interval+", "+actions+", [nothing])\n"+id+" = "+id+".minionize("+dist+", "+turn+")"
 		
 		if watdo == "2":
 			equip, boss, room, turn = "[", "True", "bossroom", "-1"

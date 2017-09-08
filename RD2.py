@@ -6,6 +6,9 @@ import math
 #look for:   #VISUALS   to find where HTML visuals were removed
 debug = True
 
+#prevent crashes
+nothing = None
+
 BLACK = (0, 0, 0)
 BLIMBO = (34, 34, 34)
 WHITE = (255, 255, 255)
@@ -62,9 +65,10 @@ plaTotal = 1
 bossmisc = 0
 finalbosses = ["zarol", "zarol", "zarol", "Coo", "North", "Blue", "Jim", "Siv"]
 endboss = "zarol"
+CIstage = 0
+COstage = 0
+Cmode = 0
 
-#prevent crashes
-nothing = None
 
 
 #two sets of coord pairs
@@ -101,6 +105,7 @@ Sgrave = getImg("screens/gravestone")
 Scompass = getImg("screens/compass")
 Sinsane = getImg("screens/screenlastinsanity")
 Szarol = getImg("screens/screenzarol")
+Scrafter = getImg("screens/Crafter")
 Sbattle = Smain
 		
 def prints(stuff):
@@ -117,7 +122,9 @@ def cbrt(num):
 	else:
 		return num ** (1.0/3.0)
 	
-def addEnch(type, en1, en2): #DO THORNS GOOD
+def addEnch(type, en1, en): #DO THORNS GOOD
+	en2 = {"reflecting":0, "thorns":False, "destructive":0, "trueProtection":False, "layered":[0, 0], "piercing":0, "heavy":0, "sweeping":0, "returning":[0, 0], "mending":[-1, 0], "bound":0}
+	en2.update(en)
 	if type == 1: #defensive
 		en3 = {"reflecting":0, "thorns":False, "destructive":0, "trueProtection":False, "layered":[0, 0]}
 		en3["reflecting"] = en1["reflecting"]+en2["reflecting"]
@@ -126,8 +133,8 @@ def addEnch(type, en1, en2): #DO THORNS GOOD
 			en3["trueProtection"] = True
 		en3["layered"][0] = max(en1["layered"][0], en2["layered"][0])
 		en3["layered"][1] = max(en1["layered"][1], en2["layered"][1])
-		en3 = en1["thorns"]
-			
+		en3["thorns"] = en2["thorns"]
+		print en3
 		return en3
 		
 	if type == 2: #offensive
@@ -139,7 +146,97 @@ def addEnch(type, en1, en2): #DO THORNS GOOD
 		en3["returning"][0] = max(en1["returning"][0], en2["returning"][0])
 		en3["returning"][1] = max(en1["returning"][1], en2["returning"][1])
 		
+		print en3
 		return en3
+		
+	if type == 3: #full item
+		en3 = {"mending":[-1, 0], "bound":0}
+		en3["bound"] = en1["bound"]+en2["bound"]
+		
+		#en3["mending"][1] = max(en1["mending"][1], en2["mending"][1]) #gets highest
+		en3["mending"][1] = math.floor((en1["mending"][1] + en2["mending"][1]) *0.75) #kida adds them
+		if en1["mending"][0] == -1:
+			en1["mending"][0] = 9999999
+		if en2["mending"][0] == -1:
+			en2["mending"][0] = 9999999
+		en3["mending"][0] = min(en1["mending"][0], en2["mending"][0]) #gets lowest but not negatives
+		if en3["mending"][0] == 9999999:
+			en3["mending"][0] = -1
+		
+		'''if self.ench["mending"][0] != -1:
+			self.mendTick = 0
+		else:
+			self.mendTick = -1
+		if self.regenammo[0] != 0:
+			self.regenTick = 0
+		else:
+			self.regenTick = -1'''
+		print en3
+		return en3
+		
+def Enchant(inp, spec = 0):
+	item = newItem(inp)
+	if len(item.atkChunks) > 0:
+		num = rand(len(item.atkChunks))-1
+		if item.atkChunks[num].proj != None:
+			num2 = rand(5)
+			if num2 == 1:
+				enchs = {"destructive":((rand(math.fabs(item.lvl)) +1) * rand(10))}
+			if num2 == 2:
+				enchs = {"piercing":rand(2)}
+			if num2 == 3:
+				enchs = {"heavy":rand(3)}
+			if num2 == 4:
+				enchs = {"sweeping":rand(3)}
+			if num2 == 5:
+				enchs = {"returning":([rand(item.maxammo), 15*rand(6)])}
+		else:
+			num2 = rand(4)
+			if num2 == 1:
+				enchs = {"destructive":(rand(math.fabs(item.lvl))+2)*rand(10)}
+			if num2 == 2:
+				enchs = {"piercing":rand(2)}
+			if num2 == 3:
+				enchs = {"heavy":rand(3)}
+			if num2 == 4:
+				enchs = {"sweeping":rand(4)}
+		item.atkChunks[num].ench = addEnch(2, item.atkChunks[num].ench, enchs)
+	elif len(item.dfnChunks) > 0:
+		#self.ench = {"reflecting":0, "thorns":False, "destructive":0, "trueProtection":False, "layered":[0, 0]}
+		num = rand(len(item.dfnChunks))-1
+		if item.dfnChunks[num].dfn == None: #DONT TRUE PROTEC
+			num2 = rand(4)
+			if num2 == 1:
+				enchs = {"reflecting":10*rand(10)}
+			if num2 == 2:
+				enchs = {"thorns":atkChunk(math.ceil(rand(item.dfnChunks[num].dfn)*0.2), 15*rand(6), random.choice([True, False]), False, rand(2)-1)}
+			if num2 == 3:
+				enchs = {"destructive":((rand(5)+1)*rand(10))}
+			if num2 == 4:
+				enchs = {"layered":[5*rand(15), rand(3)]}
+		else:
+			num2 = rand(5)
+			if num2 == 1:
+				enchs = {"reflecting":10*rand(9)}
+			if num2 == 2:
+				enchs = {"thorns":atkChunk(math.ceil(rand(item.dfnChunks[num].dfn)*0.2), 12*rand(6), random.choice([True, False]), False)}
+			if num2 == 3:
+				enchs = {"destructive":((rand(5)+1)*rand(10))}
+			if num2 == 4:
+				enchs = {"layered":[5*rand(15), rand(3)]}
+			if num2 == 5: #maybe not if already trueprotec
+				enchs = {"trueProtection":True}
+		print num2
+		item.dfnChunks[num].ench = addEnch(1, item.dfnChunks[num].ench, enchs)
+	elif rand(3) == 1:
+		num2 = rand(2)
+		if num2 == 1:
+			enchs = {"mending":[(rand(20)+50)*(rand(20)+50), rand(math.floor(item.maxdur/15))]}
+		if num2 == 2:
+			enchs = {"bound":rand(3)}
+		item.ench = addEnch(3, item.ench, enchs)
+		#self.ench = {"mending":[-1, 0], "bound":0}
+	return newItem(item)
 		
 class DispObj(object):
 	def refresh(self):
@@ -466,7 +563,7 @@ class ItemDisp(object):
 		if type == 2:
 			#global pla
 			self.item.refresh()
-			if self.item.ammo != None:
+			if self.item.ammo != None and self.item.maxammo != 0:
 				pygame.draw.rect(self.fight.all[0].img, LGREY, (50, 0, 2, 52))
 				pygame.draw.rect(self.fight.all[0].img, BLUE, (50, 52, 2, (self.item.ammo/self.item.maxammo)*(-52)))#ammo
 				pygame.draw.rect(self.fight.all[0].img, LGREY, (0, 50, 50, 2))
@@ -549,18 +646,21 @@ class Room():
 			self.exitA = "You go "
 			self.exitB = "."
 
+#REF: Mono, Valve, YS
+#TYPE: Trip, Daily, Lore, Split
+			
 room1 = Room(0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, -4 ,"Your eyes burn as you look into the lit black.  Green lines stretch to a vanishing point, showing you a door, a wall and a cliff.  Your eyesight blurs, reduced to craggy blocks.", "Your legs jitter as you walk on thin green lines, forming an exit to what you believe to be ", ".", "You feel like taking any extra steps in may be fatal.")
 room2 = Room(1, 0, 0, 1, 1, 1, 1, rand(2)-1, 1, 2, rand(2)-1, 1, "This room is overrun by nature. There are twisted, moist vines covering the walls and most likely any exits.", "You carefully make your way to the ", ", occasionally tripping.", "You trip on your way over to the wall, only finding no exit.")
-room3 = Room(0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, "You\'re in a linoleum cube, bare and featureless.   A circular opening appears behind you, and an open pit is just ahead.   A featureless voice speaks to you through static speakers.   You can\'t understand a single word.", "As you walk toward the ", ", the circular door smoothly opens in the wall ahead of you.", "The voice seems to be insulting you as you stumble about, slightly confused.", True)
+room3 = Room(0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, "You\'re in a linoleum cube, bare and featureless.   A circular opening appears behind you, and an open pit is just ahead.   A featureless voice speaks to you through static speakers.   You can\'t understand a single word.", "As you walk toward the ", ", the circular door smoothly opens in the wall ahead of you.", "The voice seems to be insulting you as you stumble about, slightly confused.", ["Valve"])
 room4 = Room(1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 3, "You find yourself in a lonely forest.  The snow on the ground mists in the sun, slowly turning into slush.  You take a moment to mourn the death of winter. Global warming man.  That\'s what it does.", "There's a small door in one of the trees to the ", ". You pull it open and and fall through.", "")
 room5 = Room(0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, -2, "You stand on clouds, up to your ankles in condensation.  You see birds flying nearby.  You could swear that you see a large animal lurching its way towards you on lopsided legs.", " ", " ", " ")
-room6 = Room(0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, -1, "You are in a room, a large centrepiece of machinery whirring to life, bursts of energy coming from within. There are voices yelling urgently at you from a viewport in the wall above.", "You manage to dodge the now falling rubble and make it through the ", "ern sliding doors.", "A zap of lightning from the core of the room leaps through the viewport, and you hear a scream of pain.", True)
+room6 = Room(0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, -1, "You are in a room, a large centrepiece of machinery whirring to life, bursts of energy coming from within. There are voices yelling urgently at you from a viewport in the wall above.", "You manage to dodge the now falling rubble and make it through the ", "ern sliding doors.", "A zap of lightning from the core of the room leaps through the viewport, and you hear a scream of pain.", ["Valve"])
 room7 = Room(0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 1, "The walls cave inwards, rough rock with red striped sedimentary motif. The floor is loose packed sand, soft against your feet.  You look ahead, where the walls become lower and the ground gets rough.  You\'ll need to crawl.", "You crawl to the ", " exit, scraping your elbow.", "You realize that this is not an Indiana Jones movie, and that this wall will not open with enough force.")
 room8 = Room(0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 4, "You see a single shelf, packed full of books, reaching upwards like a ladder into the darkness. ", "You grip the ", "ern shelves, pulling yourself up past musty tomes.", "You become distracted by the books, taking a moment to flip through one.")
 room9 = Room(0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, -1, "There are huge wooden beams stretching across an empty cavern.  Coals smoulder in campfires across the expanse, lighting the room with grey dusk.  Rotting homes half-formed out of clay fill the room with a musty stench.", "You walk past small encampments and crusty artefacts to a hole in the ", "ern wall.", "You glance into one of the rooms. You spot a skeleton and an old vase. No exits here.")
 room10 = Room(0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, -1, "The sun shines in your eyes.  You feel water underneath you.  Shielding your eyes from the glare, you see the boat you\'re standing on, a small and splintery craft.  The way it bobs under your weight alarms you.  A curl of rope under your feet obscures the bottom of the boat.", "you take hold of the paddles, paddling the boat to the ", ".", "Paddle as you may, the swirling currents quickly rush  you back into place.")
-room11 = Room(0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 2, "You are on a cold, stormy beach. Litter is strewn across the sand, and a man with a prosthetic arm is purposefully cleaning it up, glancing around as if expecting someone, or some<i>thing</i>.", "As you meander your way to the ", ", the man shouts at you angrily, something about litter.", "You wade about in the ocean, unsure as to whether you are looking for something, or mourning.", True)
-room12 = Room(0, 1, 0, 0, 1, 1, 1, rand(2)-1, rand(2)-1, 0, 1, rand(2), "You are in a room, full of red books with no titles, no markings at all. They fill the room, but you can hear a sort of carnal snore from somewhere in the room. You decide that would be best to keep away from whatever is producing the noise.", "You manage to sneak your way through to the ", ", cringing at the occasional shifting book.", "You wander throughout the room, surprisingly small for the quantity of books it holds.", True)
+room11 = Room(0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 2, "You are on a cold, stormy beach. Litter is strewn across the sand, and a man with a prosthetic arm is purposefully cleaning it up, glancing around as if expecting someone, or some<i>thing</i>.", "As you meander your way to the ", ", the man shouts at you angrily, something about litter.", "You wade about in the ocean, unsure as to whether you are looking for something, or mourning.", ["Split"])
+room12 = Room(0, 1, 0, 0, 1, 1, 1, rand(2)-1, rand(2)-1, 0, 1, rand(2), "You are in a room, full of red books with no titles, no markings at all. They fill the room, but you can hear a sort of carnal snore from somewhere in the room. You decide that would be best to keep away from whatever is producing the noise.", "You manage to sneak your way through to the ", ", cringing at the occasional shifting book.", "You wander throughout the room, surprisingly small for the quantity of books it holds.", ["Mono"])
 room13 = Room(rand(2)-1, rand(2)-1, rand(2)-1, rand(2)-1, rand(2)-1, rand(2)-1, rand(2)-1, 1, 1, 1, 1, -7, "You find yourself in a room filled with bright darkness. Things seem to appear and disappear as if they were both there, and not there. You feel very dull all of a sudden, as if you have realized the futility of life.", "You walk slowly to what you think is a door, tripping over invisible things along the way to the ", ".", "You feel it would be best to leave as soon as possible.")
 room14 = Room(1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, -3, "You find yourself in what at first appears to be a dog park, but upon closer inspection of the large black walls surrounding the area as well as the absence of any dogs and the presence of many hooded figures, you realize that this is not a dog park. Not a dog park at all.","After searching the "," side of the dog park, you don't find an exit, yet.....","The hooded figures are staring, and coming closer.....", True)
 room15 = Room(0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, -1, "You stand before the barrier,your quest finally over, you are filled with DETERMINATION. That is until you realize that this was not the end off your quest and you must continue. Go on.","You walk through the "," side of the barrier","You bump into the barrier, and you realize that it lives up to it's name", True)
@@ -574,26 +674,26 @@ room22 = Room(0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, -5, "You step somewhere, you can'
 room23 = Room(1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 10, "You step into a wondrous room filled with peaceful plants and animals. Waterfalls and large lush trees fill the landscape. It seems as if you have found a utopia.", "You must use all of your willpower to leave this peaceful utopia to the ",".", "You find yourself sliping deeper into this peace.")
 room24 = Room(0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, -8, "As soon as you enter this room, you know you should not have. Various instruments of torture are strewn about the room. The room is filled with the wailing of the not yet dead corpses and the torture machines at work. The smell is indescribable.", "You quickly leave to the ",".", "You find yourself lost among the horrors of this room." )
 room25 = Room(0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, -7, "It is dark. Creepily dark. You can hear a faint whispering.", "You somehow find the light in the ", ".", "The whispering is getting louder.")
-room26 = Room(0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 5, "You are in your bedroom. It is clean and tidy in here. there is a doorway that leads to the main room.", "You walk to the ", ", out of your bedroom and into the main room.", "You decide against the act of heading that direction, maybe later.", True)
-room27 = Room(0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, -2, "You are in your bedroom. It is messy and looks slightly looted. there is a doorway that leads to the main room.", "You walk to the ", ", out of your bedroom and into the main room.", "You decide against the act of heading north, maybe later.", True)
-room28 = Room(1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 2, "You are in a peaceful courtyard with a bird fountain in the center, surrounded by walls and a tower made of quartz and marble.", "You walk to the ", ", through an intricately carved doorway.", "There is a wall here, you decide it would be too much trouble to climb it.", True)
+room26 = Room(0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 5, "You are in your bedroom. It is clean and tidy in here. there is a doorway that leads to the main room.", "You walk to the ", ", out of your bedroom and into the main room.", "You decide against the act of heading that direction, maybe later.", ["Lore"])
+room27 = Room(0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, -2, "You are in your bedroom. It is messy and looks slightly looted. there is a doorway that leads to the main room.", "You walk to the ", ", out of your bedroom and into the main room.", "You decide against the act of heading north, maybe later.", ["Lore"])
+room28 = Room(1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 2, "You are in a peaceful courtyard with a bird fountain in the center, surrounded by walls and a tower made of quartz and marble.", "You walk to the ", ", through an intricately carved doorway.", "There is a wall here, you decide it would be too much trouble to climb it.", ["Lore"])
 room29 = Room(0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, "Your feet burn as you stand in the hot sand. You survey the endless expanse of desert around you, and realize that the in the years you have spent trekking through this wasteland have been useless.", "You continue your fruitless trek to the ", ".", "You become quite dizzy, probably an effect of dehydration.")
 room30 = Room(0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, "You stand on top of a factory, the clanging of machinery behind you. Smoke pollutes the sky and obscures the sun. The occasional sizzle of laser cutters quietly supports the clanging.", "You walk through the factory, carefully avoiding the dangerous machines. You exit to the ", ".", "You breath in some of the smoke. It burns in the back of your throat, making it hard to breath.", True)#ben plz confirm
-room31 = Room(0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, -2, "You are in a large warehouse, through the grimy windows you can see it is dusk. The occasional object is stored here, but everything is covered in spiderwebs.", "You open a large door in the ", "ern wall, someone helping from the other side.", "As you move, the strands of web begin catching.", True)
-room32 = Room(1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, -9, "Everything is blurry. You blink and try to focus, realizing the world around you is out of focus, not your eyes.", "You squint on your way ", ", if but only to reduce visual exposure.", "You chuckle to yourself, thinking about how this place needs glasses.", True)
-room33 = Room(0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, "You feel a knotting feeling in your gut, and lose sense of location. Glancing up, you find yourself in a room with other people, you try to get their attention, but they don't look up from their computers. At a loss, you sit down at a terminal, and begin browsing for anything to help you (and some cat pictures along the way).", "As you look through the files on your screen, you see one simply titled '", ".exe', clicking it, you feel the same knot, and the scenery changes.", "You can't leave. Goddamnit Zakiah", True)
+room31 = Room(0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, -2, "You are in a large warehouse, through the grimy windows you can see it is dusk. The occasional object is stored here, but everything is covered in spiderwebs.", "You open a large door in the ", "ern wall, someone helping from the other side.", "As you move, the strands of web begin catching.", ["Trip"])
+room32 = Room(1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, -9, "Everything is blurry. You blink and try to focus, realizing the world around you is out of focus, not your eyes.", "You squint on your way ", ", if but only to reduce visual exposure.", "You chuckle to yourself, thinking about how this place needs glasses.", ["Trip"])
+room33 = Room(0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, "You feel a knotting feeling in your gut, and lose sense of location. Glancing up, you find yourself in a room with other people, you try to get their attention, but they don't look up from their computers. At a loss, you sit down at a terminal, and begin browsing for anything to help you (and some cat pictures along the way).", "As you look through the files on your screen, you see one simply titled '", ".exe', clicking it, you feel the same knot, and the scenery changes.", "You can't leave. Goddamnit Zakiah", ["Lore"])
 room34 = Room(0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, -5, "You feel the walls watching you. You look closer, seeing that these are no ordinary walls, not walls at all, but millions of creepy bald guys.", "You sprint in a ", "ernly direction, Eager to escape their watching eyes.", "You hear your blood rushing, Everything going out of focus, knowing they are all watching only making it worse.")
 room35 = Room(1, 0, rand(2)-1, rand(2)-1, 1, 0, 1, 0, 0, 0, 1, 2, "You stumble on a root that wasn't there a second ago, and glance around. You are now in a grove of many trees. Every one of the trees is thin, tall, and either willow or cottonwood. It is rather peaceful, and you take a moment to rest your weary legs", "You trek off to the ", ", knowing that it is the right thing to do.", "Valiently, you make an effort to leave. Though after some time walking, you find yourself back in the grove.", True)#room35.light = (room35.dark - 1) * (room35.dark - 1)
-room36 = Room(1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 6, "You stand on a hill, on a path surrounded by flowers of many different colors. You decide to search for a specific flower, yet not knowing what it looks like.", "Turning ", ", you know your search has come to an end as you spot a fower adorned terrace.", "You stop and smell the flowers.", True)
+room36 = Room(1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 6, "You stand on a hill, on a path surrounded by flowers of many different colors. You decide to search for a specific flower, yet not knowing what it looks like.", "Turning ", ", you know your search has come to an end as you spot a fower adorned terrace.", "You stop and smell the flowers.", ["Daily"])
 room37 = Room(1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, -7, "yesssssssssssssss", "You exit through the ", ", stumbling over vines.", " \"I don't know...\" you mutter to yourself")
 room38 = Room(0, 1, 0, 1, 0, 1, rand(1), 0, 1, 0, 1, 6, "You are in a large overhang, light from outside illuminating a massive array of small, intricately detailed clay soldiers.", "You clamber towards the ", "ern light, holding your hands above your eyes to block the light", "You stumble over the remains of the small clay soldiers, cracking them even further.", True)
 room39 = Room(0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 3, "You are in a room, quite bland. You feel like it is a blank canvas, and you can do anything with it.", "You stroll to the ", ".", "Looks like you cannot, in fact, do anything with this room.")
-room40 = Room(1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, rand(6) - 3, "Spikes jut up from the ground as the world molds into shape. The landscape begins to for itself, like concrete pouring into a mould. In fact, the landscape seems like one of nature, if all plant mater was replaced by concrete. In the far distance you see two figures, you feel it would be a bad idea to get their attention.", "Gaining your footing on the uneaven ground, you stumble a few steps towards the ", ", just as you fully ready yourself to leave you hear a gleeful shout and the world reforms...", "The spiking cement grass impedes you, causing you to trip almost immediately.", True)
+room40 = Room(1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, rand(6) - 3, "Spikes jut up from the ground as the world molds into shape. The landscape begins to for itself, like concrete pouring into a mould. In fact, the landscape seems like one of nature, if all plant mater was replaced by concrete. In the far distance you see two figures, you feel it would be a bad idea to get their attention.", "Gaining your footing on the uneaven ground, you stumble a few steps towards the ", ", just as you fully ready yourself to leave you hear a gleeful shout and the world reforms...", "The spiking cement grass impedes you, causing you to trip almost immediately.", ["Lore"])
 room41 = Room(0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 3, "You can't stop blinking for a period... When you finally stop you see the world as it once was, pure and without pollution. It fills you with a tranquility, knowing there was something before humans ruined it... and maybe some echo of it here.", "", "", "")
 
 bossroom = Room(0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, -2, "You find yourself in a wide open room. The ceiling is high and dark. An ominous feeling of doom hangs over you.", "Exhausted, you leave through the ", " door.", "You somehow walk into a nonexistent wall.", False, False)
 roomBoss2 = Room(0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 1, -2, "You are in a small stone cavern, many twisting passageways leading through a winding cave system. You feel a drop of water plop on your head.", "You climb out through a ", "ern cave.", "You climb through a tunnel, only to find yourself in a room similar to the one you came from.", False, False)
-roomBoss3 = Room(1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 2, "Suddenly you are in a forest. A crossroads leading in all directions, yet you feel leaving will not be that easy. Searching for why you feel that way, you notice a few houses around you, well made, and decide to lean on one to rest for a moment. Part of it chips off. You glance around hurriedly, hoping no one saw what you did. The house probably wasn't as sturdy as you expected.", "Free to leave now, you choose to go to the ", ", hoping it will lead to better fortunes and maybe even happiness.", "You somehow can't leave even with exits everywhere. You blame Zakiah.", True, False)
+roomBoss3 = Room(1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 2, "Suddenly you are in a forest. A crossroads leading in all directions, yet you feel leaving will not be that easy. Searching for why you feel that way, you notice a few houses around you, well made, and decide to lean on one to rest for a moment. Part of it chips off. You glance around hurriedly, hoping no one saw what you did. The house probably wasn't as sturdy as you expected.", "Free to leave now, you choose to go to the ", ", hoping it will lead to better fortunes and maybe even happiness.", "You somehow can't leave even with exits everywhere. You blame Zakiah.", ["Lore"], False)
 roomBoss4 = Room(0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 3, "You find yourself in a room, walls covered in mechanical and mystical constructs alike. Trees are visible through the sparsely placed windows.", "You find a button hidden on the ", "ern wall, pressing it against your better judgement.", "You become distracted by the intricacies of this room.", True, False)
 #plant, manmade, water, dark, animal, light, items, north, east, south, west, sane, message, exitA, exitB, exitFail, reference = False, normal = True
 
@@ -616,6 +716,8 @@ class dfnChunk(object):
 		#Destructive: direct durability damage to attacking weapon; Layered: value1 is chance for damage to be put through again, to max of value 2
 		self.ench = {"reflecting":0, "thorns":False, "destructive":0, "trueProtection":False, "layered":[0, 0]}
 		self.ench.update(enchs)
+	def rebuild(self):
+		return dfnChunk(self.agil, self.dfn, self.all, self.dur, self.piercable, self.ench)
 
 #single chunk of damage calculation. when putting into list, be sure to put in order: [projectile chunks, melee chunk, eternal chunks]. any other order will make some unused by attack()
 class atkChunk(object):
@@ -634,6 +736,8 @@ class atkChunk(object):
 		self.ench.update(enchs)
 		#piercing level. 0 counts all armor chunks, 1 doesn't count piercable chunks, 2 skips all chunks (aside from special enchants). 3 skips everything.
 		self.pierce = piercing + self.ench["piercing"]
+	def rebuild(self):
+		return atkChunk(self.dmg, self.agil, self.dfn, self.etrn, self.pierce - self.ench["piercing"], self.proj, self.ench)
 		
 allitems = []
 class Item(object):
@@ -642,8 +746,9 @@ class Item(object):
 			self.dfratio = float(self.durability)/self.maxdur
 		except ZeroDivisionError:
 			self.dfratio = 0
-			
-	def __init__(self, offence, defence, durability, sanity, score, name, desc, img, lvl, destructable = True, ammo = None, regenammo = [], enchs = {}, toappend = True):
+		
+	#offence, defence, agility, sanity, score, name, divname, desc
+	def __init__(self, offence, defence, durability, sanity, score, name, desc, img, lvl, ref = [], destructable = True, ammo = None, regenammo = [], enchs = {}, toappend = True):
 		self.atkChunks = offence
 		self.dfnChunks = defence
 		self.durability = durability
@@ -653,6 +758,7 @@ class Item(object):
 		self.score = score
 		self.Name = name
 		self.desc = desc
+		self.ref = ref
 		try:#Do something you can only do on objects
 			self.img = pygame.transform.scale(img, (50, 50))
 		except:
@@ -708,15 +814,25 @@ class Item(object):
 		self.div = ItemDisp(self)
 		if toappend:
 			global allitems
-			allitems.append(self)
+			allitems.append(newItem(self))
 			
-
-
+def newItem(item):
+	newit =  Item(item.atkChunks, item.dfnChunks, item.durability, item.sane, item.score, item.Name, item.desc, item.img, item.lvl, item.ref, item.destructable, item.ammo, item.regenammo, item.ench, False)
+	for x in range(len(newit.atkChunks)):
+		i = item.atkChunks[x]
+		i = atkChunk(i.dmg, i.agil, i.dfn, i.etrn, i.pierce - i.ench["piercing"], i.proj, i.ench)
+		print i, item.atkChunks[x]
+		newit.atkChunks[x] = i
+	for i in range(len(newit.dfnChunks)):
+		newit.dfnChunks[i] = item.dfnChunks[i].rebuild()
+	return newit
+	
+#REF: Mono, Valve, YS, MN
+#TYPE: Trip, Daily, Lore, Split
 		
-nothing = Item([], [], 0, 0, 0, "", "", "no_thing", -1, False)
+nothing = Item([], [], 0, 0, 0, "", "", "no_thing", -1, [], False, None, [], {}, False)
 nothing.img = getImg("special/passive")
 nothing.div = ItemDisp(nothing)
-allitems.remove(nothing)
 acorncap = Item([], [dfnChunk(1, 1, True)], 15, 4, 9, "Acorn Cap", "If you were really tiny, like, smaller than a squirrel, this would be the perfect armor. You place it over your heart  You call it a kiss", "acorncap", 1)
 boardgame = Item([], [dfnChunk(0, 1, True), dfnChunk(-1, 1)], 32, 2, 2, "Board Game", "The cardboard is battered  from years of wear, but you can see the winding  path your piece would take if you were a winner.   You're not a winner.", "boardgame", 1)
 bobbypin = Item([atkChunk(2, 1)], [], 35, 1, 1, "Bobby Pin", "Ow... it's sharp.", "bobbypin", 1)
@@ -733,19 +849,56 @@ no_thing = Item([], [], 1, -2, -1, "Nothing", "You stare off into the distance..
 #var sharktooth = new item(2, 0, 2, 1, 2, "Shark Tooth", "sharktooth","Maybe you can give it to the tooth fairy and get some money.");
 #var steeltoedboots = new item(1, 5, -2, 1, 1, "Steel Boots", "steeltoedboots", "Your enemy might be able to kill you, but hey at least your toes will be fine.");
 #var styrofoamchestplate = new item(0, 1, -1, 2, 2, "White Chestplate", "styrofoamchestplate","It's hefty with beautiful detailing that shines in even the blackest cavern.  You wish it was made out of something other than styrofoam.");
-wandofwater = Item([atkChunk(3, 1, True, False, 1, 2), atkChunk(2, -1)], [], 20, -3, 3, "Wand of Water", "You'll never be thirsty again", "wandofwater", 1, True, 20, [30, 1])
+wandofwater = Item([atkChunk(3, 1, True, False, 1, 2), atkChunk(2, -1)], [], 20, -3, 3, "Wand of Water", "You'll never be thirsty again", "wandofwater", 1, [], True, 20, [30, 1])
 wings = Item([], [dfnChunk(-5, 2, True, False, False)], 40, -2, 1, "Wings", "Now you can fly!  (No you can't)", "wings", 1)
 #var organs = new item(1, 1, 3, -5, 5, "Organs", "organs", "A wet gooey mass that drips on your hand.  You can hear an almost musical wheeze.");
 onepin = Item([atkChunk(5, 5, False)], [], 100, 2, 4, "One Pin", "The tip is dull from overuse.", "onepin", 1)
-nerfgun = Item([atkChunk(2, 10, False, False, 0, 1)], [], 60, 3, 3, "Nerf Gun", "Sometimes Styrofoam bullets can hurt.", "nerfgun", 1, True, 6, [750, 6])
+nerfgun = Item([atkChunk(2, 10, False, False, 0, 1)], [], 60, 3, 3, "Nerf Gun", "Sometimes Styrofoam bullets can hurt.", "nerfgun", 1, [], True, 6, [750, 6])
+
+#var redbook = new item(1, 2, 0, 2, 6, "Red Book", "redbook", "There are no markings, but you feel as though there are many others much like it.");
+redbook = Item([atkChunk(1, -1)], [dfnChunk(0, 2)], 40, 2, 6, "Red Book", "There are no markings, but you feel as though there are many others much like it.", "redbook", 1, ["Mono"])
+#var brokenseashell = new item(-1, 2, 4, 5, 7, "Broken seashell", "brokenseashell", "It appears recently broken, but you keep it for sentimental value. Towards what, even you cannot quite tell.");
+brokenseashell = Item([atkChunk(-1, 4, False, True)], [dfnChunk(4, 2, True)], 20, 5, 8, "Broken seashell", "It appears recently broken, but you keep it for sentimental value. Towards what, even you cannot quite tell.", "brokenseashell", 1, ["Split"])
+#var redball = new item(-1, 2, 1,10, 6, "Red Ball", "redball", "It is comforting, yet oddly unnerving. You keep it as an anchor to remind you of the 'real world.'");
+redball = Item([atkChunk(-1, 1, False, True)], [dfnChunk(8, 1, True)], 8, 10, 6, "Red Ball", "It is comforting, yet oddly unnerving. You keep it as an anchor to remind you of the 'real world.'", "redball", 1, ["MN"])
+#var crowbar = new item(3, 3, -2, 1, 3, "Crowbar", "crowbar", "A red crowbar. You feel as though the fact that it has three points is significant.");
+crowbar = Item([atkChunk(3, -2)], [dfnChunk(0, 3, False, True)], 300, 3, 3, "Crowbar", "A red crowbar. You feel as though the fact that it has three points is significant.", "crowbar", 1, ["Valve"])
+'''
+
+var rotflesh = new item(3,2, 0, -7, 4,"Rotting Flesh","rotflesh","It's a rotting leg, snatched off a carcass that was probably dead.   Probably.");
+var crate = new item(-1, 3, -3, 2, 3, "Crate", "crate","It cowers, trying to get away from you.  You can hear it whimper.  It knows what's coming.");
+var redbook = new item(1, 2, 0, 2, 6, "Red Book", "redbook", "There are no markings, but you feel as though there are many others much like it.");
+var brokenseashell = new item(-1, 2, 4, 5, 7, "Broken seashell", "brokenseashell", "It appears recently broken, but you keep it for sentimental value. Towards what, even you cannot quite tell.");
+var redball = new item(-1, 2, 1,10, 6, "Red Ball", "redball", "It is comforting, yet oddly unnerving. You keep it as an anchor to remind you of the 'real world.'");
+var crowbar = new item(3, 3, -2, 1, 3, "Crowbar", "crowbar", "A red crowbar. You feel as though the fact that it has three points is significant.");
+var fakebeard = new item(0,1,3,4,4,"Beard", "fakebeard", "It's a beard. You suddenly feel like you have been here for longer than you think you have.");
+var gear = new item(3, 2, 2, 2, 1, "Gear", "gear", "A small gear. It looks like it fell out of some machine.");
+var catears = new item(2, 2, 2, 2, 2, "Cat Ears", "catears", "nekomimi");
+var bikeweel = new item(2, 1, -3, 2, 3, "Bike Wheel", "bikeweel", "It's part of your bike. Did you have a bike?");
+var recording = new item(7, -2, 1, -2, 6, "Recording", "recording", "Nyan cat recording");
+var potato = new item(2, 2, 1, 8, 6, "Potato", "potato", "Quite a normal potato.");
+var otatop = new item(0, 7, -2, -2, 6, "Otatop", "otatop", "Quite a inverted potato.");
+var squiglasses = new item(2, 1, 2, 4, 7, "Glasses", "squiglasses", "They are non-prescription, acting more as a mask, allowing you to be someone else.");
+var buttton = new item(0, 1, -3, 3, 9, "Button", "buttton", "Even though it is just a normal button, you feel as though it marks you for a death from an unknown source.");
+var map = new item(0, 1, 3, 1, 8, "Map", "map", "A roughly drawn map, you don't recognize any of the landmarks. You deem it useless.");
+var cable = new item(2, 0, 1, 5, 3, "a Cable", "cable", "You are sure it charges something.<br/>Somewhere.");
+var croptop = new item(0, 3, 2, 2, 3, "Crop Top", "croptop", "It is woven from corn stalks. You are amazed by the makers commitment as you laugh yourself to tears.");
+var rock = new item(3, 2, 0, 2, 2, "Rock", "rock", "A small rock. It's tasty. Maybe a bit too much salt.");
+var fourclover = new item(0, 1, 7, 15, 4, "Clover", "fourclover", "A four leaf clover. How lucky!");
+var sevenclover = new item(0, 1, 15, 20, 4, "Clover", "sevenclover", "A seven leaf clover. Quite lucky?");
+var stonekey = new item(1, 1, 3, 5, 5, "Stone Key", "stonekey", "A stone key. It looks like it fits into a door somewhere.")
+var happyshirt = new item(0, 2, 3, 10, 3, "Happy Shirt", "happyshirt", "It makes you smile when clouds are gray.")
+
+'''
 
 #LEVEL 2
-circularsaw = Item([atkChunk(15, 0, True, False, 1, None, {"destructive":5, "heavy":1})], [dfnChunk(-1, -5, True)], 120, -7, 8, "Circular Saw", "You feel as though only a psychopath would use this as a weapon. The stains of blood imply that it already has.", "circularsaw", 2)
+circularsaw = Item([atkChunk(15, 0, True, False, 1, None, {"destructive":5, "heavy":1})], [dfnChunk(-1, -5, True)], 120, -7, 8, "Circular Saw", "You feel as though only a psychopath would use this as a weapon. The stains of blood imply that it already has.", "circularsaw", 2, ["YS"])
+bullet = Item([atkChunk(0, 1, False, True, 1, None, {"heavy":1, "destructive":2})], [], 180, 1, 9, "Bullet", "A massive bullet, it could probably take out a tank from the right gun.", "bullet", 2, ["Split"])
 mirror0 = Item([], [dfnChunk(-15, 20, False, False, False, {"reflecting":0.2})], 10, 5, 3, "Grimy Mirror", "Covered with muck, seems to reflect things thrown upon it. But still only as durable as any old plate of glass.", "mirror0", 2)
 
 #LEVEL 3
-higgs = Item([atkChunk(1, 1, False, True, 1)], [], 5, -15, 4, "Higgs Boson", "You have no idea how you found this. And you know you probably shouldn't have been able to.", "higgs", 3, True, None, [], {"mending":[1000, -1]})
-romace = Item([atkChunk(26, 5)], [dfnChunk(-3, 2, True), dfnChunk(-10, 18, False, False, True, {"thorns":atkChunk(5, -10)})], 500, 5, 5, "Romace", "It was love at first slice.", "mace", 3)#"mace of restoration, neverwinter game"
+higgs = Item([atkChunk(1, 1, False, True, 1)], [], 5, -15, 4, "Higgs Boson", "You have no idea how you found this. And you know you probably shouldn't have been able to.", "higgs", 3, [], True, None, [], {"mending":[1000, -1]})
+romace = Item([atkChunk(26, 5)], [dfnChunk(-3, 2, True), dfnChunk(-10, 18, False, False, True, {"thorns":atkChunk(5, -10)})], 500, 5, 5, "Romace", "It was love at first slice.", "mace", 3, ["Self"])#"mace of restoration, neverwinter game"
 mirror1 = Item([], [dfnChunk(-20, None, False, False, False, {"reflecting":0.6})], 30, 6, 3, "Mirror", "Quite clear, seems to reflect anything thrown upon it. But still only as durable as any old plate of glass.", "mirror1", 3)
 
 #LEVEL 4
@@ -757,39 +910,39 @@ mirror3 = Item([], [dfnChunk(-10, None, False, False, False, {"reflecting":1.4, 
 
 #--BOSS ITEMS--
 #HERO
-heroshield = Item([], [dfnChunk(-5, 6, False, False, False), dfnChunk(-2, 4, True)], 200, 1, 10, "Heroes Shield", "You feel a bit bad, killing someone with origins probably alike yours.", "heroshield", -1, False)
-herosword = Item([atkChunk(6, 2)], [dfnChunk(0, 2, False, True)], 200, 1, 10, "Heroes Sword", "A fitting weapon for a hero. But are <i>you<i> a hero?", "herosword", -1, False)
+heroshield = Item([], [dfnChunk(-5, 6, False, False, False), dfnChunk(-2, 4, True)], 200, 1, 10, "Heroes Shield", "You feel a bit bad, killing someone with origins probably alike yours.", "heroshield", -1, [], False)
+herosword = Item([atkChunk(6, 2)], [dfnChunk(0, 2, False, True)], 200, 1, 10, "Heroes Sword", "A fitting weapon for a hero. But are <i>you<i> a hero?", "herosword", -1, [], False)
 
 #COOSOME
-fishingrod = Item([atkChunk(6, 10, True, False, 1, 1, {"destructive":5}), atkChunk(5, 0)], [dfnChunk(0, 3)], 150, 0, 10, "Fishing Rod", "Hook, Line, and Sink.", "fishingrod", -1, True, 1, [300, 1])
-pencil = Item([atkChunk(8, -5, True, False, 0, None, {"heavy":1})], [dfnChunk(-5, 10), dfnChunk(-1, 2, True, True)], 300, -5, 10, "the Pencil", "Quite oversized, you use it as a blunt weapon. But you feel there is more to it.", "pencil", -1, False, None, [], {"mending":[50, 1]})
-drawingpad = Item([atkChunk(2, 1, True, True, 1)], [dfnChunk(5, 2, True, True, False)], 50, 12, 10, "Drawing Pad", "Using this, you can stay positive. Because everything else is in here.", "drawingpad", -1, False, None, [], {"mending":[500, 10]})
-spoon = Item([atkChunk(50, 7, False, False, 2, 30), atkChunk(35, 6, False, False, 1, 1, {"returning":[2, 100]}), atkChunk(15, 3, True, True)], [dfnChunk(1, 1)], 100, -8, 10, "the Spoon", "It's just a spoon. But something feels powerful about it...", "spoon", -1, False, 30, [10, 1], {"mending":[500, 1], "bound":2})
+fishingrod = Item([atkChunk(6, 10, True, False, 1, 1, {"destructive":5}), atkChunk(5, 0)], [dfnChunk(0, 3)], 150, 0, 10, "Fishing Rod", "Hook, Line, and Sink.", "fishingrod", -1, ["Self"], True, 1, [300, 1])
+pencil = Item([atkChunk(8, -5, True, False, 0, None, {"heavy":1})], [dfnChunk(-5, 10), dfnChunk(-1, 2, True, True)], 300, -5, 10, "the Pencil", "Quite oversized, you use it as a blunt weapon. But you feel there is more to it.", "pencil", -1, ["Self"], False, None, [], {"mending":[50, 1]})
+drawingpad = Item([atkChunk(2, 1, True, True, 1)], [dfnChunk(5, 2, True, True, False)], 50, 12, 10, "Drawing Pad", "Using this, you can stay positive. Because everything else is in here.", "drawingpad", -1, [], False, None, [], {"mending":[500, 10]})
+spoon = Item([atkChunk(50, 7, False, False, 2, 30), atkChunk(35, 6, False, False, 1, 1, {"returning":[2, 100]}), atkChunk(15, 3, True, True)], [dfnChunk(1, 1)], 100, -8, 10, "the Spoon", "It's just a spoon. But something feels powerful about it...", "spoon", -1, ["Self", "Lore"], False, 30, [10, 1], {"mending":[500, 1], "bound":2})
 
 #ALPHA
-alphaxe = Item([atkChunk(20, -2, True, False, 0, None, {"sweeping":2, "heavy":1})], [dfnChunk(-2, -2, True, True), dfnChunk(-10, 12)], 250, 0, 10, "Alpha's Axe", "A large heavy axe, with surprisingly powerful hits.", "alphaxe", -1, False)
-sivgoggles = Item([atkChunk(4, 15, False, True, 1, None, {"sweeping":1})], [dfnChunk(10, 2, True), dfnChunk(25, 2, False, True, True, {"trueProtection":True})], 30, -15, 10, "Alpha's Glasses", "Gazing through them, You can see things. Where they are, and where they are going.", "sivgoggles", -1, False, None, [], {"bound":4, "mending":[3, 1]})
-hair = Item([atkChunk(1, 1, False, True, 0, None, {"destructive":30})], [], 10, -100, 10, "Alpha's Hair", "You stole this from a boss. Well, stole isn't the right word. More of Generated through Desire.", "hair", -1, False, None, [], {"bound":10})
-shurikenbag = Item([atkChunk(35, 25, False, False, 1, 5, {"sweeping":5}), atkChunk(15, 20, True, False, 0, 1, {"returning":[2, 80], "destructive":10})], [dfnChunk(5, 4, True)], 100, -35, 10, "Shuriken Pouch", "A small, blood filled pouch, when you reach your hand into it, you always pull out a shuriken.", "shurikenbag", -1, False, 10, [1, 1], {"bound":1, "mending":[5, 2]})
+alphaxe = Item([atkChunk(20, -2, True, False, 0, None, {"sweeping":2, "heavy":1})], [dfnChunk(-2, -2, True, True), dfnChunk(-10, 12)], 250, 0, 10, "Alpha's Axe", "A large heavy axe, with surprisingly powerful hits.", "alphaxe", -1, ["Self", "Lore"], False)
+sivgoggles = Item([atkChunk(4, 15, False, True, 1, None, {"sweeping":1})], [dfnChunk(10, 2, True), dfnChunk(25, 2, False, True, True, {"trueProtection":True})], 30, -15, 10, "Alpha's Glasses", "Gazing through them, You can see things. Where they are, and where they are going.", "sivgoggles", -1, ["Self", "Lore"], False, None, [], {"bound":4, "mending":[3, 1]})
+hair = Item([atkChunk(1, 1, False, True, 0, None, {"destructive":30})], [], 10, -100, 10, "Alpha's Hair", "You stole this from a boss. Well, stole isn't the right word. More of Generated through Desire.", "hair", -1, ["Self"], False, None, [], {"bound":10})
+shurikenbag = Item([atkChunk(35, 25, False, False, 1, 5, {"sweeping":5}), atkChunk(15, 20, True, False, 0, 1, {"returning":[2, 80], "destructive":10})], [dfnChunk(5, 4, True)], 100, -35, 10, "Shuriken Pouch", "A small, blood filled pouch, when you reach your hand into it, you always pull out a shuriken.", "shurikenbag", -1, ["Self", "Lore"], False, 10, [1, 1], {"bound":1, "mending":[5, 2]})
 #rune = Item() #the god rune
 
 #JIM GRIND
-jimsword = Item([atkChunk(25, 20, True, False, 0, None, {"heavy":3})], [dfnChunk(-20, None), dfnChunk(-20, 4, True)], 1000, 0, 10, "Jim's Sword", "An incredibly heavy weapon, you can barely pick it up off the ground; you also wonder how that man could toss it around.", "jimsword", -1)
-communism = Item([atkChunk(80, 100, True, False, 2, 1, {"heavy":2}), atkChunk(5, -10)], [], 100, 4, 10, "Crossbow", "An intricate, heavy crossbow with an ingraved name: 'Communism mk. II'", "communism", -1, True, 1, [500, 1])
-jimarmor = Item([], [dfnChunk(-10, 5, False, True), dfnChunk(-20), dfnChunk(-5, 8, True, True, None, {"layered":[70, 2]}), dfnChunk(-5, 25, True, False, None, {"trueProtection":True, "thorns":atkChunk(5, 0, False)})], 500, -2, 10, "Enchanted Armor", "Glimmering metallic armor, Material flowing smoothly within it to fill the gaps in its structure.", "jimarmor", -1, False, None, [], {"mending":[5, 4]})
-hatandboots = Item([], [dfnChunk(15, 10, False, True), dfnChunk(0, None, False, False, False, {"trueProtection":True}), dfnChunk(0, 15, True, True, False, {"layered":[80, 2]}), dfnChunk(20, 20, True, False, False, {"trueProtection":True})], 800, -2, 10, "Hat and Boots", "Can't Bump your head anymore, and probably won't stub your toes.", "hatandboots", -1, False, None, [], {"mending":[1, 1], "bound":2})
+jimsword = Item([atkChunk(25, 20, True, False, 0, None, {"heavy":3})], [dfnChunk(-20, None), dfnChunk(-20, 4, True)], 1000, 0, 10, "Jim's Sword", "An incredibly heavy weapon, you can barely pick it up off the ground; you also wonder how that man could toss it around.", "jimsword", -1, ["Self"])
+communism = Item([atkChunk(80, 100, True, False, 2, 1, {"heavy":2}), atkChunk(5, -10)], [], 100, 4, 10, "Crossbow", "An intricate, heavy crossbow with an ingraved name: 'Communism mk. II'", "communism", -1, ["Self"], True, 1, [500, 1])
+jimarmor = Item([], [dfnChunk(-10, 5, False, True), dfnChunk(-20), dfnChunk(-5, 8, True, True, None, {"layered":[70, 2]}), dfnChunk(-5, 25, True, False, None, {"trueProtection":True, "thorns":atkChunk(5, 0, False)})], 500, -2, 10, "Enchanted Armor", "Glimmering metallic armor, Material flowing smoothly within it to fill the gaps in its structure.", "jimarmor", -1, ["Self"], False, None, [], {"mending":[5, 4]})
+hatandboots = Item([], [dfnChunk(15, 10, False, True), dfnChunk(0, None, False, False, False, {"trueProtection":True}), dfnChunk(0, 15, True, True, False, {"layered":[80, 2]}), dfnChunk(20, 20, True, False, False, {"trueProtection":True})], 800, -2, 10, "Hat and Boots", "Can't Bump your head anymore, and probably won't stub your toes.", "hatandboots", -1, ["Self"], False, None, [], {"mending":[1, 1], "bound":2})
 	
 #CUBE
-device = Item([atkChunk(30, 30, False, False, 2, None, {"sweeping":2}), atkChunk(10, 5, False, True)], [], 80, -6, 10, "Electrical Device", "You have no idea how it works, but it looks far beyond any tech you have ever seen.", "device", -1, False, None, [], {"mending":[20, 1]})
-inactivecube = Item([], [dfnChunk(0, 1)], 1, 0, 10, "Inactive Cube", "You bet you could find some way to use it.", "inactivecube", -1, False)
+device = Item([atkChunk(30, 30, False, False, 2, None, {"sweeping":2}), atkChunk(10, 5, False, True)], [], 80, -6, 10, "Electrical Device", "You have no idea how it works, but it looks far beyond any tech you have ever seen.", "device", -1, ["Self", "Lore"], False, None, [], {"mending":[20, 1]})
+inactivecube = Item([], [dfnChunk(0, 1)], 1, 0, 10, "Inactive Cube", "You bet you could find some way to use it.", "inactivecube", -1, ["Self", "Lore"], False)
 #card = item(2, 25, 25, 0, 20, "00000111", "card", "")
 
 #ZAROL
-zaroltrophy = Item([], [], 1, 0, 30, "Zarol Trophy", "Thinking back, Seriously. How the hell did you do that?", "zaroltrophy", -1, True, None, [], {"bound":2})
-zarolflesh = Item([], [dfnChunk(2, 15, True, True, False, {"destructive":5}), dfnChunk(-2, 2, False, True, False, {"layered":[60, 10], "thorns":atkChunk(5, 0, False, False, 0, None, {"destructive":1})})], 1000, -10, 10, "Zarol's Flesh", "A mysterious substance, unlike any of which you have ever seen before.", "zflesh", -1, True, None, [], {"mending":[5, -2]})
-zarolmist = Item([atkChunk(25, 20, False, False, 2, 10, {"destructive":30, "sweeping":5}), atkChunk(10, 0, True, True, 1, None, {"destructive":20})], [], 20, -10, 10, "Zarol Mist", "How you can possess this eludes your mind.", "zmist", -1, False, 10, [20, 1], {"mending":[15, 1]})
+zaroltrophy = Item([], [], 1, 0, 30, "Zarol Trophy", "Thinking back, Seriously. How the hell did you do that?", "zaroltrophy", -1, ["Self"], True, None, [], {"bound":2})
+zarolflesh = Item([], [dfnChunk(2, 15, True, True, False, {"destructive":5}), dfnChunk(-2, 2, False, True, False, {"layered":[60, 10], "thorns":atkChunk(5, 0, False, False, 0, None, {"destructive":1})})], 1000, -10, 10, "Zarol's Flesh", "A mysterious substance, unlike any of which you have ever seen before.", "zflesh", -1, ["Self"], True, None, [], {"mending":[5, -2]})
+zarolmist = Item([atkChunk(25, 20, False, False, 2, 10, {"destructive":30, "sweeping":5}), atkChunk(10, 0, True, True, 1, None, {"destructive":20})], [], 20, -10, 10, "Zarol Mist", "How you can possess this eludes your mind.", "zmist", -1, ["Self"], False, 10, [20, 1], {"mending":[15, 1]})
 
-lapis = Item([atkChunk(5000, 5000, False, False, 3, None, {"sweeping":1000})], [dfnChunk(0, True, False, True, False, {"trueProtection":True, "thorns":atkChunk(5000, 5000, False, False, 3)})], 1000, 0, 0, "Lapis", "The gem of the gods. Or at least the god of 7.", "lapis", -1, False, None, [], {"bound":100, "mending":[50, 1000]})
+lapis = Item([atkChunk(5000, 5000, False, False, 3, None, {"sweeping":1000})], [dfnChunk(0, True, False, True, False, {"trueProtection":True, "thorns":atkChunk(5000, 5000, False, False, 3)})], 1000, 0, 0, "Lapis", "The gem of the gods. Or at least the god of 7.", "lapis", -1, [], False, None, [], {"bound":100, "mending":[50, 1000]})
 
 
 class Player(object):
@@ -840,23 +993,30 @@ class Player(object):
 	def refresh(self):
 		#set self.sanity
 		localrand = self.sane
+		localdfn = self.dfn
+		localatk = self.dmg
 		for i in self.equipped:
 			localrand += i.sane
-
+			for x in i.atkChunks:
+				if x.etrn:
+					localatk += x.dmg
+			for x in i.dfnChunks:
+				if x.all and x.dfn != None:
+					localdfn += x.dfn
 		global score
 		if score < 0:
 			localrand += score*2
 		self.sanity = math.floor(localrand)
-		#set two attack chunks
-		#for i in 
 		global TI1
-		TI1 = DispObj([DispObj(smallfont.render("Health: "+str(self.hp), True, (0, 0, 0))), DispObj(smallfont.render("Base Dmg: "+str(self.dmg), True, (0, 0, 0)), (0, 15)), DispObj(smallfont.render("Base Dfn: "+str(self.dfn), True, (0, 0, 0)), (0, 30)), DispObj(smallfont.render("Score: "+str(score), True, (0, 0, 0)), (0, 45)), DispObj(smallfont.render("Level: "+str(self.lvl), True, (0, 0, 0)), (0, 60)), DispObj(smallfont.render("Room: "+str(turn), True, (0, 0, 0)), (0, 75))], (10, 126), False, (195, 120)) #inventory stats
+		TI1 = DispObj([DispObj(smallfont.render("Health: "+str(self.hp), True, (0, 0, 0))), DispObj(smallfont.render("Base Dmg: "+str(localatk), True, (0, 0, 0)), (0, 15)), DispObj(smallfont.render("Base Dfn: "+str(localdfn), True, (0, 0, 0)), (0, 30)), DispObj(smallfont.render("Score: "+str(score), True, (0, 0, 0)), (0, 45)), DispObj(smallfont.render("Level: "+str(self.lvl), True, (0, 0, 0)), (0, 60)), DispObj(smallfont.render("Room: "+str(turn), True, (0, 0, 0)), (0, 75))], (10, 126), False, (195, 120)) #inventory stats
 		
 pla = Player()
 pla.refresh()
 pla.reStats()
 actions = [["atk1", 1]]
 bosses = []
+
+
 class Enm(object):
 	#enemy base:	   atk, de, name, pic, maxhp, ddev, agil, sane, message, cry, lvl, rundown, heal, interval, equip = [nothing]
 	#boss base:		hp, atk,   de,  name, img, maxhp, ddev, agil, heal, sane, loot, loot2, turn, message, cry, rundown, room, interval, equip = [nothing] #NEW INTERVALS NEED TO BE HALF ORIGONAL
@@ -908,9 +1068,12 @@ class Enm(object):
 		self.dist = 0
 		
 
-	def Minionize(self, dist):
-		self.dist = dist
-
+	def Minionize(self, dist, lvl):
+		thisminion = Enm(self.hp, self.maxhp, self.dmg, self.ddev, self.dfn, self.agil, self.heal, self.sane, self.name, "", self.message, self.cry, self.rundown, self.atkIntBase, self.actions, self.equipped, False, None, -1, False)
+		thisminion.dist = dist
+		thisminion.turn = lvl
+		return thisminion
+		
 	def reStats(self):
 		prints("Recalculating stats for: "+self.name)
 		self.dfratio = float(0)
@@ -930,6 +1093,31 @@ class Enm(object):
 
 		self.hpratio = ratio
 
+
+#MINIONS
+def getMinionTree(entity, type):
+	minionTree = []
+	if type == 2:
+		for i in entity.minions:
+			minionTree.append(i)
+			if len(i.minions) > 0:
+				minionTree += getMinionTree(i, 2)
+		return minionTree
+	if type == 1:
+		minionTree = []
+		minionTree += getMinionTree(entity, 2)
+		return minionTree
+
+def getMinion(source, min):
+	#if source is player, make div of minion with id=minion.div+minion.id.   new div is only hp
+	thisMin = min.Minionize(min.dist, min.turn)
+	source.minions.append(thisMin)
+	if (source == pla):
+		print "DISPLAY"
+	source.minionTree = getMinionTree(source, 1)
+	prints("Gave "+source.name+" "+thisMin.name)
+		
+		
 creepybaldguy = Enm(18, 18, 5, 2, 10, [1, 100], 4, -1, "Creepy Bald Guy", "creep", "You know you are being watched. Always... ", "you feel it staring through your eyes, Into your Soul.", ["Even though it seems nearly dead, it continues its steady gaze deep into your eyes.", "it seems to have lost some hair in this fight. You blink, realizing it was already bald.", "it seems to be observing, only attacking to see how you react.", "it is sitting there, staring at you. Waiting and observing your every move."], 100, [["atk1", 3]], [nothing])
 creep2 = Enm(35, 35, 8, 3, 12, [1, 100], 8, -1, "Creepier Bald Guy", "creep2", "You know you are being watched. Always... ", "you feel it staring through your eyes, Into your Soul.", ["Even though it seems nearly dead, it continues its steady gaze deep into your eyes.", "it seems to have lost some hair in this fight. You blink, realizing it was already bald.", "it seems to be observing, only attacking to see how you react.", "it is sitting there, staring at you. Waiting and observing your every move."], 87, [["heal", 1], ["atk1", 19]], [nothing])
 creep3 = Enm(120, 120, 12, 4, 15, [5, 100], 10, -2, "Creepier Balder Guy", "creep3", "You know you are being watched. Always... ", "you feel it staring through your eyes, Into your Soul.", ["Even though it seems nearly dead, it continues its steady gaze deep into your eyes.", "it seems to have lost some hair in this fight. You blink, realizing it was already bald.", "it seems to be observing, only attacking to see how you react.", "it is sitting there, staring at you. Waiting and observing your every move."], 60, [["heal", 1], ["atk1", 10]], [nothing])
@@ -952,6 +1140,41 @@ rockgolum = Enm(200, 200, 10, 20, 35, [1, 100], 10, 0, "Rock Golum", "rockgolum"
 enm = creepybaldguy
 
 
+#Minions
+trapfall = Enm(100, 100, 80, 10, 10, [500, 100], 0, -1, "Ceiling trap", "trapfall", "traap heeere", "it's a tarp!", [], 500, [["atk1", 2]], [nothing])
+trapfall = trapfall.Minionize(0, 7)
+trapfire = Enm(5, 5, 1, 0, 1, [500, 100], 0, -1, "Fire Trap", "trapfire", "Fiiiirrrreeeee", "it's a tarp!", [], 7, [["atk1", 2]], [nothing])
+trapfire = trapfire.Minionize(1, 7)
+trapdart = Enm(1, 1, 10, 1, 0, [0, 100], 0, -1, "Dart Trap", "trapdart", "You stumble over a small box.", "it's a tarp!", [], 95, [["atk1", 2]], [nothing])
+trapdart = trapdart.Minionize(2, 7)
+trapsword = Enm(1, 1, 20, 3, 0, [0, 100], 0, -1, "Sword Trap", "trapsword", "You stumble over a small box.", "it's a tarp!", [], 600, [["atk1", 2]], [nothing])
+trapsword = trapsword.Minionize(1, 7)
+shield = Enm(400, 430, 20, 4, 4, [0, 100], 0, 3, "Shield", "shield", "You see a shield lying next to you. You decide to pick it up and take it with you.", "A shield", [], 200, [["atk1", 2]], [nothing])
+shield = shield.Minionize(80, 5)
+sheild = Enm(150, 170, 10, 4, 5, [0, 100], 0, 3, "Sheild", "sheild", "You see a sheild lying next to you. You decide to pick it up and take it with you.", "A sheild", [], 300, [["atk1", 2]], [nothing])
+sheild = sheild.Minionize(78, 4)
+enteddy = Enm(10, 12, 3, 1, 20, [3, 100], 4, 10, "Teddy Bear", "enteddy", "You find a Teddy bear lying on the ground. You decide to pick it up.", "It looks a little grimy and beat up, but you can't seem to brush it off. Must've been made that way.", [], 125, [["heal", 1], ["atk1", 5]], [nothing])
+enteddy = enteddy.Minionize(1, 4)
+fairy = Enm(10, 10, 1, 0, 1, [90, 100], 1, -2, "A fairy", "fairy", " You feel a presence nearby.", "When did this get here? All it seems to do is say watch out, and tell you to listen.", [], 85, [["heal", 1], ["atk1", 29]], [nothing])
+fairy = fairy.Minionize(1, 4)
+nyancat = Enm(30, 35, 7, 2, 1, [88, 100], 1, -15, "Nyan Cat", "nyancat", "You see a.. Cat? It jumps up, flying toward you, Rainbows trailing it.", "Nyaning", [], 8, [["heal", 19], ["atk1", 1]], [nothing])
+nyancat = nyancat.Minionize(45, 5)
+strikorb = Enm(35, 45, 17, 3, -5, [25, 100], 7, -3, "Red Orb", "strikorb", "There seems to be a floating red orb here.", "It's a reddish, transparent, sphere, floating next to you. It's presence sets your blood boiling, making you ready to pounce.", [], 35, [["heal", 1], ["atk1", 14]], [nothing])
+strikorb = strikorb.Minionize(8, 5)
+balorb = Enm(50, 50, 10, 1, 10, [20, 100], 6, 5, "White Orb", "balorb", "There seems to be a floating white orb here.", "It's a whitish, transparent, sphere, floating next to you. It's presence cools your blood, Balancing your thoughts.", [], 40, [["heal", 1], ["atk1", 3]], [nothing])
+balorb = balorb.Minionize(10, 5)
+tankorb = Enm(75, 100, 1, 1, 25, [2, 100], 10, -3, "Green Orb", "tankorb", "There seems to be a floating green orb here.", "It's a greenish, transparent, sphere, floating next to you. It's presence makes you feel as though your blood is of iron, Steeling against any attack.", [], 50, [["heal", 1], ["atk1", 1]], [nothing])
+tankorb = tankorb.Minionize(25, 5)
+miniminion = Enm(1, 1, 0, 0, 0, [7, 100], 0, 1, "Minion", "miniminion", "A single tiny sphere, hugely out of place. It approaches you hesitantly. ", "A single tiny sphere, hanging close by.", [], 90, [["atk1", 3]], [nothing])
+miniminion = miniminion.Minionize(5, 4)
+superminion = Enm(40, 40, 1, 1, 2, [2, 100], 4, -5, "The Group", "superminion", "uhh, minions follow you", "A huge grouping of small orbs, swarming around you like fruit flies around fruit.", [], 10, [["heal", 1], ["atk1", 49]], [nothing])
+superminion = superminion.Minionize(4, 5)
+cube = Enm(1, 1, 1, 1, 20, [10, 100], 0, -1, "Cube", "cube", "There is a cube here. It is small.", "A small cube. It hungers for it's friends.", [], 50, [["atk1", 11]], [nothing])
+cube = cube.Minionize(75, 6)
+chicken = Enm(46, 46, 1, 4, 1, [1, 100], 10, 6, "Chicken", "chicken", "There's a chicken here.", "Loot?", [], 75, [["heal", 1], ["atk1", 99]], [nothing])
+chicken = chicken.Minionize(25, 4)
+
+
 #bosses
 adventurer = Enm(190, 190, 10, 5, 0, [5,100], 30, -7, "Adventurer", "adventurer", "You hear the footsteps of someone else.", "It is an Adventurer, Readying his stance for Battle!", ["He seems oddly unaware of the massive amounts of damage you have dealt him. Much like you are.", "", "", "", "He seems more confident of himself, more sure of his strides.", ""], 50, [["atk1", 4], ["heal", 1]], [herosword, heroshield], True, bossroom, 10)
 
@@ -970,6 +1193,30 @@ jimgrind = Enm(200, 200, 35, 2, 35, [3,120], 12, -2, "Jim Grind", "jimgrind", "S
 lastsanity = Enm(500, 500, 18, 5, 16, [29,100], 100, -100, "Last Remnants of Sanity", "lastsanity", "You feel parts of your mind fighting back, with nonsense of '<i>Something is wrong</i>.'", "You realize you need to silence these nagging voices.", ["<i>You are destroying yourself...</i>", "<i>Do you even know the names of the people you killed?</i>", "<i></i>", "<i>Something is seriously wrong with you,</i>"], 60, actions, [], True, bossroom, -100)
 lastinsanity = Enm(1000, 1000, 15, 90, 10, [2,100], 3, 100, "Last Remnants of Insanity", "lastinsanity", "You feel parts of your mind begin to come together.......", "You have come to a realization: the only way to obtain your goal is to wipe insanity from your mind.", ["but.. What is this place?", "How do you not return to what was already there?", "", ""], 25, actions, [], True, bossroom, -100)
 #creepiestbaldest = Enm(400, 500, 40, 1, 5, [83, 100], 20, -20, "The Knowing Eye", "creepiestbaldest", "You see one blink. And with its eyes, another one is opening.", "You feel its knowing gaze, that it has nothing more to learn.", ["", "", "", "", "", ""], 55, [["atk1", ]], [map, shinedisk], True, room34, 52)
+
+
+coompanion = coo33.Minionize(100, 15)
+
+
+minions = [coompanion, cube, shield, sheild, nyancat, balorb, strikorb, tankorb, superminion, miniminion] #, mincreep2, mincreep3, mincreep4, enteddy, fairy, chicken, trapfall, trapfire];
+
+class crafter(object):
+	def __init__(self):
+		self.Istage = 0
+		self.Ostage = 0
+		self.mode = 0
+		self.working = False #doing something
+		self.disabled = False #used up
+		self.inroom = False #is it in the room?
+		self.inputs = [nothing, nothing]
+		self.output = nothing
+		self.img = Scrafter
+		self.Iimg = (getImg("special/I0"), getImg("special/I1"))
+		self.Oimg = (getImg("special/O0"), getImg("special/O1"), getImg("special/O2"))
+		self.Mimg = (getImg("special/M0"), getImg("special/M1"), getImg("special/M2"))
+		
+		
+C = crafter()
 
 zarol = None
 def buildFinal():
@@ -1000,7 +1247,7 @@ def buildFinal():
 		global jimsword
 		global communism
 		global jimarmor
-		#global hatandboots
+		global hatandboots
 		print "JIM BOSS SPAWN"
 		
 	if endboss == "Siv":
@@ -1152,6 +1399,7 @@ def genRoom():
 	global room
 	global lootable
 	global endboss
+	global C
 	
 	pla.refresh()
 	print pla.sane, pla.sanity
@@ -1160,6 +1408,17 @@ def genRoom():
 	gentables()
 	turn += 1
 	healable = True
+	
+	
+	if rand(5) <= 3:
+		C.inroom = True
+		C.disabled = False
+		if C.working:
+			C.output = Enchant(C.output)
+		else:
+			C.Istage = 0
+			C.Ostage = 0
+	
 	#leveling up
 	if (score >= 30 and pla.lvl == 1):
 		pla.lvl = 2
@@ -1200,7 +1459,7 @@ def genRoom():
 	if (search or turn == 1):
 		room = ablerooms[rand(len(ablerooms))-1]
 	roommessage += room.message
-	if room.isref:
+	if room.isref != False:
 		prints("Room is a reference.")
 	
 	avent = random.randint(1, 30)
@@ -1290,7 +1549,7 @@ def genRoom():
 	for i in pla.equipped:
 		pla.sane += (i.sane)/5
 	for i in pla.minions:
-		pla.sane += (pla.minions[i].sane / 5)
+		pla.sane += (i.sane / 5)
 	
 	
 	#Determining lootable
@@ -1301,9 +1560,9 @@ def genRoom():
 		lootable = False
 
 	ableminions = []
-	'''for i in minions:
-		if (i.lvl <= pla.lvl):
-			ableminions.append(i)'''
+	for i in minions:
+		if (i.turn <= pla.lvl):
+			ableminions.append(i)
 	
 	if (rand(8) == 1 and len(ableminions) > 0):
 		minion = ableminions[rand(len(ableminions))-1]
@@ -1459,11 +1718,12 @@ def move(direction):
 			TM2.all = wraptext("You feel this would be a bad idea.", 900, font, True)
 			TM2.refresh()
 	
+	
 def getitem(item): #AAAAAAAAAAAAAAAHHHHHHHHHHHHHHHHHHHHH
 	global invenItems
 	global score
 	global TM2
-	invenItems.insert(0, Item(item.atkChunks, item.dfnChunks, item.durability, item.sane, item.score, item.Name, item.desc, item.img, item.lvl, item.destructable, item.ammo, item.regenammo, item.ench, False)) #need to change to a special item, probably a custom object
+	invenItems.insert(0, newItem(item)) #need to change to a special item, probably a custom object
 	score += item.score
 	prints("Found: "+item.Name)
 	TM2.all = wraptext("You found "+item.Name + ". You place the newfound loot in your backpack.", 900, font, True)
@@ -1492,6 +1752,7 @@ def equip(item):
 			success = True
 	if success:
 		refreshItems(1)
+		pla.refresh()
 		for i in pla.equipped:
 			i.div.refresh(3)
 	
@@ -1533,8 +1794,8 @@ def removeitem(item): #must take valid item. ignores indestructable, only cares 
 			if item.durability <= 0:
 				item.broken = True
 		else:
-			invenItems.remove(item)
 			prints("Removed: "+item.Name)
+			invenItems.remove(item)
 	elif item in pla.equipped:
 		if item.ench["bound"] > 0:
 			item.ench["bound"] = item.ench["bound"] -1
@@ -1542,8 +1803,8 @@ def removeitem(item): #must take valid item. ignores indestructable, only cares 
 			if item.durability <= 0:
 				item.broken = True
 		else:
-			invenItems.remove(item)
 			prints("Removed: "+item.Name)
+			pla.equipped.remove(item)
 		
 	else:
 		prints(item.Name+" not found in inventory!")
@@ -1599,6 +1860,17 @@ def op(type):
 		pla.dfn = 0
 		pla.heal = 1
 		
+	if type == "Craft":
+		C.inroom = True
+		C.disabled = False
+		if not C.working:
+			C.Istage = 0
+			C.Ostage = 0
+			
+	if type == "enchant":
+		if len(invenItems) > 0:
+			invenItems[0] = Enchant(invenItems[0])
+		refreshItems(1)
 	'''if type == "minions":
 		for (var i = 0; i < 3; i++){
 			getMinion(pla, miniminion);
@@ -1990,20 +2262,6 @@ def Do(entity):
 		count += i[1]
 	Refresh(entity)
 
-#MINIONS
-def getMinionTree(entity, type):
-	minionTree = []
-	if type == 2:
-		for i in entity.minions:
-			minionTree.append(i)
-			if len(entity.minions[i].minions) > 0:
-				minionTree += getMinionTree(i, 2)
-		return minionTree
-	if type == 1:
-		minionTree = []
-		minionTree += getMinionTree(entity, 2)
-		return minionTree
-		
 
 #Getting visuals for screens
 looot = font.render("Loot", True, (0, 0, 0))
@@ -2011,6 +2269,7 @@ inveen = font.render("Inventory", True, (0, 0, 0))
 baack = font.render("Back", True, (0, 0, 0))
 heeal = font.render("Heal", True, (0, 0, 0))
 meem = font.render("Meditate", True, (0, 0, 0))
+craft = font.render("Craft", True, (0, 0, 0))
 Fdfn = DispObj(ac2Img, (130, 199))
 Fheal = DispObj(getImg("special/heal"), (190, 199))
 
@@ -2034,10 +2293,10 @@ while running:
 			if event.button == 1: #lclick
 				mouse_down = True
 			if event.button == 3: #rclick
-				if Screen in [2, 3]:
+				if Screen in [2, 3, 7]:
 					Screen = 1
-			if event.button == 4 and Screen == 2:
-				if hitDetect((115, 10), (370, 239), mouse_pos): #scrolling on the items list
+			if event.button == 4:
+				if (hitDetect((115, 10), (370, 239), mouse_pos) and Screen == 2) or (hitDetect((10, 10), (370, 239), mouse_pos) and Screen == 7): #scrolling on the items list
 					if netSize > 239: #Scrolling up
 						if scrollMom >= -8:
 							scrollMom += 10
@@ -2046,8 +2305,8 @@ while running:
 					else:
 						scrollMom = 0
 				
-			if event.button == 5 and Screen == 2:
-				if hitDetect((115, 10), (370, 239), mouse_pos): #scrolling on the items list
+			if event.button == 5:
+				if (hitDetect((115, 10), (370, 239), mouse_pos) and Screen == 2) or (hitDetect((10, 10), (370, 239), mouse_pos) and Screen == 7): #scrolling on the items list
 					if netSize > 239: #Scrolling down
 						if scrollMom <= 8:
 							scrollMom -= 10
@@ -2063,6 +2322,10 @@ while running:
 		if event.type == pygame.KEYDOWN and debug:
 			if event.key == K_1:
 				op("allitems")
+			if event.key == K_2:
+				Screen = 2
+			if event.key == K_3:
+				Screen = 3
 			if event.key == K_4:
 				Screen = 4
 			if event.key == K_5:
@@ -2098,6 +2361,18 @@ while running:
 				print "True sanity:", pla.trueSane
 				print "Defending:", pla.defending
 				print "Final Boss:", endboss
+			if event.key == K_s:
+				op("Craft")
+				print "Crafter enabled."
+			if event.key == K_d:
+				op("enchant")
+				print "Enchanted"
+			if event.key == K_f:
+				print "LAPIS STATUS"
+				print len(allitems)
+				print lapis.atkChunks[0], "Core"
+				if invenItems[0].Name == "Lapis":
+					print invenItems[0].atkChunks[0], "Inven"
 				
 	mouse_pos = pygame.mouse.get_pos()
 
@@ -2116,9 +2391,16 @@ while running:
 		pygame.draw.rect(screen, Cbacking, [910, 64, 75, 24])
 		screen.blit(heeal, (910, 64))
 		if inbattle:
+			if C.inroom:
+				pygame.draw.rect(screen, Cbacking, [910, 118, 75, 24])
+				screen.blit(craft, (910, 118))
+			else:
+				pygame.draw.rect(screen, Cbacking, [910, 91, 75, 24])
+				screen.blit(meem, (910, 91))
+		elif C.inroom:
 			pygame.draw.rect(screen, Cbacking, [910, 91, 75, 24])
-		#screen.blit(meem, (910, 91))
-		
+			screen.blit(craft, (910, 91))
+			
 		screen.blit(Scompass, (910, 174))
 		
 		
@@ -2141,8 +2423,14 @@ while running:
 			if hitDetect((910, 64), (75, 24), mouse_pos): #heal
 				TM2.all = wraptext(Heal(pla), 900, font, True)
 				TM2.refresh()
-			if hitDetect((910, 91), (75, 24), mouse_pos) and inbattle: #fight - will be meditate
-				Screen = 3
+			if inbattle:
+				if hitDetect((910, 91), (75, 24), mouse_pos):
+					Screen = 3
+				if hitDetect((910, 118), (75, 24), mouse_pos) and C.inroom:
+					Screen = 7
+			else:
+				if hitDetect((910, 91), (75, 24), mouse_pos) and C.inroom:
+					Screen = 7
 	
 	if Screen == 2: #inven screen
 		screen.fill(Cbacking)
@@ -2298,7 +2586,162 @@ while running:
 					genRoom()
 					Screen = 1
 		
+	if Screen == 7: #Crafting
+		screen.fill(Cbacking)
+		screen.blit(Smain, (0, 0))
 		
+		#Crafter
+		screen.blit(C.img, (390, 0))
+		if C.inputs[0] != nothing: #dfn 1
+			screen.blit(C.inputs[0].div.mini, (395, 100))
+		if C.inputs[1] != nothing: #dfn 1
+			screen.blit(C.inputs[1].div.mini, (395, 150))
+		
+		screen.blit(C.Iimg[C.Istage], (390, 149))
+		screen.blit(C.Oimg[C.Ostage], (885, 122))
+		
+		if C.Ostage == 1: #open and ready to loot
+			if C.output != nothing:
+				screen.blit(C.output.div.mini, (910, 150))
+				if mouse_down:
+					if hitDetect((880, 150), (60, 60), mouse_pos):
+						getitem(C.output)
+						C.output = nothing
+						mouse_down = False
+						C.Ostage = 0
+					
+				
+		if C.Ostage == 2 and not C.disabled: #cooking
+			if mouse_down:
+				if hitDetect((880, 150), (60, 60), mouse_pos): #generous opening area
+					C.Ostage = 1
+					mouse_down = False
+					C.working = False
+			
+		screen.blit(C.Mimg[C.mode], (560, 121))
+		#buttons and stuff
+		screen.blit(ItemsDisp.img, (10, 10))
+		pygame.draw.rect(screen, Cbacking, [910, 10 , 75, 24])
+		screen.blit(baack, (910, 10))
+		
+		
+		if mouse_down:
+			if hitDetect((910, 10), (75, 24), mouse_pos): #Back
+				Screen = 1
+				mouse_down = False
+				
+			if C.Istage == 0: #Inserting items
+				for i in invenItems: #item detect
+					x = i.div.norm
+					if hitDetect((10, x.baseCoords[1]+scrollMod), (370, 54), mouse_pos): #size of items
+						success = False
+						if C.inputs[0] == nothing:
+							C.inputs[0] = i
+							success = True
+						elif C.inputs[1] == nothing:
+							C.inputs[1] = i
+							success = True
+						if success:
+							mouse_down = False
+							invenItems.remove(i)
+							refreshItems(1)
+							break
+				
+			if hitDetect((395, 100), (50, 50), mouse_pos) and C.inputs[0] != nothing: #Removing items
+				mouse_down = False
+				invenItems.insert(0, C.inputs[0])
+				C.inputs[0] = nothing
+				refreshItems(1)
+			if hitDetect((395, 150), (50, 50), mouse_pos) and C.inputs[1] != nothing:
+				mouse_down = False
+				invenItems.insert(0, C.inputs[1])
+				C.inputs[1] = nothing
+				refreshItems(1)
+				
+			if hitDetect((560, 120), (100, 111), mouse_pos) and not C.working: #Switch
+				C.mode += 1
+				if C.mode > 2:
+					C.mode = 0
+				mouse_down = False
+				
+			if hitDetect((330+390, 140), (140, 40), mouse_pos) and not (C.disabled or C.working): #CRAFT
+				legit = False
+				mouse_down = False
+				ref = False
+				if C.mode == 1 and C.inputs != [nothing, nothing]: #INFERRENCE
+					if nothing == C.inputs[0] and C.inputs[1].ref != False:
+						for x in C.inputs[1].ref:
+							if x in room.isref:
+								legit = True
+					elif nothing == C.inputs[1] and C.inputs[0].ref != False:
+						for x in C.inputs[0].ref:
+							if x in room.isref:
+								legit = True
+					elif C.inputs[0].ref != False and C.inputs[1].ref != False:
+						for i in C.inputs[0].ref:
+							if i in C.inputs[1].ref:
+								legit = True
+								ref = i
+									
+						
+				if (not (nothing in C.inputs)) and (not legit) and C.mode != 1:
+					legit = True
+						
+				#see if craft is legit
+				if legit:
+					#generate a good result (dont enchant here, enchant on room load if invest)
+					C.Istage = 1
+					print "CRAFTING on mode:", C.mode
+					if C.mode == 1:
+						C.output = []
+						for i in allitems:
+							if ref in i.ref: #and i.score > 0:
+								C.output.append(i)
+								
+						if C.inputs[0] == C.inputs[1]: #remove dupes
+							C.inputs.remove(C.inputs[0])
+						if nothing in C.inputs: #remove sweet nothings
+							C.inputs.remove(nothing)
+							
+						if len(C.output) > len(C.inputs): #remove inputs from output to maximize varaity
+							for i in C.inputs:
+								C.output.remove(i)
+							C.output = random.choice(C.output)
+							
+						else: #special case when there arent enough
+							C.output = Enchant(newItem(random.choice(C.inputs)))
+									
+						C.inputs = [nothing, nothing]
+							
+							
+					if C.mode in [0, 2]:
+						C.output = []
+						for i in lootitems:
+							if C.inputs[0].lvl == -1 or C.inputs[1].lvl == -1:
+								C.output.append(i)
+							elif C.inputs[0].lvl <= i.lvl and C.inputs[1].lvl <= i.lvl: #TO DO make better range
+								C.output.append(i)
+						if len(C.output) == 0:
+							print "EMPTY RESULTS! scores & levels:"
+							for i in C.inputs:
+								print i.score, i.lvl
+						C.output = random.choice(C.output)
+						C.inputs = [nothing, nothing]
+						C.disabled = True
+					
+					if C.mode < 2:
+						C.Ostage = 1
+					if C.mode == 2:
+						C.working = True
+						C.Ostage = 2
+				
+				else:
+					#do something to alert the player "failed"
+					print "FAILED TO CRAFT: invalid recipie"
+			else:
+				#print "FAILED TO CRAFT: crafter not accepting"
+				mouse_down = False
+			
 	if inbattle: #BATTLING
 		enm.atkInt -= 1
 		if (enm.atkInt == 0):
