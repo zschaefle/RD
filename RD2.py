@@ -176,12 +176,13 @@ def addEnch(type, en1, en): #DO THORNS GOOD
 		
 def Enchant(inp, spec = 0):
 	item = newItem(inp)
+	print "ENCHANTING:", item.Name
 	if len(item.atkChunks) > 0:
 		num = rand(len(item.atkChunks))-1
 		if item.atkChunks[num].proj != None:
 			num2 = rand(5)
 			if num2 == 1:
-				enchs = {"destructive":((rand(math.fabs(item.lvl)) +1) * rand(10))}
+				enchs = {"destructive":(rand(math.fabs(item.lvl)+1) * rand(4))}
 			if num2 == 2:
 				enchs = {"piercing":rand(2)}
 			if num2 == 3:
@@ -193,7 +194,7 @@ def Enchant(inp, spec = 0):
 		else:
 			num2 = rand(4)
 			if num2 == 1:
-				enchs = {"destructive":(rand(math.fabs(item.lvl))+2)*rand(10)}
+				enchs = {"destructive":(rand(math.fabs(item.lvl)+1))*rand(5)}
 			if num2 == 2:
 				enchs = {"piercing":rand(2)}
 			if num2 == 3:
@@ -209,7 +210,7 @@ def Enchant(inp, spec = 0):
 			if num2 == 1:
 				enchs = {"reflecting":10*rand(10)}
 			if num2 == 2:
-				enchs = {"thorns":atkChunk(math.ceil(rand(item.dfnChunks[num].dfn)*0.2), 15*rand(6), random.choice([True, False]), False, rand(2)-1)}
+				enchs = {"thorns":atkChunk(math.ceil(rand(math.abs(item.dfnChunks[num].dfn)+1)*0.2), 15*rand(6), random.choice([True, False]), False, rand(2)-1)}
 			if num2 == 3:
 				enchs = {"destructive":((rand(5)+1)*rand(10))}
 			if num2 == 4:
@@ -219,7 +220,7 @@ def Enchant(inp, spec = 0):
 			if num2 == 1:
 				enchs = {"reflecting":10*rand(9)}
 			if num2 == 2:
-				enchs = {"thorns":atkChunk(math.ceil(rand(item.dfnChunks[num].dfn)*0.2), 12*rand(6), random.choice([True, False]), False)}
+				enchs = {"thorns":atkChunk(math.ceil(rand(math.abs(item.dfnChunks[num].dfn)+1)*0.2), 12*rand(6), random.choice([True, False]), False)}
 			if num2 == 3:
 				enchs = {"destructive":((rand(5)+1)*rand(10))}
 			if num2 == 4:
@@ -371,7 +372,7 @@ class ItemDisp(object):
 					
 					if i.etrn:
 						localrand.all.append(DispObj(pasImg, (0, 0)))
-						localrand.all.append(DispObj(font.render("Dmg: +"+str(i.dmg), True, (0, 0, 0)), (20, 0)))
+						localrand.all.append(DispObj(font.render("Passive +"+str(i.dmg), True, (0, 0, 0)), (20, 0)))
 					else:
 						localrand.all.append(DispObj(font.render("Dmg: "+str(i.dmg), True, (0, 0, 0)), (20, 0)))
 						if not i.dfn:
@@ -384,7 +385,7 @@ class ItemDisp(object):
 						astring = "Cumbersome"
 					if i.agil < -20:
 						astring = "Hindering"
-					if i.agil == 0:
+					if i.agil >= -2 and i.agil <= 2: # if -2 <= i.agil <= 2
 						astring = "Unobtrusive"
 					if i.agil > 2:
 						astring = "Balanced"
@@ -482,7 +483,7 @@ class ItemDisp(object):
 				if i.all:
 					localrand.all.append(DispObj(dfnImg, (0, 0)))
 					if i.dfn >= 0 or i.dfn == None:
-						astring += "+"
+						astring = "Passive +"
 				else:
 					localrand.all.append(DispObj(actImg, (0, 0)))
 				if i.dfn == None:
@@ -514,7 +515,7 @@ class ItemDisp(object):
 				
 				#enchants
 				if i.ench["reflecting"] > 0:
-					localrand.all.append(DispObj(font.render("Reflecting "+str(i.ench["reflecting"]), True, (0, 0, 100)), (1, thissize)))
+					localrand.all.append(DispObj(font.render("Reflecting "+str(100*i.ench["reflecting"])+"%", True, (0, 0, 100)), (1, thissize)))
 					thissize += 16
 				if i.ench["thorns"] != False:
 					localrand.all.append(DispObj(font.render("Thorns +"+str(i.ench["thorns"].dmg), True, (0, 0, 100)), (1, thissize)))
@@ -855,22 +856,13 @@ wings = Item([], [dfnChunk(-5, 2, True, False, False)], 40, -2, 1, "Wings", "Now
 onepin = Item([atkChunk(5, 5, False)], [], 100, 2, 4, "One Pin", "The tip is dull from overuse.", "onepin", 1)
 nerfgun = Item([atkChunk(2, 10, False, False, 0, 1)], [], 60, 3, 3, "Nerf Gun", "Sometimes Styrofoam bullets can hurt.", "nerfgun", 1, [], True, 6, [750, 6])
 
-#var redbook = new item(1, 2, 0, 2, 6, "Red Book", "redbook", "There are no markings, but you feel as though there are many others much like it.");
 redbook = Item([atkChunk(1, -1)], [dfnChunk(0, 2)], 40, 2, 6, "Red Book", "There are no markings, but you feel as though there are many others much like it.", "redbook", 1, ["Mono"])
-#var brokenseashell = new item(-1, 2, 4, 5, 7, "Broken seashell", "brokenseashell", "It appears recently broken, but you keep it for sentimental value. Towards what, even you cannot quite tell.");
-brokenseashell = Item([atkChunk(-1, 4, False, True)], [dfnChunk(4, 2, True)], 20, 5, 8, "Broken seashell", "It appears recently broken, but you keep it for sentimental value. Towards what, even you cannot quite tell.", "brokenseashell", 1, ["Split"])
-#var redball = new item(-1, 2, 1,10, 6, "Red Ball", "redball", "It is comforting, yet oddly unnerving. You keep it as an anchor to remind you of the 'real world.'");
-redball = Item([atkChunk(-1, 1, False, True)], [dfnChunk(8, 1, True)], 8, 10, 6, "Red Ball", "It is comforting, yet oddly unnerving. You keep it as an anchor to remind you of the 'real world.'", "redball", 1, ["MN"])
-#var crowbar = new item(3, 3, -2, 1, 3, "Crowbar", "crowbar", "A red crowbar. You feel as though the fact that it has three points is significant.");
-crowbar = Item([atkChunk(3, -2)], [dfnChunk(0, 3, False, True)], 300, 3, 3, "Crowbar", "A red crowbar. You feel as though the fact that it has three points is significant.", "crowbar", 1, ["Valve"])
+buttton = Item([], [dfnChunk(-3, 1, True)], 50, 3, 9, "Button", "Even though it is just a normal button, you feel as though it marks you for a death from an unknown source.", "buttton", 1, ["Trip"])
+
 '''
 
 var rotflesh = new item(3,2, 0, -7, 4,"Rotting Flesh","rotflesh","It's a rotting leg, snatched off a carcass that was probably dead.   Probably.");
 var crate = new item(-1, 3, -3, 2, 3, "Crate", "crate","It cowers, trying to get away from you.  You can hear it whimper.  It knows what's coming.");
-var redbook = new item(1, 2, 0, 2, 6, "Red Book", "redbook", "There are no markings, but you feel as though there are many others much like it.");
-var brokenseashell = new item(-1, 2, 4, 5, 7, "Broken seashell", "brokenseashell", "It appears recently broken, but you keep it for sentimental value. Towards what, even you cannot quite tell.");
-var redball = new item(-1, 2, 1,10, 6, "Red Ball", "redball", "It is comforting, yet oddly unnerving. You keep it as an anchor to remind you of the 'real world.'");
-var crowbar = new item(3, 3, -2, 1, 3, "Crowbar", "crowbar", "A red crowbar. You feel as though the fact that it has three points is significant.");
 var fakebeard = new item(0,1,3,4,4,"Beard", "fakebeard", "It's a beard. You suddenly feel like you have been here for longer than you think you have.");
 var gear = new item(3, 2, 2, 2, 1, "Gear", "gear", "A small gear. It looks like it fell out of some machine.");
 var catears = new item(2, 2, 2, 2, 2, "Cat Ears", "catears", "nekomimi");
@@ -879,7 +871,6 @@ var recording = new item(7, -2, 1, -2, 6, "Recording", "recording", "Nyan cat re
 var potato = new item(2, 2, 1, 8, 6, "Potato", "potato", "Quite a normal potato.");
 var otatop = new item(0, 7, -2, -2, 6, "Otatop", "otatop", "Quite a inverted potato.");
 var squiglasses = new item(2, 1, 2, 4, 7, "Glasses", "squiglasses", "They are non-prescription, acting more as a mask, allowing you to be someone else.");
-var buttton = new item(0, 1, -3, 3, 9, "Button", "buttton", "Even though it is just a normal button, you feel as though it marks you for a death from an unknown source.");
 var map = new item(0, 1, 3, 1, 8, "Map", "map", "A roughly drawn map, you don't recognize any of the landmarks. You deem it useless.");
 var cable = new item(2, 0, 1, 5, 3, "a Cable", "cable", "You are sure it charges something.<br/>Somewhere.");
 var croptop = new item(0, 3, 2, 2, 3, "Crop Top", "croptop", "It is woven from corn stalks. You are amazed by the makers commitment as you laugh yourself to tears.");
@@ -895,6 +886,9 @@ var happyshirt = new item(0, 2, 3, 10, 3, "Happy Shirt", "happyshirt", "It makes
 circularsaw = Item([atkChunk(15, 0, True, False, 1, None, {"destructive":5, "heavy":1})], [dfnChunk(-1, -5, True)], 120, -7, 8, "Circular Saw", "You feel as though only a psychopath would use this as a weapon. The stains of blood imply that it already has.", "circularsaw", 2, ["YS"])
 bullet = Item([atkChunk(0, 1, False, True, 1, None, {"heavy":1, "destructive":2})], [], 180, 1, 9, "Bullet", "A massive bullet, it could probably take out a tank from the right gun.", "bullet", 2, ["Split"])
 mirror0 = Item([], [dfnChunk(-15, 20, False, False, False, {"reflecting":0.2})], 10, 5, 3, "Grimy Mirror", "Covered with muck, seems to reflect things thrown upon it. But still only as durable as any old plate of glass.", "mirror0", 2)
+brokenseashell = Item([atkChunk(-1, 4, False, True)], [dfnChunk(4, 2, True)], 20, 5, 8, "Broken seashell", "It appears recently broken, but you keep it for sentimental value. Towards what, even you cannot quite tell.", "brokenseashell", 2, ["Split"])
+redball = Item([atkChunk(-1, 1, False, True)], [dfnChunk(8, 1, True)], 8, 10, 6, "Red Ball", "It is comforting, yet oddly unnerving. You keep it as an anchor to remind you of the 'real world.'", "redball", 2, ["MN"])
+crowbar = Item([atkChunk(3, -2)], [dfnChunk(0, 3, False, True)], 300, 3, 3, "Crowbar", "A red crowbar. You feel as though the fact that it has three points is significant.", "crowbar", 1, ["Valve"])
 
 #LEVEL 3
 higgs = Item([atkChunk(1, 1, False, True, 1)], [], 5, -15, 4, "Higgs Boson", "You have no idea how you found this. And you know you probably shouldn't have been able to.", "higgs", 3, [], True, None, [], {"mending":[1000, -1]})
@@ -906,7 +900,6 @@ mirror2 = Item([], [dfnChunk(-10, None, False, False, False, {"reflecting":1, "t
 
 #LEVEL 5
 mirror3 = Item([], [dfnChunk(-10, None, False, False, False, {"reflecting":1.4, "trueProtection":True})], 100, 2, 3, "Gleaming Mirror", "Shining like nothing before, Reflecting things tossed upon it with vigor to surpass your own.", "mirror1", 5)
-
 
 #--BOSS ITEMS--
 #HERO
@@ -942,7 +935,7 @@ zaroltrophy = Item([], [], 1, 0, 30, "Zarol Trophy", "Thinking back, Seriously. 
 zarolflesh = Item([], [dfnChunk(2, 15, True, True, False, {"destructive":5}), dfnChunk(-2, 2, False, True, False, {"layered":[60, 10], "thorns":atkChunk(5, 0, False, False, 0, None, {"destructive":1})})], 1000, -10, 10, "Zarol's Flesh", "A mysterious substance, unlike any of which you have ever seen before.", "zflesh", -1, ["Self"], True, None, [], {"mending":[5, -2]})
 zarolmist = Item([atkChunk(25, 20, False, False, 2, 10, {"destructive":30, "sweeping":5}), atkChunk(10, 0, True, True, 1, None, {"destructive":20})], [], 20, -10, 10, "Zarol Mist", "How you can possess this eludes your mind.", "zmist", -1, ["Self"], False, 10, [20, 1], {"mending":[15, 1]})
 
-lapis = Item([atkChunk(5000, 5000, False, False, 3, None, {"sweeping":1000})], [dfnChunk(0, True, False, True, False, {"trueProtection":True, "thorns":atkChunk(5000, 5000, False, False, 3)})], 1000, 0, 0, "Lapis", "The gem of the gods. Or at least the god of 7.", "lapis", -1, [], False, None, [], {"bound":100, "mending":[50, 1000]})
+lapis = Item([atkChunk(5000, 5000, False, False, 3, None, {"sweeping":1000})], [dfnChunk(0, None, False, True, False, {"trueProtection":True, "thorns":atkChunk(5000, 5000, False, False, 3)})], 1000, 0, 0, "Lapis", "The gem of the gods. Or at least the god of 7.", "lapis", -1, [], False, None, [], {"bound":100, "mending":[50, 1000]}, False)
 
 
 class Player(object):
@@ -1075,13 +1068,17 @@ class Enm(object):
 		return thisminion
 		
 	def reStats(self):
-		prints("Recalculating stats for: "+self.name)
+		prints("Recalculating stats for ENM: "+self.name)
 		self.dfratio = float(0)
 		self.hpratio = float(1)
 		dfTotal = 0
 		for i in self.equipped:
 			dfTotal += i.maxdur
-			self.dfratio += i.durability
+			if i.durability <= 0 and i.destructable:
+				prints("Item broken: "+i.Name)
+				self.equipped.remove(i)
+			else:
+				self.dfratio += i.durability
 		try:
 			self.dfratio = self.dfratio/dfTotal #Wait, why doesn't this crash all the time? is it because of the nothing item?
 		except ZeroDivisionError:
@@ -1117,6 +1114,14 @@ def getMinion(source, min):
 	source.minionTree = getMinionTree(source, 1)
 	prints("Gave "+source.name+" "+thisMin.name)
 		
+def killMinion(source, minion):
+	for i in source.minions:
+		if (i == minion):
+			if (source == pla):
+				pass
+			#printc(minion, source.name+"'s "+ minion.name+ " is dead.");
+			#prints(source.name+"'s "+ minion.name+ " is dead.");
+			source.minions.remove(i)
 		
 creepybaldguy = Enm(18, 18, 5, 2, 10, [1, 100], 4, -1, "Creepy Bald Guy", "creep", "You know you are being watched. Always... ", "you feel it staring through your eyes, Into your Soul.", ["Even though it seems nearly dead, it continues its steady gaze deep into your eyes.", "it seems to have lost some hair in this fight. You blink, realizing it was already bald.", "it seems to be observing, only attacking to see how you react.", "it is sitting there, staring at you. Waiting and observing your every move."], 100, [["atk1", 3]], [nothing])
 creep2 = Enm(35, 35, 8, 3, 12, [1, 100], 8, -1, "Creepier Bald Guy", "creep2", "You know you are being watched. Always... ", "you feel it staring through your eyes, Into your Soul.", ["Even though it seems nearly dead, it continues its steady gaze deep into your eyes.", "it seems to have lost some hair in this fight. You blink, realizing it was already bald.", "it seems to be observing, only attacking to see how you react.", "it is sitting there, staring at you. Waiting and observing your every move."], 87, [["heal", 1], ["atk1", 19]], [nothing])
@@ -1182,7 +1187,7 @@ coo33 = Enm(125, 170, 5, 75, 10, [19,100], 8, -2, "coo33", "coosome", "You hear 
 coosome = Enm(140, 150, 25, 2, 14, [14,100], 20, -1, "Coosome", "coosome", "You see someone, just as they see you. He stares at you with deadpan eyes.", "", ["It's bloodied eyes dart across you, searching for ways to finish you off quickly.", "It looks angry, but seems to have survived worse.", "It is smiling, although panting. It seems as though it's malnourishedness is taking effect.", "He seems unfazed, a low growl and a chuckle murmured from within.", "It takes a deep breath, the type one might take after a good nights sleep.", "It seems to be toying with you, darting through the room."], 34, actions, [fishingrod, pencil], True, roomBoss2, 15, False)
 colton = Enm(120, 140, 10, 8, 10, [28,90], 12, -1, "Colton", "coosome", "You see a person, just as he hears you. He jumps, making an odd noise.", "", ["It's bloodied eyes dart across you, searching for ways to finish you off quickly.", "It looks angry, but seems to have survived worse.", "It is smiling, although panting. It seems as though it's malnourishedness is taking effect.", "He seems unfazed, a low growl and a chuckle murmured from within.", "It takes a deep breath, the type one might take after a good nights sleep.", "It seems to be toying with you, darting through the room."], 41, actions, [drawingpad, pencil], True, roomBoss2, 15, False)
 
-alpha = Enm(350, 500, 14, 6, 0, [60, 80], 10, -3, "Alpha", "alpha", "You hear sudden quick footsteps from behind you.", "you turn to see someone dashing at you, Swinging a large axe!", ["", "", "", "", "", ""], 60, [["atk1", 4], ["heal", 1]], [alphaxe, sivgoggles], True, roomBoss3, 20)
+alpha = Enm(350, 500, 14, 6, 0, [45, 80], 10, -3, "Alpha", "alpha", "You hear sudden quick footsteps from behind you.", "you turn to see someone dashing at you, Swinging a large axe!", ["", "", "", "", "", ""], 60, [["atk1", 4], ["heal", 1]], [alphaxe, sivgoggles], True, roomBoss3, 20)
 jimgrind = Enm(200, 200, 35, 2, 35, [3,120], 12, -2, "Jim Grind", "jimgrind", "Someone is in the room with you. You turn just fast enough to see him. He knows he has been spotted.", "A stern look on his face; A deadly look in his eyes.", ["", "You can see small gaps in his defence now, chinks in his armor.", "His breathing is heavy, and his swings are slower, yet just as powerful.", "He stands with a confident air about him, holding his sword firmly.", "His armor is beginning to glow, even the largest chinks in his armor closing as the armor reshapes into its original form.", "He seems unaware of your blows, simply tanking all damage you may deal to him."], 130, actions, [jimsword, jimarmor], True, roomBoss4, 25)
 #strangecube = Enm(250, 350, -50, 2, -5, [10,100], 75, -3, "Strange Cube", "cube", "A strange cube is sitting on the ground in front or you.", "Sudden arcs of electricity jump across its surface as it rises into the air.", ["Although grounded, it still musters up powerful shocks upon you.", "It appears to have physical damage, and is barely able to keep itself aloft.", "It is wavering now, seeming to have less energy within it, focusing on attacks.", "It floats evenly in front of you, electricity visibly through internal circuits.", "electricity is visible streaking across its surface, arcing to nearby surfaces.", "It's magnetic fields are powerful, you can feel them pulling on your magnetic accessories."], 37, actions, [inactivecube, device], True, bossroom, 30)
 
@@ -1301,6 +1306,7 @@ def Heal(entity):
 			heal = entity.heal
 		entity.hp = entity.hp+heal
 		#printc(entity, entity.name + " heals <strong>"+ heal+ "</strong> hp") #VISUALS
+		print entity.name+" Healed"
 		entity.reStats()
 
 #based on player level, changes aspects of game such as tiers of items, and rooms.
@@ -1418,6 +1424,8 @@ def genRoom():
 		else:
 			C.Istage = 0
 			C.Ostage = 0
+	else:
+		C.inroom = False
 	
 	#leveling up
 	if (score >= 30 and pla.lvl == 1):
@@ -1723,7 +1731,7 @@ def getitem(item): #AAAAAAAAAAAAAAAHHHHHHHHHHHHHHHHHHHHH
 	global invenItems
 	global score
 	global TM2
-	invenItems.insert(0, newItem(item)) #need to change to a special item, probably a custom object
+	invenItems.insert(0, newItem(item))
 	score += item.score
 	prints("Found: "+item.Name)
 	TM2.all = wraptext("You found "+item.Name + ". You place the newfound loot in your backpack.", 900, font, True)
@@ -1761,6 +1769,7 @@ def unequip(slot):
 	global invenItems
 	global nothing
 	if pla.equipped[slot] != nothing:
+		pla.equipped[slot].div.refresh(1)
 		invenItems.insert(0, pla.equipped[slot])
 		pla.equipped[slot] = nothing
 		refreshItems(1)
@@ -1804,7 +1813,9 @@ def removeitem(item): #must take valid item. ignores indestructable, only cares 
 				item.broken = True
 		else:
 			prints("Removed: "+item.Name)
-			pla.equipped.remove(item)
+			num = pla.equipped.index(item)
+			global nothing
+			pla.equipped[num] = nothing
 		
 	else:
 		prints(item.Name+" not found in inventory!")
@@ -1827,6 +1838,7 @@ def op(type):
 		global allitems
 		for i in allitems:
 			getitem(i)
+		getitem(lapis)
 	if type == "loot":
 		global lootable
 		lootable = True
@@ -1902,7 +1914,7 @@ def limbo(type, message):
 	Screen = 4
 	limbostuff = [type, message]
 
-def limbob(type, message):
+def limbob(type, message = ""):
 	global roommessage
 	global score
 	global pla
@@ -2001,6 +2013,8 @@ def limbob(type, message):
 		}'''
 		Screen = 5
 	#you jumped (button)
+	
+	#monolith TOUCH
 
 
 def check(entity):
@@ -2085,8 +2099,8 @@ def check(entity):
 				#WHAT DOES THAT DO #VISUALS
 			else:
 				limbo(0, "After experiencing a moment of extreme pain due to your inevitable death, you find yourself in a suprisingly calm dark space. The only landmarks are a large cliff dropping off into endlessness infront of you, and strange floating structures to high for you to reach. You realize that there is only one thing you can do....")
-		#if (entity in pla.minions){
-		#   killMinion(entity.id, 1)
+		if (entity in pla.minions):
+			pla.minions.remove(entity)
 			
 #does not include: minions, dodging, calculation of boosting items
 def Damage(source, weapon, atk, target):
@@ -2097,7 +2111,7 @@ def Damage(source, weapon, atk, target):
 	prevdmg = initdmg
 	dmg = initdmg #differentiated for enchants
 	prints("------")
-	prints("Initial damage: "+source.name+str(initdmg)+target.name)
+	prints("Initial damage: "+source.name+" "+str(initdmg)+" on "+target.name)
 	for k in range(len(target.equipped)): #loop through equipped items, counts because enchantments can do stuff
 		i = target.equipped[k]
 		enchValues[0] = 0 #reset for layered
@@ -2125,6 +2139,7 @@ def Damage(source, weapon, atk, target):
 						i.durability -= tanked
 					if i.durability < 0: #if armor is destroyed, only tank as much as it can
 						dmg -= i.durability
+						prints("Item destroyed: "+i.Name)
 						#if dmg > prevdmg:  #only do this if rebounding is back
 						#	dmg = prevdmg
 				
@@ -2186,7 +2201,6 @@ def attack(source, weapon, target, enchValues = [1, None, None]):
 			for i in weapon.atkChunks:
 				if i.proj == None:
 					atk = atkChunk(source.dmg + i.dmg, source.agil[0] + i.agil, i.dfn, i.etrn, i.pierce, i.proj, i.ench)
-					
 					break
 				else:
 					if weapon.ammo >= i.proj: #see if enough ammo to use proj chunk
@@ -2212,8 +2226,9 @@ def attack(source, weapon, target, enchValues = [1, None, None]):
 					weapon.ammo += atk.ench["returning"][1]
 			
 			#add agil mod of used chunk
+			print "Source agil:", [source.agil[0]+atk.agil, source.agil[1]], "ATK agil:", atk.agil, "target agil:", target.agil
 			newagil = [((target.agil[0]*(source.agil[1]+atk.agil))-(((source.agil[0]+atk.agil)*target.agil[1])/2)), (target.agil[1]*(source.agil[1]+atk.agil))]
-			#prints(newagil)
+			prints("Hit chance with mods: "+str(newagil)+" : "+str((100*(newagil[1]-newagil[0]))/newagil[1])+"% hit")
 			if (rand(newagil[1]) <= newagil[0]):
 				messages.append(target.name + " dodged "+ source.name +"'s attack")
 				
@@ -2361,6 +2376,17 @@ while running:
 				print "True sanity:", pla.trueSane
 				print "Defending:", pla.defending
 				print "Final Boss:", endboss
+				print "---CRAFTER INFO---"
+				print "Mode:", C.mode
+				print "Input stage:", C.Istage
+				print "Output stage:", C.Ostage
+				print "Cooking:", C.working
+				if inbattle:
+					print "---ENEMY INFO---"
+					print enm.name
+					print "Enemy Agility:", enm.agil
+					print "Player Agility:", pla.agil
+					
 			if event.key == K_s:
 				op("Craft")
 				print "Crafter enabled."
@@ -2585,6 +2611,17 @@ while running:
 					roommessage = ""
 					genRoom()
 					Screen = 1
+		if monolithTime <= 0:
+			localrand = len(invenItems)
+			for i in range(len(invenItems)):
+				removeitem(invenItems[localrand-(i+1)])
+			dodging = False
+			dodged = 0
+			monolithTime = 1500
+			turn = checkpoint
+			roommessage = ""
+			genRoom()
+			Screen = 1
 		
 	if Screen == 7: #Crafting
 		screen.fill(Cbacking)
@@ -2604,7 +2641,7 @@ while running:
 			if C.output != nothing:
 				screen.blit(C.output.div.mini, (910, 150))
 				if mouse_down:
-					if hitDetect((880, 150), (60, 60), mouse_pos):
+					if hitDetect((885, 122), (110, 137), mouse_pos):
 						getitem(C.output)
 						C.output = nothing
 						mouse_down = False
@@ -2613,7 +2650,7 @@ while running:
 				
 		if C.Ostage == 2 and not C.disabled: #cooking
 			if mouse_down:
-				if hitDetect((880, 150), (60, 60), mouse_pos): #generous opening area
+				if hitDetect((885, 122), (110, 137), mouse_pos): #generous opening area
 					C.Ostage = 1
 					mouse_down = False
 					C.working = False
@@ -2710,22 +2747,34 @@ while running:
 							
 						else: #special case when there arent enough
 							C.output = Enchant(newItem(random.choice(C.inputs)))
-									
 						C.inputs = [nothing, nothing]
 							
 							
 					if C.mode in [0, 2]:
 						C.output = []
-						for i in lootitems:
-							if C.inputs[0].lvl == -1 or C.inputs[1].lvl == -1:
-								C.output.append(i)
-							elif C.inputs[0].lvl <= i.lvl and C.inputs[1].lvl <= i.lvl: #TO DO make better range
-								C.output.append(i)
+						if C.mode == 0:
+							for i in lootitems:
+								if i.lvl >= C.inputs[0].lvl and i.lvl >= C.inputs[1].lvl: #TO DO make better range
+									C.output.append(i)
+						if C.mode == 2:
+							for i in allitems:
+								if C.inputs[0].lvl == -1 or C.inputs[1].lvl == -1:
+									C.output.append(i)
+								if (i.lvl >= math.floor((C.inputs[0].lvl+C.inputs[1].lvl)/1.5) and i.lvl < math.ceil((C.inputs[0].lvl+C.inputs[1].lvl)/1.5)+2): #TO DO make better range
+									C.output.append(i)
+						if C.inputs[0].lvl == -1 or C.inputs[1].lvl == -1:
+							for i in allitems:
+								if i.lvl == -1:
+									C.output.append(i)
 						if len(C.output) == 0:
 							print "EMPTY RESULTS! scores & levels:"
 							for i in C.inputs:
 								print i.score, i.lvl
-						C.output = random.choice(C.output)
+							print "'combined' lvl:", math.floor((C.inputs[0].lvl+C.inputs[1].lvl)/1.5)
+							for i in allitems:
+								if i.lvl == math.floor((C.inputs[0].lvl+C.inputs[1].lvl)/1.5):
+									C.output.append(i)
+						C.output = newItem(random.choice(C.output))
 						C.inputs = [nothing, nothing]
 						C.disabled = True
 					
@@ -2813,7 +2862,8 @@ while running:
 				if i.durability > 0:
 					i.broken = False
 	
-	for i in pla.equipped:
+	for x in range(len(pla.equipped)):
+		i = pla.equipped[x]
 		if i.mendTick != -1: #mending
 			i.mendTick += 1
 			if i.mendTick >= i.ench["mending"][0] and not i.broken:
