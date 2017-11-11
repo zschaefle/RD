@@ -1021,8 +1021,8 @@ class Enm(object):
 		self.dmg = atk #damage += atk (if melee)
 		self.ddev = ddev #damage +- ddev
 		self.dfn = dfn #damage -= dfn
-		self.baseagil = agil
-		self.agil = agil #touple, #/# chance to dodge
+		self.baseagil = agil[:]
+		self.agil = agil[:] #touple, #/# chance to dodge
 		self.heal = heal
 		self.sane = sane #Added to sanity when killed
 		self.name = name
@@ -2226,7 +2226,7 @@ def attack(source, weapon, target, enchValues = [1, None, None]):
 					weapon.ammo += atk.ench["returning"][1]
 			
 			#add agil mod of used chunk
-			print "Source agil:", [source.agil[0]+atk.agil, source.agil[1]], "ATK agil:", atk.agil, "target agil:", target.agil
+			print source.name, "agil:", [source.agil[0]+atk.agil, source.agil[1]], "ATK agil:", atk.agil, "target agil:", target.agil
 			newagil = [((target.agil[0]*(source.agil[1]+atk.agil))-(((source.agil[0]+atk.agil)*target.agil[1])/2)), (target.agil[1]*(source.agil[1]+atk.agil))]
 			prints("Hit chance with mods: "+str(newagil)+" : "+str((100*(newagil[1]-newagil[0]))/newagil[1])+"% hit")
 			if (rand(newagil[1]) <= newagil[0]):
@@ -2381,12 +2381,11 @@ while running:
 				print "Input stage:", C.Istage
 				print "Output stage:", C.Ostage
 				print "Cooking:", C.working
-				if inbattle:
-					print "---ENEMY INFO---"
-					print enm.name
-					print "Enemy Agility:", enm.agil
-					print "Player Agility:", pla.agil
-					
+				print "---ENEMY INFO---"
+				print enm.name
+				print "Enemy Agility:", enm.agil, " Base:", enm.baseagil
+				print "Player Agility:", pla.agil, " Base:", pla.baseagil
+				print "Equipped enemy items:", len(enm.equipped)
 			if event.key == K_s:
 				op("Craft")
 				print "Crafter enabled."
