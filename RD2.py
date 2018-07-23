@@ -68,6 +68,7 @@ endboss = "zarol"
 CIstage = 0
 COstage = 0
 Cmode = 0
+SanPool = 0
 
 
 
@@ -1286,7 +1287,6 @@ def Heal(entity):
 				if (pla.hp + heal > pla.maxhp):
 					heal = pla.maxhp - pla.hp
 				pla.hp = pla.hp+heal
-				pla.sane += 0.2 #soon REMOVE
 				if (pla.hp > pla.maxhp):
 					heal -= pla.hp - pla.maxhp
 					pla.hp = pla.maxhp
@@ -1294,6 +1294,7 @@ def Heal(entity):
 				if heal > 0:
 					pla.reStats()
 					return "You heal "+str(heal)+" hp!"
+					pla.sane += 0.2 #soon REMOVE
 				else:
 					healable = True
 					return "You are already at peak health."
@@ -1361,8 +1362,12 @@ def prepbattle(enemy):
 	global Sbattle
 	global zarol
 	global lastinsanity
+	global SanPool
 	search = False
 	enm = enemy
+	if enm.boss:
+		pla.sane += SanPool
+		SanPool = 0
 	pla.defending = False
 	'''localrand = rand(100) #Traps
 	if (localrand == 1){
@@ -1406,6 +1411,7 @@ def genRoom():
 	global lootable
 	global endboss
 	global C
+	global SanPool
 	
 	pla.refresh()
 	print pla.sane, pla.sanity
@@ -1504,19 +1510,19 @@ def genRoom():
 		room.manmade = 1
 	if (avent == 11):
 		roommessage += " You have a moment of dizziness, a thought of doubt."
-		pla.sane -= 1
+		SanPool -= 1
 	if (avent == 12):
 		roommessage += " You hear whispering. You turn quickly, but nothing is there."
-		pla.sane -= 3
+		SanPool -= 3
 	if (avent == 13):
 		roommessage += " You feel a tap on your shoulder, and turn around to find that there is nothing there."
-		pla.sane -= 5
+		SanPool -= 5
 	if (avent == 14):
 		roommessage += " No matter to the circumstances, you are tired. You take a moment to rest."
-		pla.sane += 5
+		SanPool += 5
 	if (avent == 15):
 		roommessage += " You feel a sense of refreshment, of redefining who you are."
-		pla.sane += 3
+		SanPool += 3
 	if (avent == 16):
 		roommessage += " You blink. Something seems off."
 		localrand = room.north
@@ -1553,11 +1559,11 @@ def genRoom():
 			localrand = "You feel a powerful greed from deep below."
 		roommessage += localrand
 	
-	pla.sane += room.sanity
+	SanPool += room.sanity
 	for i in pla.equipped:
-		pla.sane += (i.sane)/5
+		SanPool += (i.sane)/5
 	for i in pla.minions:
-		pla.sane += (i.sane / 5)
+		SanPool += (i.sane / 5)
 	
 	
 	#Determining lootable
@@ -1927,11 +1933,14 @@ def limbob(type, message = ""):
 	global dodged
 	global monolithTime
 	global monolithOrig
+	global SanPool
 	roommessage = ""
 	#normal death
 	if type == 0:
 		score -= 1
-		pla.sane -= 5
+		SanPool -= 5
+		pla.sane += SanPool
+		SanPool = 0
 		if (checkpoint < 0):
 			checkpoint = 1
 		
@@ -1975,6 +1984,7 @@ def limbob(type, message = ""):
 		score += 10
 		turn = 0
 		checkpoint = 0
+        
 		pla.sane = pla.sane / 1.1
 		pla.hp = 100
 		unequip(0)
@@ -2022,14 +2032,15 @@ def check(entity):
 	global inbattle
 	global score
 	global pla
+	global SanPool
 	if (entity.hp <= 0):
 		if (entity.name == enm.name and inbattle):
 			inbattle = False
 			message = "You Kill the enemy."
 			entity.minions = []
 			score += 1
-			pla.sane -= 1
-			pla.sane += entity.sane
+			SanPool -= 1
+			SanPool += entity.sane
 			pla.refresh()
 			if entity.boss:
 				global bossesbeat
@@ -2374,6 +2385,7 @@ while running:
 				print "Sanity:", pla.sane
 				print "Item modified sanity:", pla.sanity
 				print "True sanity:", pla.trueSane
+				print "Sanity Pool:", SanPool
 				print "Defending:", pla.defending
 				print "Final Boss:", endboss
 				print "---CRAFTER INFO---"
