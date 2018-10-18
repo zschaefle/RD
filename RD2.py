@@ -21,9 +21,9 @@ Cbacking = (170,170,170)
 
 pygame.init()
 size = (995, 259)
-font = pygame.font.SysFont('couriernew', 13)
-fontComp = pygame.font.SysFont('couriernew', 16, True)
-smallfont = pygame.font.SysFont('couriernew', 12)
+font = pygame.font.SysFont('couriernew', 18) #13
+fontComp = pygame.font.SysFont('couriernew', 20, True) #16
+smallfont = pygame.font.SysFont('couriernew', 12) #12
 massive = pygame.font.SysFont('couriernew', 200, True)
 
 screen = pygame.display.set_mode(size)
@@ -175,8 +175,7 @@ def addEnch(type, en1, en): #DO THORNS GOOD
 		print en3
 		return en3
 		
-def Enchant(inp, spec = 0):
-	item = newItem(inp)
+def Enchant(item, spec = 0):
 	print "ENCHANTING:", item.Name
 	if len(item.atkChunks) > 0:
 		num = rand(len(item.atkChunks))-1
@@ -238,7 +237,7 @@ def Enchant(inp, spec = 0):
 			enchs = {"bound":rand(3)}
 		item.ench = addEnch(3, item.ench, enchs)
 		#self.ench = {"mending":[-1, 0], "bound":0}
-	return newItem(item)
+	return item
 		
 class DispObj(object):
 	def refresh(self):
@@ -373,7 +372,10 @@ class ItemDisp(object):
 					
 					if i.etrn:
 						localrand.all.append(DispObj(pasImg, (0, 0)))
-						localrand.all.append(DispObj(font.render("Passive +"+str(i.dmg), True, (0, 0, 0)), (20, 0)))
+						if i.dmg < 0:
+							localrand.all.append(DispObj(font.render("Passive "+str(i.dmg), True, (0, 0, 0)), (20, 0)))
+						else:
+							localrand.all.append(DispObj(font.render("Passive +"+str(i.dmg), True, (0, 0, 0)), (20, 0)))
 					else:
 						localrand.all.append(DispObj(font.render("Dmg: "+str(i.dmg), True, (0, 0, 0)), (20, 0)))
 						if not i.dfn:
@@ -816,17 +818,19 @@ class Item(object):
 		self.div = ItemDisp(self)
 		if toappend:
 			global allitems
-			allitems.append(newItem(self))
+			allitems.append(self)
 			
 def newItem(item):
-	newit =  Item(item.atkChunks, item.dfnChunks, item.durability, item.sane, item.score, item.Name, item.desc, item.img, item.lvl, item.ref, item.destructable, item.ammo, item.regenammo, item.ench, False)
-	for x in range(len(newit.atkChunks)):
-		i = item.atkChunks[x]
-		i = atkChunk(i.dmg, i.agil, i.dfn, i.etrn, i.pierce - i.ench["piercing"], i.proj, i.ench)
-		print i, item.atkChunks[x]
-		newit.atkChunks[x] = i
-	for i in range(len(newit.dfnChunks)):
-		newit.dfnChunks[i] = item.dfnChunks[i].rebuild()
+	prints("New Item Copy: "+item.Name+str(item))
+	newAtk = []
+	for x in item.atkChunks:
+		newAtk.append(x.rebuild())
+	newDef = []
+	for x in item.dfnChunks:
+		newDef.append(x.rebuild())
+
+	#apparantly passing by reference here, so look out
+	newit =  Item(newAtk, newDef, item.durability, item.sane, item.score, item.Name, item.desc, item.img, item.lvl, item.ref, item.destructable, item.ammo, item.regenammo, item.ench, False)
 	return newit
 	
 #REF: Mono, Valve, YS, MN
@@ -1737,7 +1741,8 @@ def getitem(item): #AAAAAAAAAAAAAAAHHHHHHHHHHHHHHHHHHHHH
 	global invenItems
 	global score
 	global TM2
-	invenItems.insert(0, newItem(item))
+	newitem = newItem(item)
+	invenItems.insert(0, newitem)
 	score += item.score
 	prints("Found: "+item.Name)
 	TM2.all = wraptext("You found "+item.Name + ". You place the newfound loot in your backpack.", 900, font, True)
@@ -2410,6 +2415,8 @@ while running:
 				print lapis.atkChunks[0], "Core"
 				if invenItems[0].Name == "Lapis":
 					print invenItems[0].atkChunks[0], "Inven"
+			if event.key == K_g:
+				getitem(lapis)
 				
 	mouse_pos = pygame.mouse.get_pos()
 
