@@ -71,6 +71,10 @@ Cmode = 0
 SanPool = 0
 
 
+def prints(stuff):
+	global debug
+	if debug:
+		print stuff
 
 #two sets of coord pairs
 def hitdetect(p1, p2, p3, p4 = None):
@@ -86,7 +90,7 @@ def hitDetect(p1, p2, p3):
 
 def getImg(name):
 	full = "Assets/img/"+name+".png"
-	print "Loading: "+full
+	prints("Loading: "+full)
 	try:
 		return pygame.image.load(full)
 	except pygame.error:
@@ -108,11 +112,6 @@ Sinsane = getImg("screens/screenlastinsanity")
 Szarol = getImg("screens/screenzarol")
 Scrafter = getImg("screens/Crafter")
 Sbattle = Smain
-		
-def prints(stuff):
-	global debug
-	if debug:
-		print stuff
 		
 def rand(num):
 	return random.randint(1, num)
@@ -156,14 +155,14 @@ def addEnch(type, en1, en): #DO THORNS GOOD
 		
 		#en3["mending"][1] = max(en1["mending"][1], en2["mending"][1]) #gets highest
 		en3["mending"][1] = math.floor((en1["mending"][1] + en2["mending"][1]) *0.75) #kida adds them
-		if en1["mending"][0] == -1:
-			en1["mending"][0] = 9999999
-		if en2["mending"][0] == -1:
-			en2["mending"][0] = 9999999
-		en3["mending"][0] = min(en1["mending"][0], en2["mending"][0]) #gets lowest but not negatives
-		if en3["mending"][0] == 9999999:
-			en3["mending"][0] = -1
-		
+
+		n1 = en1["mending"][0]
+		n2 = en2["mending"][0]
+		n3 = min(n1, n2)
+		if n3 == -1: # if either is -1, the other is the least or also -1; both >= -1
+			n3 = max(n1, n2)
+		en3["mending"][0] = n3
+
 		'''if self.ench["mending"][0] != -1:
 			self.mendTick = 0
 		else:
@@ -215,7 +214,7 @@ def Enchant(item, spec = 0):
 		if item.dfnChunks[num].dfn == None: #DONT TRUE PROTEC
 			num2 = rand(4)
 			if num2 == 1:
-				enchs = {"reflecting":2*rand(4) + 2}
+				enchs = {"reflecting":(2*rand(4) + 2)/100.0}
 			if num2 == 2:
 				enchs = {"thorns":atkChunk(math.ceil(rand(math.fabs(item.lvl)+1)*0.3), 15*rand(6), random.choice([True, False]), False, rand(2)-1)}
 			if num2 == 3:
@@ -225,7 +224,7 @@ def Enchant(item, spec = 0):
 		else:
 			num2 = rand(5)
 			if num2 == 1:
-				enchs = {"reflecting":2*rand(3) + 3}
+				enchs = {"reflecting":(2*rand(3) + 3)/100.0}
 			if num2 == 2:
 				enchs = {"thorns":atkChunk(math.ceil(rand(math.fabs(item.dfnChunks[num].dfn)+1)*0.2), 12*rand(6), random.choice([True, False]), False)}
 			if num2 == 3:
@@ -358,20 +357,21 @@ class ItemDisp(object):
 				allsize += 16
 			
 			
-			proj = {"is":False, "dmg":[9999999, -99], "ammo":-99, "agil":0, "pierce":0, "enchs":{"destructive":0, "piercing":0, "heavy":0, "sweeping":0, "returning":[0, 0]}}
+			proj = {"is":False, "dmg":[None, None], "ammo":None, "agil":0, "pierce":0, "enchs":{"destructive":0, "piercing":0, "heavy":0, "sweeping":0, "returning":[0, 0]}}
 			for i in self.item.atkChunks: #build offence displays
 				if i.proj != None: #if projectile
 					proj["is"] = True
-					if proj["dmg"][0] > i.dmg:
-						proj["dmg"][0] = i.dmg
-					if proj["dmg"][1] < i.dmg:
-						proj["dmg"][1] = i.dmg
-					if proj["ammo"] < i.proj:
-						proj["ammo"] = i.proj
-					if proj["agil"] < i.agil:
-						proj["agil"] = i.agil
-					if proj["pierce"] < i.pierce:
-						proj["pierce"] = i.pierce
+					#get lowest damage
+					proj["dmg"][0] = i.dmg if (proj["dmg"][0] == None) else min(proj["dmg"][0], i.dmg)
+					#get highest damage
+					proj["dmg"][1] = i.dmg if (proj["dmg"][1] == None) else max(proj["dmg"][1], i.dmg)
+					#get highest ammo cost
+					proj["ammo"] = i.proj if (proj["ammo"] == None) else max(proj["ammo"], i.proj)
+					#get highest agil
+					proj["agil"] = max(i.agil, proj["agil"])
+					#get the highest pierce
+					proj["pierce"] = max(proj["pierce"], i.pierce)
+					#add the enchantments
 					proj["enchs"] = addEnch(2, proj["enchs"], i.ench)
 					
 				else:#normal melee
@@ -920,7 +920,7 @@ mirror3 = Item([], [dfnChunk(-10, None, False, False, False, {"reflecting":1.4, 
 
 #--BOSS ITEMS--
 #HERO
-heroshield = Item([], [dfnChunk(-5, 6, False, False, False), dfnChunk(-2, 4, True)], 200, 1, 10, "Heroes Shield", "You feel a bit bad, killing someone with origins probably alike yours.", "heroshield", -1, [], False)
+heroshield = Item([], [dfnChunk(-5, 6, False, False, False), dfnChunk(-2, 4, True)], 600, 1, 10, "Heroes Shield", "You feel a bit bad, killing someone with origins probably alike yours.", "heroshield", -1, [], False)
 herosword = Item([atkChunk(6, 2)], [dfnChunk(0, 2, False, True)], 200, 1, 10, "Heroes Sword", "A fitting weapon for a hero. But are <i>you<i> a hero?", "herosword", -1, [], False)
 
 #COOSOME
@@ -1143,11 +1143,11 @@ def killMinion(source, minion):
 creepybaldguy = Enm(18, 18, 5, 2, 10, [1, 100], 4, -1, "Creepy Bald Guy", "creep", "You know you are being watched. Always... ", "you feel it staring through your eyes, Into your Soul.", ["Even though it seems nearly dead, it continues its steady gaze deep into your eyes.", "it seems to have lost some hair in this fight. You blink, realizing it was already bald.", "it seems to be observing, only attacking to see how you react.", "it is sitting there, staring at you. Waiting and observing your every move."], 100, [["atk1", 3]], [nothing])
 creep2 = Enm(35, 35, 8, 3, 12, [1, 100], 8, -1, "Creepier Bald Guy", "creep2", "You know you are being watched. Always... ", "you feel it staring through your eyes, Into your Soul.", ["Even though it seems nearly dead, it continues its steady gaze deep into your eyes.", "it seems to have lost some hair in this fight. You blink, realizing it was already bald.", "it seems to be observing, only attacking to see how you react.", "it is sitting there, staring at you. Waiting and observing your every move."], 87, [["heal", 1], ["atk1", 19]], [nothing])
 creep3 = Enm(120, 120, 12, 4, 15, [5, 100], 10, -2, "Creepier Balder Guy", "creep3", "You know you are being watched. Always... ", "you feel it staring through your eyes, Into your Soul.", ["Even though it seems nearly dead, it continues its steady gaze deep into your eyes.", "it seems to have lost some hair in this fight. You blink, realizing it was already bald.", "it seems to be observing, only attacking to see how you react.", "it is sitting there, staring at you. Waiting and observing your every move."], 60, [["heal", 1], ["atk1", 10]], [nothing])
-creep4 = Enm(200, 200, 15, 5, 20, [10, 100], 12, -2, "Creepiest Bald Guy", "creep4", "You know you are being watched. Always... ", "you feel it staring through your eyes, Into your Soul.", ["Even though it seems nearly dead, it continues its steady gaze deep into your eyes.", "it seems to have lost some hair in this fight. You blink, realizing it was already bald.", "it seems to be observing, only attacking to see how you react.", "it is sitting there, staring at you. Waiting and observing your every move."], 40, [["heal", 1], ["atk1", 10]], [nothing])
+creep4 = Enm(200, 200, 15, 5, 20, [10, 100], 12, -2, "Creepiest Bald Guy", "creep4", "You know you are being watched. Always... ", "you feel it staring through your eyes, Into your Soul.", ["Even though it seems nearly dead, it continues its steady gaze deep into your soul.", "it seems to have lost some hair in this fight. You blink, realizing it was already bald.", "it seems to be observing, only attacking to see how you react.", "it is sitting there, staring at you. Waiting and observing your every move."], 40, [["heal", 1], ["atk1", 10]], [nothing])
 terracotta = Enm(5, 5, 0, 5, 12, [13, 100], 0, 0, "clay soldier", "terracotta", "Intricately carved hinges begin to move,", "Beginning its advance towards you.", ["It lays on the ground, cracks running through it.", "It wobbles, an arm and a leg missing.", "There are small cracks beginning to run through its body.", "it stands there, it's carefully carved tiny eyes staring at you."], 50, [["atk1", 2]], [nothing])
 thug = Enm(100, 100, 7, 5, 0, [0, 100], 4, 0, "Thug", "thug", "A thug approaches you on the street. You prepare your fists, being much stronger than your lean appearance implies.", "'Hey, Idiot. Whose territory do you think you're Waltzing around in?'", ["", "", "", "He holds his hands up in front of his face, posture like that of a fake wrestler."], 150, [["heal", 1], ["atk1", 2]], [nothing])
 bookofdeath = Enm(3, 3, 10, 1, 20, [5, 100], 4, -1, "Flailing Broken Binding", "bookofdeath", "A nearby book seems to stir..", "A book snaps into a row of paper teeth.....", ["It stops, all of its pages missing.", "It squeals, trying to flee.", "Pages are everywhere", "It flaps, words flying"], 37, [["heal", 3], ["atk1", 7]], [nothing])
-catwatcher = Enm(65, 65, 15, 2, 5, [20, 100], 20, -1, "Watcher Catling", "catwatcher", "You feel as though something is watching you.....", "A small Furry leaps at you!", ["", "", "", ""], 50, [["heal", 9], ["atk1", 11]], [nothing])
+catwatcher = Enm(65, 65, 15, 2, 5, [20, 100], 20, -1, "Watcher Catling", "catwatcher", "You feel as though something is watching you.....", "Some kind of cat person leaps at you!", ["", "", "", ""], 50, [["heal", 9], ["atk1", 11]], [nothing])
 axeurlegs = Enm(10, 10, 2, 1, 0, [0, 100], 1, -2, "Axeurlegs", "axeurlegs", "One of the plants seems to be twitching.....", "Steel blades click into place as the plant spins into action!", ["", "", "", "Its spinning extremely quickly, blades hacking away at your legs inch by inch."], 4, [["atk1", 3]], [nothing])
 anenemy = Enm(38, 38, 5, 10, 7, [10, 100], 8, 0, "Anenemy", "anenemy", "A sloshing sound alerts you to anenemy in the water......", "Anenemy attacks you!", ["Anenemy", "Anenemy", "Anenemy", "Anenemy"], 37, [["heal", 2], ["atk1", 8]], [nothing])
 lightorb = Enm(5, 5, 12, 3, 20, [80, 100], 3, 0, "Light Orb", "lightorb", "A glowing orb floats gently towards you", "", ["It's light is so dim, you can almost make out the creature emitting it.", "it is no longer floating quite as high as before, and it's light is fading.", "It's light is getting duller, and it sways from side to side.", "It darts around in front of you, a streak of light across your vision."], 50, [["atk1", 2]], [nothing])
@@ -1155,7 +1155,7 @@ mimic = Enm(20, 20, 5, 5, 15, [1, 100], 3, -1, "Mimic", "mimic", "A golden chest
 nerveball = Enm(20, 20, 20, 8, 8, [10, 100], 3, -3, "the ball of nerves", "nerveball", "You see a swirling ball of... nerves?", "it turns towards you, screaming with silence   ...and electrical currents.", ["", "", "", ""], 25, [["atk1", 2]], [nothing])
 clone = Enm(100, 100, 15, 5, 10, [5, 100], 10, -5, "Your clone", "clone", "You see a more menacing version of yourself in what you think is a mirror....", "", ["It's lost many of its limbs. It attempts to crawl away.", "It has realized it's mistake. It attempts to escape.", "It seems slightly startled, as if this was an accedent.", "It's you."], 37, [["heal", 1], ["atk1", 9]], [nothing])
 koi = Enm(250, 250, 20, 3, -2, [1, 100], 50, 0, "Koi", "koi", "There is a very strange looking fish swimming in the water....", "It leaps at you, with it's blunt teeth!", ["", "", "", ""], 37, [["heal", 1], ["atk1", 9]], [nothing])
-slime = Enm(150, 150, 3, 2, 15, [1, 100], 2, -3, "Slime", "slime", "The ceiling seems to be dripping some strange substance...", "You are consumed by a large blob of jelly!", ["You final stick your head out, the slime almost gone.", "You attempt to escape. This sort of works.", "The acid melts away your skin.", "You can't breath"], 13, [["heal", 1], ["atk1", 39]], [nothing])
+slime = Enm(150, 150, 3, 2, 15, [1, 100], 2, -3, "Slime", "slime", "a strange substance seems to be dripping from above you...", "You are consumed by a large blob of jelly!", ["You final stick your head out, the slime almost gone.", "You attempt to escape. This sort of works.", "The acid melts away your skin.", "You can't breath"], 13, [["heal", 1], ["atk1", 39]], [nothing])
 dog = Enm(175, 175, 10, 20, 10, [4, 100], 0, 0, "Dog", "dog", "The sounds of a happy dog are getting louder....", "ARF ARF!", ["The dog is wimpering now. It's afraid.", "Tastes like gingerbread", "Smells like gingerbread.", "It runs up to you, ready to play."], 37, [["atk1", 100]], [nothing])
 muffin = Enm(30, 30, 2, 2, 2, [80, 100], 20, 4, "Muffin", "muffin", "A bake sale is going on nearby", "An angry muffin attacks you with it's tiny fangs bared!", ["Only now, with its body crumbling, does it consider you might be stronger, and begins searching for an escape", "Though a few bit-sized chunks have fallen off, it maintains its combative stance.", "A few crumbs have fallen off, but it still stays committed.", "'I SHALL NOT BE DEFEATED' it shouts"], 25, [["heal", 4], ["atk1", 11]], [nothing])
 rockgolum = Enm(200, 200, 10, 20, 35, [1, 100], 10, 0, "Rock Golum", "rockgolum", "You hear a thumping from nearby", "A golum bursts from the wall!", ["", "", "", ""], 75, [["heal", 1], ["atk1", 99]], [nothing])
@@ -1163,7 +1163,7 @@ enm = creepybaldguy
 
 
 #Minions
-trapfall = Enm(100, 100, 80, 10, 10, [500, 100], 0, -1, "Ceiling trap", "trapfall", "traap heeere", "it's a tarp!", [], 500, [["atk1", 2]], [nothing])
+trapfall = Enm(100, 100, 80, 10, 10, [500, 100], 0, -1, "Ceiling trap", "trapfall", "There are lines in the cieling.", "it's a tarp!", [], 500, [["atk1", 2]], [nothing])
 trapfall = trapfall.Minionize(0, 7)
 trapfire = Enm(5, 5, 1, 0, 1, [500, 100], 0, -1, "Fire Trap", "trapfire", "Fiiiirrrreeeee", "it's a tarp!", [], 7, [["atk1", 2]], [nothing])
 trapfire = trapfire.Minionize(1, 7)
@@ -1200,7 +1200,7 @@ chicken = chicken.Minionize(25, 4)
 #bosses
 adventurer = Enm(190, 190, 10, 5, 0, [5,100], 30, -7, "Adventurer", "adventurer", "You hear the footsteps of someone else.", "It is an Adventurer, Readying his stance for Battle!", ["He seems oddly unaware of the massive amounts of damage you have dealt him. Much like you are.", "", "", "", "He seems more confident of himself, more sure of his strides.", ""], 50, [["atk1", 4], ["heal", 1]], [herosword, heroshield], True, bossroom, 10)
 
-coo33 = Enm(80, 120, 5, 75, 10, [19,100], 8, -2, "coo33", "coosome", "You hear something behind you.", "\'Here,  Fishy..   Fishy...\'", ["It's bloodied eyes dart across you, searching for ways to finish you off quickly.", "It looks angry, but seems to have survived worse.", "It is smiling, although panting. It seems as though it's malnourishedness is taking effect.", "He seems unfazed, a low growl and a chuckle murmured from within.", "It takes a deep breath, the type one might take after a good nights sleep.", "It seems to be toying with you, darting through the room."], 26, actions, [fishingrod, pencil], True, roomBoss2, 15)
+coo33 = Enm(80, 120, -5, 75, 10, [19,100], 8, -2, "coo33", "coosome", "You hear something behind you.", "\'Here,  Fishy..   Fishy...\'", ["It's bloodied eyes dart across you, searching for ways to finish you off quickly.", "It looks angry, but seems to have survived worse.", "It is smiling, although panting. It seems as though it's malnourishedness is taking effect.", "He seems unfazed, a low growl and a chuckle murmured from within.", "It takes a deep breath, the type one might take after a good nights sleep.", "It seems to be toying with you, darting through the room."], 26, actions, [fishingrod, pencil], True, roomBoss2, 15)
 coosome = Enm(140, 150, 25, 2, 14, [14,100], 20, -1, "Coosome", "coosome", "You see someone, just as they see you. He stares at you with deadpan eyes.", "", ["It's bloodied eyes dart across you, searching for ways to finish you off quickly.", "It looks angry, but seems to have survived worse.", "It is smiling, although panting. It seems as though it's malnourishedness is taking effect.", "He seems unfazed, a low growl and a chuckle murmured from within.", "It takes a deep breath, the type one might take after a good nights sleep.", "It seems to be toying with you, darting through the room."], 34, actions, [fishingrod, pencil], True, roomBoss2, 15, False)
 colton = Enm(120, 140, 10, 8, 10, [28,90], 12, -1, "Colton", "coosome", "You see a person, just as he hears you. He jumps, making an odd noise.", "", ["It's bloodied eyes dart across you, searching for ways to finish you off quickly.", "It looks angry, but seems to have survived worse.", "It is smiling, although panting. It seems as though it's malnourishedness is taking effect.", "He seems unfazed, a low growl and a chuckle murmured from within.", "It takes a deep breath, the type one might take after a good nights sleep.", "It seems to be toying with you, darting through the room."], 41, actions, [drawingpad, pencil], True, roomBoss2, 15, False)
 
@@ -2714,6 +2714,32 @@ while running:
 	if Screen == 6: #Monoliths
 		monolithTime -= 1
 		screen.fill(BLIMBO)
+
+		#pygame.draw.rect(screen, WHITE, [0, 0, monolithTime, 100])
+		mult = (1.0 - (math.sqrt(3)/float(2))) / 2.0
+		monoRatio = (monolithTime - 6) / float(1500) # -6 to prevent a drawing out of bounds problem with the arc
+		sizeHalf = size[1] / float(2)
+		pixFromCent = math.ceil((sizeHalf - (sizeHalf * monoRatio)))
+		print pixFromCent, monoRatio, sizeHalf
+		#print "fuck", (size[1] * (float(1) - (monolithTime / 1500)) / (mult)
+
+		#SUpposedly the size should be the same, the second is height/2 - the added height from size on first
+		#r1 = [0, (size[1] * (monolithTime - 6) / 3000), size[0], (pixFromCent / (mult * 2)) + 6]
+		#r2 = [0,  2 * pixFromCent - (pixFromCent / (mult * 2)), size[0], (size[1] * (monolithTime - 6)/ 3000) + (pixFromCent / (mult * 2))]
+		
+		r1 = [0, sizeHalf * monoRatio, size[0], (pixFromCent / (mult * 2)) + 6]
+		r2 = [0, sizeHalf + pixFromCent - (pixFromCent / (mult * 2)), size[0], (pixFromCent / (mult * 2)) + 6]
+
+		print r1
+		print r2
+
+		#pygame.draw.rect(screen, GREY, (0, r1[1], size[0]/2, r1[3]))
+		#pygame.draw.rect(screen, GREY, (size[0]/2, r2[1], size[0], r2[3		#print "um", (size[1] / 2), "urm", 600 * monolithTime / 3000
+		pygame.draw.arc(screen, RED, r1, math.pi/4, 3*math.pi/4, 5)
+		pygame.draw.arc(screen, RED, r2, 5*3.14/4, 7*3.14/4, 5)
+
+		#pygame.draw.line(screen, WHITE, (0, size[1]/2), (size[0], size[1]/2))
+
 		screen.blit(massive.render(str(monolithTime), False, RED), (200, 15)) #for now ;)
 		screen.blit(TL2.img, TL2.coords)
 		if mouse_down:
