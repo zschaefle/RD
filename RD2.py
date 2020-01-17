@@ -1257,24 +1257,24 @@ def buildFinal():
 	if endboss == "Coo":
 		global spoon
 		global pencil
-		print "COO BOSS SPAWN"
+		prints("COO BOSS SPAWN")
 		
 	if endboss == "North":
-		print "NORTH BOSS SPAWN"
+		prints("NORTH BOSS SPAWN")
 		
 	if endboss == "Blue":
-		print "BLUE BOSS SPAWN"
+		prints("BLUE BOSS SPAWN")
 		
 	if endboss == "Jim":
 		global jimsword
 		global communism
 		global jimarmor
 		global hatandboots
-		print "JIM BOSS SPAWN"
+		prints("JIM BOSS SPAWN")
 		
 	if endboss == "Siv":
 		#global rune
-		print "SIV BOSS SPAWN"
+		prints("SIV BOSS SPAWN")
 	
 	return enm
 #minions go here, not needed yet
@@ -1430,7 +1430,7 @@ def genRoom():
 	global SanPool
 	
 	pla.refresh()
-	print pla.sane, pla.sanity
+	#print pla.sane, pla.sanity
 	
 	prints("Generating room.")
 	gentables()
