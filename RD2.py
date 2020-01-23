@@ -113,8 +113,15 @@ Szarol = getImg("screens/screenzarol")
 Scrafter = getImg("screens/Crafter")
 Sbattle = Smain
 		
-def rand(num):
+def rand(num): #randoms from 1
+	if num < 1:
+		print "Random value below 1 asked!"
 	return random.randint(1, num)
+
+def randO(num): #randoms from 0
+	if num < 0:
+		print "Random value below 0 asked!"
+	return random.randint(0, num)
 
 def cbrt(num):
 	if num < 0:
@@ -307,7 +314,6 @@ def wraptext(text, fullline, Font, render = False, color = (0,0,17)):  #need way
 	
 TM1 = DispObj(wraptext("", 900, font, True), (10, 10), False, (900, 120)) #main room desc
 TM2 = DispObj(wraptext("", 900, font, True), (10, 130), False, (900, 119)) #room responses
-ItemsDisp = DispObj([], (115, 10), False, (370, 239)) #Inventory items display
 TL1 = DispObj([DispObj(Sgrave), 
 	DispObj(fontComp.render("RIP", False, (0, 0, 0)), (88, 30)), 
 	DispObj(wraptext("You are dead. Not big surprise.", 150, font, True), (26, 48), False, (150, 200))
@@ -607,28 +613,64 @@ class ItemDisp(object):
 		self.refresh(1)
 #pygame.transform.scale()
 
-def refreshItems(type): #used for displaying of all items
+class List(DispObj):
+	def __init__(self, pos, size):
+		DispObj.__init__(self, [], pos, False, size)
+		self.scrollMod = 0 #scroll offset
+		self.scrollMom = 0 #scroll momentum
+		self.netSize = 0 #combined height of all items in the list
+
+	def update(self):
+		if self.scrollMom != 0:
+			if self.scrollMom < -70:
+				self.scrollMom = -70
+			if self.scrollMom > 70:
+				self.scrollMom = 70
+
+			if self.scrollMom < 0:
+				if self.scrollMom < -45:
+					self.scrollMom += 0.5
+				else:
+					self.scrollMom += 1
+			if self.scrollMom > 0:
+				if self.scrollMom > 45:
+					self.scrollMom -= 0.5
+				else:
+					self.scrollMom -= 1
+			self.scrollMod += self.scrollMom
+
+			if self.scrollMod > 0: #make sure you didn't scroll too far
+				self.scrollMod = 0
+				self.scrollMom = 0
+			if self.scrollMod + self.netSize < 239: #make sure you didn't scroll too far
+				self.scrollMod = 0-(self.netSize - 239)
+				self.scrollMom = 0
+			#update display with new offset
+			for i in self.all:
+				i.coords = (i.coords[0], i.baseCoords[1]+self.scrollMod)
+
+
+ItemsDisp = List((115, 10), (370, 239)) #Inventory items display
+MinsDisp = List((490, 10), (370, 239)) #Minions display
+
+def refreshItems():  #run when adding a new item to invenItems
 	global ItemsDisp
-	global scrollMod
-	if type == 1: #run when adding a new item to invenItems
-		ItemsDisp.all = []
-		global invenItems
-		global netSize
-		netSize = 0
-		for i in invenItems:
-			i.div.norm.baseCoords = (0, netSize)
-			netSize += i.div.norm.size[1] #add size to total size
-			ItemsDisp.all.append(i.div.norm)
-		if netSize <= 239:
-			scrollMod = 0
-		refreshItems(2)
-			
-	if type == 2: #update w/ scroll mod
-		for i in ItemsDisp.all:
-			i.coords = (i.coords[0], i.baseCoords[1]+scrollMod)
-	
-	ItemsDisp.refresh()
-refreshItems(1)
+	global invenItems
+	ItemsDisp.all = []
+	ItemsDisp.netSize = 0
+	for i in invenItems:
+		i.div.norm.baseCoords = (0, ItemsDisp.netSize)
+		ItemsDisp.netSize += i.div.norm.size[1] #add size to total size
+		ItemsDisp.all.append(i.div.norm)
+	if ItemsDisp.netSize <= 239:
+		ItemsDisp.scrollMod = 0
+	for i in ItemsDisp.all:
+		i.coords = (i.coords[0], i.baseCoords[1]+ItemsDisp.scrollMod)
+
+def refreshMinions(type): #use for displaying minions
+	global MinsDisp
+	if type == 1: #adding a new minion
+		MinsDisp.all = []
 		
 #Rooms for the dongeon
 rooms = []
@@ -1287,7 +1329,7 @@ def Heal(entity):
 	global healable
 	if (entity == pla and pla.hp > 0):
 		if inbattle:
-			heal = pla.heal + random.randint(0, 2*pla.hdev)-pla.hdev
+			heal = pla.heal + randO(2*pla.hdev)-pla.hdev
 			if (pla.hp + heal > pla.maxhp):
 				heal = pla.maxhp - pla.hp
 			pla.hp = pla.hp+heal
@@ -1299,7 +1341,7 @@ def Heal(entity):
 				
 		else:
 			if healable:
-				heal = pla.heal*10 + random.randint(0, 3*pla.hdev)
+				heal = pla.heal*10 + randO(3*pla.hdev)
 				if (pla.hp + heal > pla.maxhp):
 					heal = pla.maxhp - pla.hp
 				pla.hp = pla.hp+heal
@@ -1496,7 +1538,7 @@ def genRoom():
 	if room.isref != False:
 		prints("Room is a reference.")
 	
-	avent = random.randint(1, 30)
+	avent = rand(30)
 	
 	if (avent == 1):
 		roommessage += " Your feet are suddenly covered in water, with more rising from an unseen source."
@@ -1754,7 +1796,7 @@ def genRoom():
 			prints("length: " + str(len(enmpool)))
 			prints("choices: " + str(enmcount))
 
-			localrand = random.randint(0, enmcount)
+			localrand = randO(enmcount)
 			prints("selected: "+ str(localrand))
 			if localrand < len(enmpool) and localrand >= 0:
 				roommessage += prepbattle(enmpool[localrand])
@@ -1837,7 +1879,7 @@ def getitem(item): #AAAAAAAAAAAAAAAHHHHHHHHHHHHHHHHHHHHH
 	prints("Found: "+item.Name)
 	TM2.all = wraptext("You found "+item.Name + ". You place the newfound loot in your backpack.", 900, font, True)
 	TM2.refresh()
-	refreshItems(1)
+	refreshItems()
 	
 def equip(item):
 	global pla
@@ -1861,7 +1903,7 @@ def equip(item):
 				invenItems.remove(item)
 				success = True
 	if success:
-		refreshItems(1)
+		refreshItems()
 		pla.refresh()
 		for i in pla.equipped:
 			i.div.refresh(3)
@@ -1874,7 +1916,7 @@ def unequip(slot):
 		pla.equipped[slot].div.refresh(1)
 		invenItems.insert(0, pla.equipped[slot])
 		pla.equipped[slot] = nothing
-		refreshItems(1)
+		refreshItems()
 	
 		pla.equipped[2].div.refresh(2)
 		pla.equipped[3].div.refresh(2)
@@ -1884,7 +1926,7 @@ def RDloot():
 	global lootitems
 	global TM2
 	if lootable:
-		itemget = lootitems[random.randint(0, len(lootitems)-1)]
+		itemget = lootitems[randO(len(lootitems)-1)]
 		'''if (itemget == rock)
 			Unlock(heatrock);
 		}'''
@@ -1923,7 +1965,7 @@ def removeitem(item): #must take valid item. ignores indestructable, only cares 
 	else:
 		prints(item.Name+" not found in inventory!")
 	item.div.refresh(1)
-	refreshItems(1)
+	refreshItems()
 
 #refresh an entity's stats. (agil)
 def Refresh(ent):
@@ -2213,7 +2255,7 @@ def check(entity):
 #does not include: minions, dodging, calculation of boosting items
 def Damage(source, weapon, atk, target):
 	enchValues = [0, 0] #local values needed for enchantments: layered, heavy
-	initdmg = atk.dmg + random.randint(0, 2*source.ddev) - source.ddev
+	initdmg = atk.dmg + randO(2*source.ddev) - source.ddev
 	if initdmg < 0:
 		initdmg = 0
 	prevdmg = initdmg
@@ -2259,7 +2301,7 @@ def Damage(source, weapon, atk, target):
 					Damage (source, i, atkChunk(dmg*x.ench["reflecting"], atk.agil-10, False, False, atk.pierce-1), source) #NEED AN EXCEPTION TO PREVENT THORNS LOOPING
 					prints(target.name+" has REFLECTED")
 			if enchValues[0] < x.ench["layered"][1]: #test layered max
-				if (random.randint(0, 100) < x.ench["layered"][0]):
+				if (randO(100) < x.ench["layered"][0]):
 					j -= 1
 					enchValues[0] += 1
 			prevdmg = dmg
@@ -2330,7 +2372,7 @@ def attack(source, weapon, target, enchValues = [1, None, None]):
 				enchValues[0] = 1+atk.ench["sweeping"]
 			
 			if atk.proj != None and atk.ench["returning"][0] != 0:
-				if atk.ench["returning"][0] > random.randint(0, 100):
+				if atk.ench["returning"][0] > randO(100):
 					weapon.ammo += atk.ench["returning"][1]
 			
 			#add agil mod of used chunk
@@ -2419,24 +2461,40 @@ while running:
 				if Screen in [2, 3, 7]:
 					Screen = 1
 			if event.button == 4:
-				if (hitDetect((115, 10), (370, 239), mouse_pos) and Screen == 2) or (hitDetect((10, 10), (370, 239), mouse_pos) and Screen == 7): #scrolling on the items list
-					if netSize > 239: #Scrolling up
-						if scrollMom >= -8:
-							scrollMom += 10
+				if (Screen == 2 and hitDetect((115, 10), (370, 239), mouse_pos)) or (Screen == 7 and hitDetect((10, 10), (370, 239), mouse_pos)): #scrolling on the items list
+					if ItemsDisp.netSize > 239: #Scrolling up
+						if ItemsDisp.scrollMom >= -8:
+							ItemsDisp.scrollMom += 10
 						else:
-							scrollMom = -10
+							ItemsDisp.scrollMom = -10
 					else:
-						scrollMom = 0
+						ItemsDisp.scrollMom = 0
+				if Screen == 2 and hitDetect(MinsDisp.coords, MinsDisp.size, mouse_pos):
+					if MinsDisp.netSize > 239:
+						if MinsDisp.scrollMom >= -8:
+							MinsDisp.scrollMom += 10
+						else:
+							MinsDisp.scrollMom = -10
+					else:
+						MinsDisp.scrollMom = 0
 				
 			if event.button == 5:
-				if (hitDetect((115, 10), (370, 239), mouse_pos) and Screen == 2) or (hitDetect((10, 10), (370, 239), mouse_pos) and Screen == 7): #scrolling on the items list
-					if netSize > 239: #Scrolling down
-						if scrollMom <= 8:
-							scrollMom -= 10
+				if (Screen == 2 and hitDetect((115, 10), (370, 239), mouse_pos)) or (Screen == 7 and hitDetect((10, 10), (370, 239), mouse_pos)): #scrolling on the items list
+					if ItemsDisp.netSize > 239: #Scrolling down
+						if ItemsDisp.scrollMom <= 8:
+							ItemsDisp.scrollMom -= 10
 						else:
-							scrollMom = 10
+							ItemsDisp.scrollMom = 10
 					else:
-						scrollMom = 0
+						ItemsDisp.scrollMom = 0
+				if Screen == 2 and hitDetect(MinsDisp.coords, MinsDisp.size, mouse_pos):
+					if MinsDisp.netSize > 239: #Scrolling down
+						if MinsDisp.scrollMom <= 8:
+							MinsDisp.scrollMom -= 10
+						else:
+							MinsDisp.scrollMom = 10
+					else:
+						MinsDisp.scrollMom = 0
 						
 		if event.type == pygame.MOUSEBUTTONUP:
 			if event.button == 1:
@@ -2509,6 +2567,8 @@ while running:
 					print invenItems[0].atkChunks[0], "Inven"
 			if event.key == K_g:
 				getitem(lapis)
+			if event.key == K_p:
+				print pygame.mouse.get_pos()
 				
 	mouse_pos = pygame.mouse.get_pos()
 
@@ -2591,6 +2651,7 @@ while running:
 			screen.blit(me2Img, (60, 60))
 			
 		screen.blit(ItemsDisp.img, ItemsDisp.coords)
+		screen.blit(MinsDisp.img, MinsDisp.coords)
 			
 		#buttons and stuff
 		screen.blit(TI1.img, TI1.coords)
@@ -2640,6 +2701,9 @@ while running:
 		if mouse_down:
 			if hitDetect((10, 225), (75, 24), mouse_pos):
 				Screen = 1
+
+		ItemsDisp.refresh()
+		MinsDisp.refresh()
 	
 	if Screen == 3: #battle
 		screen.fill(Cbacking)
@@ -2827,19 +2891,19 @@ while running:
 						if success:
 							mouse_down = False
 							invenItems.remove(i)
-							refreshItems(1)
+							refreshItems()
 							break
 				
 			if hitDetect((395, 100), (50, 50), mouse_pos) and C.inputs[0] != nothing: #Removing items
 				mouse_down = False
 				invenItems.insert(0, C.inputs[0])
 				C.inputs[0] = nothing
-				refreshItems(1)
+				refreshItems()
 			if hitDetect((395, 150), (50, 50), mouse_pos) and C.inputs[1] != nothing:
 				mouse_down = False
 				invenItems.insert(0, C.inputs[1])
 				C.inputs[1] = nothing
-				refreshItems(1)
+				refreshItems()
 				
 			if hitDetect((560, 120), (100, 111), mouse_pos) and not C.working: #Switch
 				C.mode += 1
@@ -2937,6 +3001,8 @@ while running:
 			else:
 				#print "FAILED TO CRAFT: crafter not accepting"
 				mouse_down = False
+
+		ItemsDisp.refresh()
 			
 	if inbattle: #BATTLING
 		enm.atkInt -= 1
@@ -3054,32 +3120,8 @@ while running:
 		if (gravetime == 0):
 			limbob(limbostuff[0], limbostuff[1])
 	
-	if scrollMom != 0:
-		if scrollMom < -70:
-			scrollMom = -70
-		if scrollMom > 70:
-			scrollMom = 70
-
-		if scrollMom < 0:
-			if scrollMom < -45:
-				scrollMom += 0.5
-			else:
-				scrollMom += 1
-		if scrollMom > 0:
-			if scrollMom > 45:
-				scrollMom -= 0.5
-			else:
-				scrollMom -= 1
-		scrollMod += scrollMom
-
-		if scrollMod > 0: #make sure you didn't scroll too far
-			scrollMod = 0
-			scrollMom = 0
-		refreshItems(2) #update display with new coords
-		if scrollMod + netSize < 239: #make sure you didn't scroll too far
-			scrollMod = 0-(netSize - 239)
-			scrollMom = 0
-		refreshItems(2) #make sure you didn't scroll too far
+	ItemsDisp.update()
+	MinsDisp.update()
 
 	pygame.display.update()
 	clock.tick(50)
