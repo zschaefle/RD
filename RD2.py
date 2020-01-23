@@ -653,7 +653,7 @@ class List(DispObj):
 ItemsDisp = List((115, 10), (370, 239)) #Inventory items display
 MinsDisp = List((490, 10), (370, 239)) #Minions display
 
-def refreshItems():  #run when adding a new item to invenItems
+def refreshItems():  #run when adding/removing from invenItems
 	global ItemsDisp
 	global invenItems
 	ItemsDisp.all = []
@@ -664,13 +664,23 @@ def refreshItems():  #run when adding a new item to invenItems
 		ItemsDisp.all.append(i.div.norm)
 	if ItemsDisp.netSize <= 239:
 		ItemsDisp.scrollMod = 0
-	for i in ItemsDisp.all:
-		i.coords = (i.coords[0], i.baseCoords[1]+ItemsDisp.scrollMod)
+	else:
+		for i in ItemsDisp.all:
+			i.coords = (i.coords[0], i.baseCoords[1]+ItemsDisp.scrollMod)
 
-def refreshMinions(type): #use for displaying minions
+def refreshMinions(type): #use when adding/removing minions to player
 	global MinsDisp
-	if type == 1: #adding a new minion
-		MinsDisp.all = []
+	global pla
+	MinsDisp.all = []
+	MinsDisp.netSize = 0
+	for i in pla.minions:
+		pass
+	if MinsDisp.netSize <= 239:
+		MinsDisp.scrollMod = 0
+	else:
+		for i in MinsDisp.all:
+			i.coords = (i.coords[0], i.baseCoords[1]+MinsDisp.scrollMod)
+
 		
 #Rooms for the dongeon
 rooms = []
