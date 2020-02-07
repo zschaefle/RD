@@ -613,6 +613,34 @@ class ItemDisp(object):
 		self.refresh(1)
 #pygame.transform.scale()
 
+class MinDisp(object):
+	def build(self):
+		global font
+		self.norm = DispObj([
+			DispObj(self.mini, (2, 2)), #image
+			DispObj(font.render(self.minion.name, True, (0, 0, 0)), (54, 2)), #minion's name
+			DispObj(pygame.Surface((100, 9), pygame.SRCALPHA, 32).convert_alpha(), (54, 25)) #surface for health bar
+			], (0, 0), False, (200, 54))
+
+		self.side = DispObj([], (0, 0), False, (200, 50))
+
+	def refresh(self):
+		#global smallfont
+		#global font
+		pygame.draw.rect(self.norm.all[2].img, LGREY, (0, 0, 100, 9))
+		pygame.draw.rect(self.norm.all[2].img, RED, (1, 1, self.minion.hpratio*100, 3))#HP
+		if self.minion.dfratio:
+			pygame.draw.rect(self.norm.all[2].img, BLUE, (1, 5, self.minion.dfratio*100, 3))#ARMOR
+		self.norm.refresh()
+
+	def __init__(self, minion):
+		self.minion = minion
+		self.mini = pygame.transform.scale(minion.img, (50, 50))
+		self.norm = None #list display
+		self.side = None #hover display
+		self.build()
+		self.refresh()
+
 class List(DispObj):
 	def __init__(self, pos, size):
 		DispObj.__init__(self, [], pos, False, size)
@@ -660,6 +688,7 @@ def refreshItems():  #run when adding/removing from invenItems
 	ItemsDisp.netSize = 0
 	for i in invenItems:
 		i.div.norm.baseCoords = (0, ItemsDisp.netSize)
+		i.div.norm.coords = i.div.norm.baseCoords
 		ItemsDisp.netSize += i.div.norm.size[1] #add size to total size
 		ItemsDisp.all.append(i.div.norm)
 	if ItemsDisp.netSize <= 239:
@@ -668,13 +697,16 @@ def refreshItems():  #run when adding/removing from invenItems
 		for i in ItemsDisp.all:
 			i.coords = (i.coords[0], i.baseCoords[1]+ItemsDisp.scrollMod)
 
-def refreshMinions(type): #use when adding/removing minions to player
+def refreshMinions(): #use when adding/removing minions to player
 	global MinsDisp
 	global pla
 	MinsDisp.all = []
 	MinsDisp.netSize = 0
 	for i in pla.minions:
-		pass
+		i.div.norm.baseCoords = (0, MinsDisp.netSize)
+		i.div.norm.coords = i.div.norm.baseCoords
+		MinsDisp.netSize += i.div.norm.size[1]
+		MinsDisp.all.append(i.div.norm)
 	if MinsDisp.netSize <= 239:
 		MinsDisp.scrollMod = 0
 	else:
@@ -1128,12 +1160,14 @@ class Enm(object):
 		self.minions = []
 		self.minionTree = []
 		self.dist = 0
+		self.div = None
 		
 
 	def Minionize(self, dist, lvl):
 		thisminion = Enm(self.hp, self.maxhp, self.dmg, self.ddev, self.dfn, self.agil, self.heal, self.sane, self.name, "", self.message, self.cry, self.rundown, self.atkIntBase, self.actions, self.equipped, False, None, -1, False)
 		thisminion.dist = dist
 		thisminion.turn = lvl
+		thisminion.div = MinDisp(thisminion)
 		return thisminion
 		
 	def reStats(self):
@@ -1178,10 +1212,13 @@ def getMinion(source, min):
 	#if source is player, make div of minion with id=minion.div+minion.id.   new div is only hp
 	thisMin = min.Minionize(min.dist, min.turn)
 	source.minions.append(thisMin)
+	source.minionTree = getMinionTree(source, 1)
+	global pla
 	if (source == pla):
 		print "DISPLAY"
-	source.minionTree = getMinionTree(source, 1)
+		refreshMinions()
 	prints("Gave "+source.name+" "+thisMin.name)
+
 		
 def killMinion(source, minion):
 	for i in source.minions:
@@ -2576,7 +2613,8 @@ while running:
 				if invenItems[0].Name == "Lapis":
 					print invenItems[0].atkChunks[0], "Inven"
 			if event.key == K_g:
-				getitem(lapis)
+				getMinion(pla, superminion)
+
 			if event.key == K_p:
 				print pygame.mouse.get_pos()
 				
@@ -2661,7 +2699,6 @@ while running:
 			screen.blit(me2Img, (60, 60))
 			
 		screen.blit(ItemsDisp.img, ItemsDisp.coords)
-		screen.blit(MinsDisp.img, MinsDisp.coords)
 			
 		#buttons and stuff
 		screen.blit(TI1.img, TI1.coords)
@@ -2669,9 +2706,11 @@ while running:
 		screen.blit(baack, (10, 225))
 		
 				
+		sideDisplaying = False
 		for i in invenItems: #equipping & alt display
 			x = i.div.norm
 			if hitDetect((115, x.baseCoords[1]+scrollMod), (370, 54), mouse_pos): #size of items
+				sideDisplaying = True
 				pygame.draw.rect(i.div.side.img, LGREY, (0, 48, 50, 2))
 				pygame.draw.rect(i.div.side.img, GREEN, (0, 48, (i.dfratio)*50, 2))#dura
 				screen.blit(i.div.side.img, (487, 10)) #the side img
@@ -2681,32 +2720,39 @@ while running:
 					break
 			
 	
+
 			#unequipping
-		if hitDetect((10, 10), (50, 50), mouse_pos):
+		if pla.equipped[0] != nothing and hitDetect((10, 10), (50, 50), mouse_pos):
+			sideDisplaying = True
 			pygame.draw.rect(pla.equipped[0].div.side.img, LGREY, (0, 48, 50, 2))
 			pygame.draw.rect(pla.equipped[0].div.side.img, GREEN, (0, 48, (pla.equipped[0].dfratio)*50, 2))#dura
 			screen.blit(pla.equipped[0].div.side.img, (487, 10)) #the side img
 			if mouse_down:
 				unequip(0)
-		if hitDetect((60, 10), (50, 50), mouse_pos):
+		if pla.equipped[1] != nothing and hitDetect((60, 10), (50, 50), mouse_pos):
+			sideDisplaying = True
 			pygame.draw.rect(pla.equipped[1].div.side.img, LGREY, (0, 48, 50, 2))
 			pygame.draw.rect(pla.equipped[1].div.side.img, GREEN, (0, 48, (pla.equipped[1].dfratio)*50, 2))#dura
 			screen.blit(pla.equipped[1].div.side.img, (487, 10)) #the side img
 			if mouse_down:
 				unequip(1)
-		if hitDetect((10, 60), (50, 50), mouse_pos):
+		if pla.equipped[2] != nothing and hitDetect((10, 60), (50, 50), mouse_pos):
+			sideDisplaying = True
 			pygame.draw.rect(pla.equipped[2].div.side.img, LGREY, (0, 48, 50, 2))
 			pygame.draw.rect(pla.equipped[2].div.side.img, GREEN, (0, 48, (pla.equipped[2].dfratio)*50, 2))#dura
 			screen.blit(pla.equipped[2].div.side.img, (487, 10)) #the side img
 			if mouse_down:
 				unequip(2)
-		if hitDetect((60, 60), (50, 50), mouse_pos):
+		if pla.equipped[3] != nothing and hitDetect((60, 60), (50, 50), mouse_pos):
+			sideDisplaying = True
 			pygame.draw.rect(pla.equipped[3].div.side.img, LGREY, (0, 48, 50, 2))
 			pygame.draw.rect(pla.equipped[3].div.side.img, GREEN, (0, 48, (pla.equipped[3].dfratio)*50, 2))#dura
 			screen.blit(pla.equipped[3].div.side.img, (487, 10)) #the side img
 			if mouse_down:
 				unequip(3)
 				
+		if not sideDisplaying:
+			screen.blit(MinsDisp.img, MinsDisp.coords)
 		
 		if mouse_down:
 			if hitDetect((10, 225), (75, 24), mouse_pos):
